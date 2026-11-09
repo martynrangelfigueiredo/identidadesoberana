@@ -48,6 +48,7 @@ const nav = [
     <meta property="og:site_name" content="Identidade Soberana" />
     <meta property="og:image" content={new URL("/icons/icon-512.png", Astro.site)} />
     <link rel="canonical" href={new URL(path, Astro.site)} />
+    <link rel="alternate" type="application/rss+xml" title="Identidade Soberana — RSS Feed" href="/rss.xml" />
   </head>
   <body>
     <header class="site-header">
@@ -89,7 +90,10 @@ const nav = [
           <span class="marca-nome">identidade <b>soberana</b></span>
         </a>
         <span>Segurança digital sem complicação.</span>
-        <a href="https://instagram.com/identidadesoberana" rel="me noopener" target="_blank">Instagram @identidadesoberana</a>
+        <div style="display:flex;gap:1rem;align-items:center;">
+          <a href="/rss.xml" title="Assinar via RSS">Feed RSS</a>
+          <a href="https://instagram.com/identidadesoberana" rel="me noopener" target="_blank">Instagram @identidadesoberana</a>
+        </div>
       </div>
     </footer>
 

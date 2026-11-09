@@ -54,6 +54,14 @@ h1, h2, h3, h4 {
 .marca-nome { font: 900 1.2rem/1 var(--is-fonte-titulo); color: var(--is-verde-escuro); letter-spacing: -.02em; }
 .marca-nome b { color: var(--is-verde); font-weight: 900; }
 
+@media (max-width: 480px) {
+  .marca { gap: .45rem; }
+  .marca-nome { font-size: 1.05rem; }
+  .marca svg { width: 34px; height: 34px; }
+  .site-header .container { min-height: 58px; }
+  .header-actions { gap: .3rem; }
+}
+
 .header-actions {
   display: flex;
   align-items: center;

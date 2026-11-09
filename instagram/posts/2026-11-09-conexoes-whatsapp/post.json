@@ -1,0 +1,67 @@
+{
+  "titulo": "Alguém está usando seu WhatsApp?",
+  "categoria": "WhatsApp",
+  "data": "2026-11-09",
+  "slides": [
+    {
+      "tipo": "capa",
+      "titulo": "Alguém está usando seu *WhatsApp*?",
+      "subtitulo": "Como descobrir aparelhos conectados e tirar invasores em 30 segundos.",
+      "ilustracao": "celular"
+    },
+    {
+      "tipo": "dica",
+      "numero": 1,
+      "titulo": "Abra *Aparelhos Conectados*",
+      "texto": "No seu WhatsApp, toque nos três pontinhos (ou Configurações no iPhone) e escolha **Aparelhos conectados**.",
+      "sabia": "É por ali que golpistas deixam o WhatsApp Web aberto no computador deles sem você perceber.",
+      "ilustracao": "cadeado"
+    },
+    {
+      "tipo": "dica",
+      "numero": 2,
+      "titulo": "Não reconheceu? *Desconecte agora*",
+      "texto": "Se aparecer algum computador que você não conhece (ex.: Google Chrome em outra cidade), toque nele e clique em **Desconectar**.",
+      "ilustracao": "escudo"
+    },
+    {
+      "tipo": "dica",
+      "numero": 3,
+      "titulo": "Ative a *confirmação em duas etapas*",
+      "texto": "Vá em Configurações > Conta > **Confirmação em duas etapas**. Crie um PIN de 6 números que só você sabe.",
+      "sabia": "Com o PIN ativo, ninguém consegue cadastrar seu número em outro celular.",
+      "ilustracao": "senha"
+    },
+    {
+      "tipo": "comparacao",
+      "titulo": "Cuidado com o golpe",
+      "faca": [
+        "Revisar aparelhos conectados todo mês",
+        "Cadastrar seu e-mail de recuperação",
+        "Bloquear o celular com biometria ou PIN"
+      ],
+      "evite": [
+        "Passar código de 6 dígitos que chega por SMS",
+        "Escanear QR Code enviado por terceiros",
+        "Emprestar o celular desbloqueado"
+      ],
+      "ilustracao": "email"
+    },
+    {
+      "tipo": "resumo",
+      "itens": [
+        "Verifique a lista de *Aparelhos conectados*",
+        "Desconecte qualquer sessão estranha",
+        "Ative o PIN de 6 dígitos na conta",
+        "Nunca passe códigos para ninguém"
+      ]
+    },
+    {
+      "tipo": "cta",
+      "titulo": "Gostou? *Salva* esse post!",
+      "texto": "Mande agora para a família no WhatsApp para todo mundo checar! 💚💛"
+    }
+  ],
+  "legenda": "Você já conferiu quem está conectado no seu WhatsApp hoje? 📲👀\n\nMuita gente nem imagina, mas é facinho alguém deixar o WhatsApp Web conectado no computador e ficar lendo suas conversas.\n\nArrasta pro lado pra ver como descobrir em 30 segundos e se proteger 👉\n\nSalva pra fazer mais tarde e manda no grupo da família! 💚💛",
+  "hashtags": ["whatsapp", "segurancanowhatsapp", "privacidade", "dicasdeseguranca", "golpesdigitais", "identidadesoberana"]
+}
