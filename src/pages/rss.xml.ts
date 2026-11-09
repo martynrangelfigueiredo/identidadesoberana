@@ -35,3 +35,4 @@ export const GET: APIRoute = async (context) => {
     headers: { "Content-Type": "application/xml; charset=utf-8" },
   });
 };
+
