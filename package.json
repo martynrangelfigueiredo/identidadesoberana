@@ -10,7 +10,8 @@
     "preview": "astro preview",
     "carrossel": "node scripts/carrossel.mjs",
     "novo:artigo": "node scripts/novo.mjs artigo",
-    "novo:carrossel": "node scripts/novo.mjs carrossel"
+    "novo:carrossel": "node scripts/novo.mjs carrossel",
+    "test:kql": "node scripts/test-kql.mjs"
   },
   "dependencies": {
     "astro": "^5.0.0"

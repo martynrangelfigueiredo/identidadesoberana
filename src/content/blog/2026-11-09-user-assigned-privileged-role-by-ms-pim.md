@@ -28,11 +28,11 @@ O serviço **MS-PIM (Microsoft Entra Privileged Identity Management)** atua como
 
 ---
 
-## 2. KQL Avançado: Enriquecimento de AuditLogs + SigninLogs
+## 2. Dica de KQL: Enriquecimento de AuditLogs + SigninLogs
 
-Geralmente, o log de auditoria do PIM registra o evento `Add member to role completed (PIM activation)` ou `Add eligible member to role in PIM completed`. Porém, analisar apenas o evento bruto deixa pontos cegos sobre o contexto de rede do ator.
+Geralmente, o log de auditoria do PIM registra o evento `Add member to role completed (PIM activation)` ou `Add eligible member to role in PIM completed`.
 
-A query abaixo extrai a atribuição privilegiada em `AuditLogs`, parseia justificativa, função e alvos, e faz **join correlato** com os `SigninLogs` pelo `CorrelationId` ou pela janela temporal da conta originadora para trazer contexto de IP, Cidade, MFA e Nível de Risco em uma visão consolidada:
+A query abaixo projeta algumas informações adicionais para contextualizar o evento, cruzando dados de `AuditLogs` com `SigninLogs` pelo `CorrelationId` ou pela janela temporal da conta originadora para trazer dados de IP, localização, MFA e nível de risco em uma visão consolidada:
 
 ```kql
 // ====================================================================================

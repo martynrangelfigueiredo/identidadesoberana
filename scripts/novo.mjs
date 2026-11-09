@@ -55,9 +55,9 @@ Explicação detalhada dos vetores de ameaça: cenários legítimos de falsos po
 
 ---
 
-## 2. KQL Enriquecido de Investigação
+## 2. Dica de KQL: [Foco da consulta]
 
-Query projetando colunas úteis (Ação, Ator, Alvo, IP, Localização, MFA, Justificativa, CorrelationId e Risco):
+A query abaixo projeta algumas colunas úteis para contextualizar o evento no Sentinel:
 
 \`\`\`kql
 let tempoAnalise = 24h;

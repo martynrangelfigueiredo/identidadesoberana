@@ -26,7 +26,11 @@ Tema comum: tecnologia, operações de segurança, conformidade e proteção de 
   - **Referência no Microsoft Learn:** Sempre referencie a página oficial da analytics rule ou catálogo no Microsoft Learn (ex.: catálogo de detecções padrão do Microsoft Sentinel no Learn).
   - **Tradução multilíngue:** O site possui seletor de tradução obrigatório na ordem exata: **1º Alemão (Deutsch)**, **2º Mandarim da China continental (简体中文)**, **3º Inglês (English)**.
   - Posts devem ser **completos, profundos e sem cortes**, servindo como playbooks operacionais de SOC/DFIR.
-  - **KQL Inovador & Enriquecido:** Sempre projete o máximo de colunas úteis (Ação, Ator, Alvo, Role, IP, Localização, MFA, Justificativa, Ticket, CorrelationId, Risco da sessão).
+  - **Seção e Tom do KQL (Dica de KQL):**
+    - **NUNCA** use títulos grandiosos como "KQL Avançado" ou "KQL Inovador". Use títulos simples e operacionais como: `## 2. Dica de KQL: [Foco da consulta]`.
+    - **Tom humilde e direto:** Não enalteça a query com frases do tipo *"A query abaixo vai muito além..."* ou *"revolucionária"*. Apenas diga que a query traz algumas informações a mais ou colunas úteis para contextualizar o evento.
+    - **Sintaxe KQL Estritamente ASCII:** NUNCA use caracteres acentuados ou cedilha (`ç`, `ã`, `õ`, `é`, `á`, etc.) em nomes de variáveis (`let`), aliases de tabelas ou colunas projetadas. Caracteres especiais quebram o compilador do Kusto (ex: use `NegacoesMFA`, e nunca `NegaçõesMFA`). Acentos só são aceitos dentro de strings `"..."` ou comentários `//`.
+    - **Validação de Sintaxe Obrigatória:** Toda query KQL DEVE ser testada e passar com sucesso pelo comando `npm run test:kql` antes de ser comitada ou publicada.
   - **Roteiro padrão de investigação obrigatório:**
     1. *O que foi feito?* (Ação detalhada, temporária vs permanente, Correlation ID).
     2. *Quem fez?* (InitiatedBy, histórico da conta, MFA, SigninLogs).

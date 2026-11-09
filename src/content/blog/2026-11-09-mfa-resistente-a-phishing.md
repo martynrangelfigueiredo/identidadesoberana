@@ -30,9 +30,9 @@ Quando uma regra de detecção de anomalias de MFA dispara no Microsoft Sentinel
 
 ---
 
-## 2. KQL Avançado: Correlação de Fadiga de MFA com Logon Consequente
+## 2. Dica de KQL: Correlação de fadiga de MFA com logon consequente
 
-A query abaixo vai muito além de apenas contar erros de MFA. Ela correlaciona as tentativas negadas com o logon subsequente bem-sucedido dentro de uma janela temporal, parseando ASN, detalhes de autenticação, cidade, sistema operacional e nível de risco da sessão:
+A query abaixo correlaciona tentativas negadas com o logon subsequente bem-sucedido dentro de uma janela temporal, trazendo algumas informações adicionais úteis para contextualizar o evento, como detalhes do método de autenticação, cidade, sistema operacional e nível de risco da sessão:
 
 ```kql
 // ====================================================================================
@@ -43,18 +43,18 @@ A query abaixo vai muito além de apenas contar erros de MFA. Ela correlaciona a
 let janelaAnalise = 24h;
 let limiarFalhasMFA = 3;
 // 1. Identificar contas que sofreram falhas ou negações repetidas de MFA (ResultType 500121 / 50074)
-let NegaçõesMFA = SigninLogs
+let NegacoesMFA = SigninLogs
 | where TimeGenerated >= ago(janelaAnalise)
 | where ResultType in (500121, 50074) // MFA negado pelo usuário ou desafio não completado
 | summarize 
-    QtdNegações = count(),
+    QtdNegacoes = count(),
     PrimeiraFalha = min(TimeGenerated),
     UltimaFalha = max(TimeGenerated),
     IPsFalha = make_set(IPAddress, 5),
     LocaisFalha = make_set(Location, 5),
     UserAgentsFalha = make_set(UserAgent, 3)
     by UserPrincipalName, bin(TimeGenerated, 15m)
-| where QtdNegações >= limiarFalhasMFA;
+| where QtdNegacoes >= limiarFalhasMFA;
 // 2. Buscar logons bem-sucedidos da mesma conta após as negações
 let LogonsSucesso = SigninLogs
 | where TimeGenerated >= ago(janelaAnalise)
@@ -71,14 +71,14 @@ let LogonsSucesso = SigninLogs
     RiscoSessao = RiskLevelDuringSignIn,
     IDCorrelacao = CorrelationId;
 // 3. Cruzamento temporal: Sucesso nos 30 minutos seguintes às negações repetidas
-NegaçõesMFA
+NegacoesMFA
 | join kind=inner (LogonsSucesso) on UserPrincipalName
 | where HoraSucesso between (UltimaFalha .. (UltimaFalha + 30m))
 | project
     DataHoraAlerta = UltimaFalha,
     DataHoraSucesso = HoraSucesso,
     UsuarioAlvo = UserPrincipalName,
-    TentativasNegadas = QtdNegações,
+    TentativasNegadas = QtdNegacoes,
     MetodoAutenticacao = MetodoMFA,
     ResultadoMFA = DetalheMFA,
     IPLogonSucesso = IPSucesso,
