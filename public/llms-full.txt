@@ -47,3 +47,4 @@ Todos os playbooks de resposta a incidentes de nuvem e identidade no site seguem
 ## 4. Feed de Notícias e Sitemaps
 - Sitemap XML: https://identidadesoberana.com.br/sitemap.xml
 - RSS Feed: https://identidadesoberana.com.br/rss.xml
+

@@ -1,7 +1,32 @@
 User-agent: *
 Allow: /
 
-# Permissão explícita para agentes e robôs de Inteligência Artificial
+# Buscadores Principais (Brasil, Europa, EUA e China)
+User-agent: Googlebot
+Allow: /
+
+User-agent: Googlebot-Image
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Baiduspider
+Allow: /
+
+User-agent: Baiduspider-image
+Allow: /
+
+User-agent: Sogou web spider
+Allow: /
+
+User-agent: YandexBot
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
+# Agentes e robôs de Inteligência Artificial
 User-agent: GPTBot
 Allow: /
 
@@ -35,5 +60,5 @@ Allow: /
 User-agent: FacebookBot
 Allow: /
 
-# Sitemap oficial
+# Sitemap oficial para indexação de URLs
 Sitemap: https://identidadesoberana.com.br/sitemap.xml

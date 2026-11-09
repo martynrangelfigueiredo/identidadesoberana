@@ -43,10 +43,33 @@ const nav = [
 
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
+
+    <!-- Diretivas Globais de Indexação para Buscadores (Google, Bing, Baidu, etc.) -->
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+    <meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+    <meta name="baiduspider" content="index, follow" />
+
+    <!-- Tags de Verificação de Propriedade (Google Search Console, Bing, Baidu) -->
+    {import.meta.env.PUBLIC_GOOGLE_SITE_VERIFICATION && <meta name="google-site-verification" content={import.meta.env.PUBLIC_GOOGLE_SITE_VERIFICATION} />}
+    {import.meta.env.PUBLIC_BING_SITE_VERIFICATION && <meta name="msvalidate.01" content={import.meta.env.PUBLIC_BING_SITE_VERIFICATION} />}
+    {import.meta.env.PUBLIC_BAIDU_SITE_VERIFICATION && <meta name="baidu-site-verification" content={import.meta.env.PUBLIC_BAIDU_SITE_VERIFICATION} />}
+
+    <!-- Open Graph (Facebook, LinkedIn, WhatsApp) -->
+    <meta property="og:type" content="website" />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:site_name" content="Identidade Soberana" />
     <meta property="og:image" content={new URL("/icons/icon-512.png", Astro.site)} />
+    <meta property="og:url" content={new URL(path, Astro.site)} />
+    <meta property="og:locale" content="pt_BR" />
+
+    <!-- Twitter / X Cards -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={new URL("/icons/icon-512.png", Astro.site)} />
+
     <link rel="canonical" href={new URL(path, Astro.site)} />
     <link rel="alternate" type="application/rss+xml" title="Identidade Soberana — RSS Feed" href="/rss.xml" />
     <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml" />
