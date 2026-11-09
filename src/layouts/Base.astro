@@ -2,6 +2,7 @@
 import "../../brand/tokens.css";
 import "../styles/global.css";
 import LanguageSelector from "../components/LanguageSelector.astro";
+import InstallPrompt from "../components/InstallPrompt.astro";
 import logo from "../../brand/logo/logo-icone.svg?raw";
 import logoBranco from "../../brand/logo/logo-icone-branco.svg?raw";
 import favicon from "../../brand/logo/logo-icone.svg?url";
@@ -26,14 +27,26 @@ const nav = [
 <html lang="pt-BR">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <link rel="icon" type="image/svg+xml" href={favicon} />
+    <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png" />
+    <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+    
+    <!-- PWA Manifest & Chrome / Android Config -->
+    <link rel="manifest" href="/manifest.webmanifest" />
     <meta name="theme-color" content="#009C3B" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Identidade Soberana" />
+    <meta name="application-name" content="Identidade Soberana" />
+
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:site_name" content="Identidade Soberana" />
+    <meta property="og:image" content={new URL("/icons/icon-512.png", Astro.site)} />
     <link rel="canonical" href={new URL(path, Astro.site)} />
   </head>
   <body>
@@ -43,12 +56,23 @@ const nav = [
           <Fragment set:html={logo} />
           <span class="marca-nome">identidade <b>soberana</b></span>
         </a>
-        <div class="nav-wrapper">
-          <nav class="nav">
-            {nav.map((i) => <a href={i.href} aria-current={path.startsWith(i.href) ? "page" : undefined}>{i.label}</a>)}
-          </nav>
+
+        <div class="header-actions">
           <LanguageSelector />
+          <InstallPrompt />
+          
+          <button id="mobile-menu-btn" class="mobile-toggle" type="button" aria-label="Abrir menu de navegação" aria-expanded="false">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+          </button>
         </div>
+
+        <nav id="site-nav" class="nav">
+          {nav.map((i) => <a href={i.href} aria-current={path.startsWith(i.href) ? "page" : undefined}>{i.label}</a>)}
+        </nav>
       </div>
     </header>
 
@@ -65,9 +89,72 @@ const nav = [
           <span class="marca-nome">identidade <b>soberana</b></span>
         </a>
         <span>Segurança digital sem complicação.</span>
-        <a href="https://instagram.com/identidadesoberana" rel="me noopener">Instagram @identidadesoberana</a>
+        <a href="https://instagram.com/identidadesoberana" rel="me noopener" target="_blank">Instagram @identidadesoberana</a>
       </div>
     </footer>
+
+    <!-- Service Worker Registration & Mobile Enhancements -->
+    <script is:inline>
+      // 1. Service Worker para suporte a PWA Offline e Instalação
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js').catch(err => {
+            console.warn('ServiceWorker registration failed: ', err);
+          });
+        });
+      }
+
+      // 2. Menu Mobile Toggle
+      const menuBtn = document.getElementById('mobile-menu-btn');
+      const siteNav = document.getElementById('site-nav');
+      if (menuBtn && siteNav) {
+        menuBtn.addEventListener('click', () => {
+          const isOpen = siteNav.classList.toggle('open');
+          menuBtn.setAttribute('aria-expanded', String(isOpen));
+        });
+      }
+
+      // 3. Melhorias nos blocos de código e tabelas do artigo
+      document.addEventListener('DOMContentLoaded', () => {
+        // Envolve tabelas em .table-wrapper para scroll suave no celular
+        document.querySelectorAll('.prosa table').forEach(tbl => {
+          if (!tbl.parentElement.classList.contains('table-wrapper')) {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'table-wrapper';
+            tbl.parentNode.insertBefore(wrapper, tbl);
+            wrapper.appendChild(tbl);
+          }
+        });
+
+        // Adiciona proteção notranslate e botão de copiar código em pre/code
+        document.querySelectorAll('.prosa pre').forEach(pre => {
+          pre.setAttribute('translate', 'no');
+          pre.classList.add('notranslate');
+
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'copy-code-btn';
+          btn.setAttribute('aria-label', 'Copiar código');
+          btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg> Copiar`;
+          
+          btn.addEventListener('click', async () => {
+            const code = pre.querySelector('code')?.innerText || pre.innerText;
+            try {
+              await navigator.clipboard.writeText(code);
+              btn.innerHTML = `✔ Copiado!`;
+              btn.style.color = 'var(--is-verde)';
+              setTimeout(() => {
+                btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg> Copiar`;
+                btn.style.color = '';
+              }, 2000);
+            } catch (err) {
+              console.error('Falha ao copiar:', err);
+            }
+          });
+
+          pre.appendChild(btn);
+        });
+      });
+    </script>
   </body>
 </html>
-

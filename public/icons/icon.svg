@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="t">
+  <title id="t">Identidade Soberana — selo</title>
+  <!-- Selo: anel verde -->
+  <circle cx="256" cy="262" r="200" fill="#FFFFFF" stroke="#009C3B" stroke-width="26"/>
+  <!-- Arco amarelo (toque Brasil) na base do selo -->
+  <circle cx="256" cy="262" r="170" fill="none" stroke="#FFDF00" stroke-width="12" stroke-linecap="round"
+          stroke-dasharray="300 769" transform="rotate(37 256 262)"/>
+  <!-- Impressão digital (identidade) -->
+  <g fill="none" stroke="#00612A" stroke-width="16" stroke-linecap="round">
+    <line x1="256" y1="262" x2="256" y2="300"/>
+    <circle cx="256" cy="268" r="34" stroke-dasharray="160 54" transform="rotate(120 256 268)"/>
+    <circle cx="256" cy="268" r="68" stroke-dasharray="330 97" transform="rotate(135 256 268)"/>
+    <circle cx="256" cy="268" r="102" stroke-dasharray="280 46 230 85" transform="rotate(125 256 268)"/>
+    <circle cx="256" cy="268" r="136" stroke-dasharray="420 70 260 105" transform="rotate(150 256 268)"/>
+  </g>
+  <!-- Estrela vermelha (5 pontas) com halo branco -->
+  <polygon points="400,50 414.69,91.77 458.97,92.84 423.78,119.73 436.44,162.16 400,137 363.56,162.16 376.22,119.73 341.03,92.84 385.31,91.77"
+           fill="#FFFFFF" stroke="#FFFFFF" stroke-width="34" stroke-linejoin="round"/>
+  <polygon points="400,50 414.69,91.77 458.97,92.84 423.78,119.73 436.44,162.16 400,137 363.56,162.16 376.22,119.73 341.03,92.84 385.31,91.77"
+           fill="#E1251B" stroke="#E1251B" stroke-width="8" stroke-linejoin="round"/>
+</svg>
+

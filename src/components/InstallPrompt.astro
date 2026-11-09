@@ -1,0 +1,69 @@
+---
+// InstallPrompt.astro — Botão para instalar PWA no Chrome (Mobile e Desktop)
+---
+<button id="pwa-install-btn" type="button" class="btn-install" style="display:none;" aria-label="Instalar aplicativo">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+    <polyline points="7 10 12 15 17 10"></polyline>
+    <line x1="12" y1="15" x2="12" y2="3"></line>
+  </svg>
+  <span>Instalar App</span>
+</button>
+
+<style>
+  .btn-install {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    font: 800 .85rem var(--is-fonte-titulo);
+    background: var(--is-verde);
+    color: var(--is-branco);
+    border: none;
+    padding: .45rem .9rem;
+    border-radius: var(--is-raio-pill);
+    cursor: pointer;
+    box-shadow: var(--is-sombra-1);
+    transition: all .15s ease;
+  }
+  .btn-install:hover {
+    background: var(--is-verde-escuro);
+    transform: translateY(-1px);
+  }
+  @media (max-width: 768px) {
+    .btn-install {
+      padding: .4rem .75rem;
+      font-size: .8rem;
+    }
+  }
+</style>
+
+<script is:inline>
+  let deferredPrompt;
+  const installBtn = document.getElementById('pwa-install-btn');
+
+  window.addEventListener('beforeinstallprompt', (e) => {
+    // Impede o Chrome padrão de mostrar o mini-infobar imediatamente
+    e.preventDefault();
+    deferredPrompt = e;
+    // Exibe o botão de instalação
+    if (installBtn) {
+      installBtn.style.display = 'inline-flex';
+    }
+  });
+
+  if (installBtn) {
+    installBtn.addEventListener('click', async () => {
+      if (!deferredPrompt) return;
+      installBtn.style.display = 'none';
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      deferredPrompt = null;
+    });
+  }
+
+  window.addEventListener('appinstalled', () => {
+    if (installBtn) installBtn.style.display = 'none';
+    deferredPrompt = null;
+  });
+</script>
+
