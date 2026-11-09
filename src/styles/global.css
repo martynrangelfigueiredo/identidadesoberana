@@ -30,15 +30,16 @@ h1, h2, h3, h4 {
 /* ---------- Header ---------- */
 .site-header {
   position: sticky; top: 0; z-index: 10;
-  background: rgba(255, 255, 255, .88);
+  background: rgba(255, 255, 255, .92);
   backdrop-filter: saturate(1.4) blur(12px);
   border-bottom: 1px solid var(--is-borda);
 }
-.site-header .container { display: flex; align-items: center; justify-content: space-between; height: 72px; gap: 1rem; }
+.site-header .container { display: flex; align-items: center; justify-content: space-between; min-height: 72px; gap: 1rem; flex-wrap: wrap; padding-block: .5rem; }
 .marca { display: flex; align-items: center; gap: .65rem; text-decoration: none; }
 .marca svg { width: 44px; height: 44px; }
 .marca-nome { font: 900 1.2rem/1 var(--is-fonte-titulo); color: var(--is-verde-escuro); letter-spacing: -.02em; }
 .marca-nome b { color: var(--is-verde); font-weight: 900; }
+.nav-wrapper { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; }
 .nav { display: flex; gap: .25rem; flex-wrap: wrap; }
 .nav a {
   text-decoration: none; color: var(--is-cinza);
@@ -46,6 +47,13 @@ h1, h2, h3, h4 {
   padding: .5rem .9rem; border-radius: var(--is-raio-pill);
 }
 .nav a:hover, .nav a[aria-current="page"] { background: var(--is-verde-claro); color: var(--is-verde-escuro); }
+
+/* ---------- Google Translate Cleanup ---------- */
+.goog-te-banner-frame { display: none !important; }
+body { top: 0px !important; }
+.skiptranslate:not(.lang-selector):not(.lang-selector *) { display: none !important; }
+#goog-gt-tt, .goog-te-balloon-frame { display: none !important; }
+.goog-text-highlight { background: transparent !important; box-shadow: none !important; }
 
 /* ---------- Hero ---------- */
 .hero { position: relative; padding: 5rem 0 4rem; overflow: hidden; }

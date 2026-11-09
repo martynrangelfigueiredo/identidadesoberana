@@ -56,6 +56,9 @@ Celular seguro · Compras online · LGPD explicada pro cidadão (seus direitos) 
 - Termos técnicos em inglês são OK (SIEM, IGA, PAM, AitM), em *itálico* na primeira vez.
 - **Padrão de Artigos de Azure / Sentinel (Obrigatório):**
   - Os posts relacionados a Azure devem ser estruturados a partir de **incidentes reais gerados pelo Microsoft Sentinel** (baseados nas *analytics rules* nativas do Azure Sentinel, sem precisar citar explicitamente a regra nativa).
+  - **Título suave, autoral e SEMPRE em português:** **NUNCA** use o nome literal do incidente no título. Escreva um título convidativo, natural e profissional (ex.: *"Elevação de privilégios via PIM: guia prático de investigação para analistas de SOC"*).
+  - **Referência no Microsoft Learn:** Todo artigo deve referenciar a documentação oficial da regra/catálogo no Microsoft Learn (ex.: catálogo de detecções padrão do Microsoft Sentinel).
+  - **Tradução:** O site fornece tradução na ordem: **1. Alemão (Deutsch)**, **2. Mandarim da China continental (简体中文)**, **3. Inglês (English)**.
   - Devem ser artigos extensos, completos e práticos — verdadeiros playbooks de SOC.
   - **KQL Enriquecido e Inovador:** Não faça consultas básicas. Cruze tabelas (`AuditLogs`, `SigninLogs`, `DeviceEvents`, `AzureActivity`), projete colunas ricas (Ação, Ator, Alvo, Role, IP, Localização, MFA, Justificativa, Ticket, CorrelationId, Risco da sessão).
   - **Roteiro estruturado de investigação:**

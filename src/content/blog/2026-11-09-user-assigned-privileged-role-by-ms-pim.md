@@ -1,5 +1,5 @@
 ---
-title: "Incidente: User Assigned Privileged Role by MS-PIM — Investigação e Playbook Completo"
+title: "Elevação de privilégios via PIM: guia prático de investigação para o SOC"
 description: "Guia técnico de investigação para alertas de atribuição de privilégios no Microsoft Entra via PIM: KQL enriquecido, cruzamento de AuditLogs e SigninLogs, validação em ITSM e trilha de auditoria no portal."
 date: 2026-11-09
 categoria: SOC
@@ -7,9 +7,13 @@ tags: [sentinel, pim, entra-id, kql, incident-response, iam, soc]
 nivel: Intermediário
 ---
 
-Incidentes de elevação de privilégios e atribuição de funções administrativas são os mais sensíveis no radar de um Security Operations Center (SOC). O alerta **"User Assigned Privileged Role by MS-PIM"** sinaliza que uma função de alto impacto (como *Global Administrator*, *Privileged Role Administrator* ou *User Administrator*) foi concedida ou ativada via **Privileged Identity Management (PIM)** no Microsoft Entra ID.
+Incidentes de elevação de privilégios e atribuição de funções administrativas são os mais sensíveis no radar de um Security Operations Center (SOC). O alerta originado pela atribuição de funções via **Privileged Identity Management (PIM)** sinaliza que uma função de alto impacto (como *Global Administrator*, *Privileged Role Administrator* ou *User Administrator*) foi concedida ou ativada no Microsoft Entra ID.
 
 > **TL;DR para o SOC:** Nunca encerre esse alerta apenas verificando se o usuário é conhecido. A missão do analista é provar a legitimidade da cadeia: **Quem solicitou?** **Quem aprovou?** **Havia ticket pré-aprovado no ITSM?** **A sessão do originador apresentava risco no SigninLogs?** Siga o passo a passo abaixo para triagem e validação forense.
+
+> 📘 **Referência no Microsoft Learn:** Este playbook baseia-se nos incidentes modelados pelas detecções nativas de identidade do Azure Sentinel e pelas trilhas de auditoria do Entra ID. Para consultar as especificações oficiais no Microsoft Learn:
+> - [Microsoft Sentinel — Built-in scheduled analytics rules catalog (Learn)](https://learn.microsoft.com/azure/sentinel/detect-threats-built-in)
+> - [Microsoft Entra ID — Configurar alertas de segurança no Privileged Identity Management (Learn)](https://learn.microsoft.com/azure/active-directory/privileged-identity-management/pim-how-to-configure-security-alerts)
 
 ---
 
@@ -232,3 +236,4 @@ Para evitar reincidência de incidentes não documentados:
 * **Obrigar Ticket Number nas configurações de Role do PIM:** Em cada função no PIM, habilite a flag *"Require ticket information on activation"*.
 * **Aprovação Dual (*Two-Person Rule*):** Funções como *Global Admin* devem sempre requerer aprovação de um membro do time de Segurança da Informação ou SOC N3.
 * **Alerta no Microsoft Sentinel:** Mantenha a regra de analytics ativa com severidade **Medium** para ativações e **High** para novas atribuições diretas de elegibilidade permanente.
+

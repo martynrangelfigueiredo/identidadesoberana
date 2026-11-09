@@ -1,6 +1,7 @@
 ---
 import "../../brand/tokens.css";
 import "../styles/global.css";
+import LanguageSelector from "../components/LanguageSelector.astro";
 import logo from "../../brand/logo/logo-icone.svg?raw";
 import logoBranco from "../../brand/logo/logo-icone-branco.svg?raw";
 import favicon from "../../brand/logo/logo-icone.svg?url";
@@ -42,9 +43,12 @@ const nav = [
           <Fragment set:html={logo} />
           <span class="marca-nome">identidade <b>soberana</b></span>
         </a>
-        <nav class="nav">
-          {nav.map((i) => <a href={i.href} aria-current={path.startsWith(i.href) ? "page" : undefined}>{i.label}</a>)}
-        </nav>
+        <div class="nav-wrapper">
+          <nav class="nav">
+            {nav.map((i) => <a href={i.href} aria-current={path.startsWith(i.href) ? "page" : undefined}>{i.label}</a>)}
+          </nav>
+          <LanguageSelector />
+        </div>
       </div>
     </header>
 

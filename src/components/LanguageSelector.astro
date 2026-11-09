@@ -1,0 +1,166 @@
+---
+// LanguageSelector.astro
+// Ordem obrigatória: 1º Alemão (de), 2º Mandarim da China continental (zh-CN), 3º Inglês (en)
+---
+<div class="lang-selector" aria-label="Traduzir página">
+  <span class="lang-label">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="10"></circle>
+      <line x1="2" y1="12" x2="22" y2="12"></line>
+      <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+    </svg>
+    <span>Traduzir:</span>
+  </span>
+  <div class="lang-options">
+    <button type="button" class="lang-btn" data-lang="de" title="Alemão / Deutsch">
+      <span class="flag">🇩🇪</span> Deutsch
+    </button>
+    <button type="button" class="lang-btn" data-lang="zh-CN" title="Mandarim (China continental) / 简体中文">
+      <span class="flag">🇨🇳</span> 简体中文
+    </button>
+    <button type="button" class="lang-btn" data-lang="en" title="Inglês / English">
+      <span class="flag">🇺🇸</span> English
+    </button>
+    <button type="button" class="lang-btn lang-reset" data-lang="pt" title="Restaurar para Português (Original)" style="display:none;">
+      <span class="flag">🇧🇷</span> Original
+    </button>
+  </div>
+  <div id="google_translate_element" style="display:none;" aria-hidden="true"></div>
+</div>
+
+<style>
+  .lang-selector {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    font-size: .82rem;
+    background: var(--is-verde-nevoa);
+    border: 1px solid var(--is-borda);
+    padding: .25rem .5rem;
+    border-radius: var(--is-raio-pill);
+  }
+  .lang-label {
+    display: inline-flex;
+    align-items: center;
+    gap: .3rem;
+    color: var(--is-cinza);
+    font-weight: 700;
+    font-family: var(--is-fonte-titulo);
+  }
+  .lang-options {
+    display: inline-flex;
+    align-items: center;
+    gap: .25rem;
+  }
+  .lang-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: .25rem;
+    background: var(--is-branco);
+    border: 1px solid var(--is-borda);
+    color: var(--is-tinta);
+    font: 600 .78rem var(--is-fonte-texto);
+    padding: .2rem .55rem;
+    border-radius: var(--is-raio-pill);
+    cursor: pointer;
+    transition: all .15s ease;
+  }
+  .lang-btn:hover {
+    background: var(--is-verde-claro);
+    color: var(--is-verde-escuro);
+    border-color: var(--is-verde);
+  }
+  .lang-btn.active {
+    background: var(--is-verde);
+    color: var(--is-branco);
+    border-color: var(--is-verde-escuro);
+  }
+  .lang-reset {
+    background: var(--is-amarelo-claro);
+    border-color: var(--is-amarelo);
+    color: var(--is-verde-escuro);
+  }
+  @media (max-width: 768px) {
+    .lang-selector {
+      width: 100%;
+      justify-content: center;
+      margin: .5rem 0;
+      flex-wrap: wrap;
+    }
+  }
+</style>
+
+<script is:inline>
+  // Inicialização do Google Website Translator
+  function googleTranslateElementInit() {
+    if (window.google && window.google.translate) {
+      new window.google.translate.TranslateElement({
+        pageLanguage: 'pt',
+        includedLanguages: 'de,zh-CN,en',
+        autoDisplay: false
+      }, 'google_translate_element');
+    }
+  }
+  window.googleTranslateElementInit = googleTranslateElementInit;
+
+  // Carrega script se ainda não estiver presente
+  if (!document.getElementById('google-translate-script')) {
+    const s = document.createElement('script');
+    s.id = 'google-translate-script';
+    s.src = '//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+    s.async = true;
+    document.head.appendChild(s);
+  }
+
+  // Event handlers para os botões de idioma
+  function initLangButtons() {
+    const buttons = document.querySelectorAll('.lang-btn');
+    const resetBtn = document.querySelector('.lang-reset');
+    
+    // Verifica idioma ativo a partir dos cookies
+    const match = document.cookie.match(/googtrans=\/pt\/([^;]+)/);
+    const activeLang = match ? match[1] : null;
+
+    if (activeLang && activeLang !== 'pt') {
+      if (resetBtn) resetBtn.style.display = 'inline-flex';
+      buttons.forEach(b => {
+        if (b.getAttribute('data-lang') === activeLang) {
+          b.classList.add('active');
+        }
+      });
+    }
+
+    buttons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const targetLang = btn.getAttribute('data-lang');
+        
+        if (targetLang === 'pt') {
+          // Reset para o português original
+          document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+          document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=" + location.hostname;
+          location.reload();
+          return;
+        }
+
+        // Define cookie de tradução
+        document.cookie = `googtrans=/pt/${targetLang}; path=/;`;
+        document.cookie = `googtrans=/pt/${targetLang}; path=/; domain=${location.hostname};`;
+
+        // Tenta acionar o dropdown do google translate se já renderizado
+        const combo = document.querySelector('.goog-te-combo');
+        if (combo) {
+          combo.value = targetLang;
+          combo.dispatchEvent(new Event('change'));
+        } else {
+          location.reload();
+        }
+      });
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initLangButtons);
+  } else {
+    initLangButtons();
+  }
+</script>
