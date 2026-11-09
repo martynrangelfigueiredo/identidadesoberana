@@ -54,6 +54,17 @@ Celular seguro · Compras online · LGPD explicada pro cidadão (seus direitos) 
 ### Regras de escrita
 - Comece com **TL;DR** (blockquote) quando o artigo for longo.
 - Termos técnicos em inglês são OK (SIEM, IGA, PAM, AitM), em *itálico* na primeira vez.
+- **Padrão de Artigos de Azure / Sentinel (Obrigatório):**
+  - Os posts relacionados a Azure devem ser estruturados a partir de **incidentes reais gerados pelo Microsoft Sentinel** (baseados nas *analytics rules* nativas do Azure Sentinel, sem precisar citar explicitamente a regra nativa).
+  - Devem ser artigos extensos, completos e práticos — verdadeiros playbooks de SOC.
+  - **KQL Enriquecido e Inovador:** Não faça consultas básicas. Cruze tabelas (`AuditLogs`, `SigninLogs`, `DeviceEvents`, `AzureActivity`), projete colunas ricas (Ação, Ator, Alvo, Role, IP, Localização, MFA, Justificativa, Ticket, CorrelationId, Risco da sessão).
+  - **Roteiro estruturado de investigação:**
+    1. *O que significa o incidente?* (Cenários benignos vs maliciosos).
+    2. *Query KQL completa com colunas projetadas*.
+    3. *As 5 perguntas da investigação:* O que foi feito? Quem fez? Poderia ter feito? Há chamado/ticket formal? A sessão foi legítima?
+    4. *Onde investigar no portal:* Rotas exatas no Microsoft Entra admin center / Azure Portal (ex: `Identity Governance > Privileged Identity Management > Microsoft Entra Roles > Resource Audit`).
+    5. *Validação em ITSM:* Checagem cruzada com ServiceNow, Jira Service Management, Freshservice ou Zendesk (e campos como `ResultReason`/justificativa).
+    6. *Procedimento técnico de resposta & contenção:* Playbook com passos imediatos e KQL para auditoria pós-incidente.
 - Sempre que possível traga: **queries de detecção** (KQL, SPL, Sigma), **tabelas comparativas**,
   **mapeamento de controles** (ISO 27001, NIST CSF, CIS, LGPD, SOC 2), **MITRE ATT&CK IDs** e **passos acionáveis**.
 - Cite fontes primárias (docs de fornecedores, NIST, ANPD, CERT.br).

@@ -19,7 +19,18 @@ Tema comum: tecnologia, operações de segurança, conformidade e proteção de 
 - Fontes: Nunito (títulos), Inter (texto), JetBrains Mono (código).
 - Cores/fontes vêm de `brand/tokens.css`. Nunca invente cores nem escreva estilos dentro de `post.json` ou dos posts `.md`.
 - Tom leve e amigável, **nunca alarmista**. Sem mascote, sem rosto, sem "hacker de capuz".
-- Instagram: zero jargão. Site: técnico, com queries, tabelas e mapeamento de controles quando fizer sentido.
+- Instagram: zero jargão, focado em dicas práticas do dia a dia.
+- **Site (Regra para Posts de Azure/Incidentes):**
+  - Todo post relacionado a Azure no site deve ser modelado a partir de um **incidente real gerado pelo Microsoft Sentinel** (tendo como base uma *analytics rule* padrão/default do Azure Sentinel, sem precisar citar explicitamente o nome da regra padrão).
+  - Posts devem ser **completos, profundos e sem cortes**, servindo como playbooks operacionais de SOC/DFIR.
+  - **KQL Inovador & Enriquecido:** Sempre projete o máximo de colunas úteis (Ação, Ator, Alvo, Role, IP, Localização, MFA, Justificativa, Ticket, CorrelationId, Risco da sessão).
+  - **Roteiro padrão de investigação obrigatório:**
+    1. *O que foi feito?* (Ação detalhada, temporária vs permanente, Correlation ID).
+    2. *Quem fez?* (InitiatedBy, histórico da conta, MFA, SigninLogs).
+    3. *Poderia ter feito?* (Papéis, permissões de atribuição/aprovação no Entra ID).
+    4. *Há chamado formal/ticket?* (Ferramentas de ITSM como ServiceNow, Jira, Freshservice, Zendesk e cruzamento com justificativa/ResultReason).
+    5. *Onde investigar no portal?* (Caminho exato no Microsoft Entra admin center, ex: `Identity Governance > Privileged Identity Management > Microsoft Entra Roles > Resource Audit`).
+    6. *Procedimento de resposta e contenção* (Revogação, revoke sessions, auditoria de pós-elevação).
 
 ## Fluxos
 - **Novo carrossel:** criar `instagram/posts/<data>-<slug>/post.json` → `npm run carrossel -- <data>-<slug>` → revisar `carrossel.html` → `--png` para exportar.
