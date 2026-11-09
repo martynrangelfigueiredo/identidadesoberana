@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+  <!-- cadeado -->
+  <circle cx="200" cy="200" r="175" fill="#E6F5EC"/>
+  <circle cx="92" cy="104" r="18" fill="#FFDF00"/>
+  <circle cx="318" cy="300" r="12" fill="#00B347"/>
+  <path d="M146 190 V140 a54 54 0 0 1 108 0 V190" fill="none" stroke="#00612A" stroke-width="28" stroke-linecap="round"/>
+  <rect x="112" y="180" width="176" height="150" rx="32" fill="#009C3B"/>
+  <rect x="112" y="180" width="176" height="32" rx="16" fill="#00B347" opacity=".55"/>
+  <circle cx="200" cy="244" r="18" fill="#FFDF00"/>
+  <rect x="192" y="250" width="16" height="44" rx="8" fill="#FFDF00"/>
+</svg>
+

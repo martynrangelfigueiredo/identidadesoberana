@@ -1,0 +1,608 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<title>Sua senha é forte mesmo? — @identidadesoberana</title>
+<style>/*
+ * Identidade Soberana — Design Tokens
+ * Fonte única de verdade para cores, fontes, raios e sombras.
+ * Usado pelo SITE (src/styles/global.css) e pelos CARROSSÉIS (instagram/template/carrossel.css).
+ * NÃO crie cores novas fora deste arquivo. Veja brand/BRAND.md.
+ */
+@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap");
+
+:root {
+  /* ---------- Cores principais ---------- */
+  --is-verde: #009C3B;          /* Verde Soberano — cor principal da marca */
+  --is-verde-escuro: #00612A;   /* Verde Profundo — títulos, links, texto verde */
+  --is-verde-medio: #00B347;    /* brilho/realce de ilustrações */
+  --is-verde-claro: #E6F5EC;    /* fundos suaves, blobs, chips */
+  --is-verde-nevoa: #F3FAF5;    /* superfície alternativa */
+
+  --is-amarelo: #FFDF00;        /* Amarelo Ouro — SOMENTE destaques (marca-texto, selos) */
+  --is-amarelo-claro: #FFF7CC;  /* fundo de dica/caixa de atenção leve */
+
+  --is-vermelho: #E1251B;       /* Vermelho Estrela — SOMENTE a estrela do logo */
+
+  /* ---------- Neutros ---------- */
+  --is-branco: #FFFFFF;         /* fundo padrão — SEMPRE branco */
+  --is-tinta: #1B2B22;          /* texto principal (verde quase preto) */
+  --is-cinza: #5B6B62;          /* texto secundário */
+  --is-cinza-claro: #9AA8A0;    /* legendas, metadados */
+  --is-borda: #DDE7E0;          /* bordas e divisórias */
+
+  /* ---------- Ilustração (mãos) ---------- */
+  --is-pele-1: #E8B98F;
+  --is-pele-2: #A86B43;
+
+  /* ---------- Tipografia ---------- */
+  --is-fonte-titulo: "Nunito", "Quicksand", system-ui, sans-serif;  /* 800/900 */
+  --is-fonte-texto: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --is-fonte-codigo: "JetBrains Mono", ui-monospace, "Cascadia Code", monospace;
+
+  /* ---------- Forma (estilo Material/GNOME) ---------- */
+  --is-raio-sm: 12px;
+  --is-raio-md: 20px;
+  --is-raio-lg: 28px;
+  --is-raio-pill: 999px;
+
+  --is-sombra-1: 0 1px 2px rgba(27, 43, 34, .06), 0 2px 6px rgba(27, 43, 34, .06);
+  --is-sombra-2: 0 4px 12px rgba(27, 43, 34, .08), 0 12px 32px rgba(0, 97, 42, .08);
+  --is-sombra-3: 0 10px 30px rgba(27, 43, 34, .10), 0 24px 60px rgba(0, 97, 42, .12);
+
+  /* Marca-texto amarelo (efeito assinatura da marca) */
+  --is-marca-texto: linear-gradient(transparent 55%, var(--is-amarelo) 55%, var(--is-amarelo) 92%, transparent 92%);
+}
+
+
+/*
+ * Identidade Soberana — Template de carrossel do Instagram
+ * Formato: 4:5 — 1080 x 1350 px. Requer brand/tokens.css (inlined pelo gerador).
+ * Não edite cores aqui: use as variáveis --is-* de brand/tokens.css.
+ */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: #EEF2EF;
+  font-family: var(--is-fonte-texto);
+  color: var(--is-tinta);
+}
+
+.preview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 40px;
+  padding: 40px;
+  justify-content: center;
+}
+.preview.export { padding: 0; gap: 0; display: block; }
+
+/* ---------- Slide ---------- */
+.slide {
+  position: relative;
+  width: 1080px;
+  height: 1350px;
+  background: var(--is-branco);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding: 88px 88px 230px;
+  box-shadow: var(--is-sombra-3);
+}
+.preview.export .slide { box-shadow: none; }
+
+/* Fundo: grid de pontos sutil (efeito "tech" leve) */
+.slide::before {
+  content: "";
+  position: absolute; inset: 0;
+  background-image: radial-gradient(var(--is-borda) 2.2px, transparent 2.6px);
+  background-size: 36px 36px;
+  -webkit-mask-image: linear-gradient(180deg, rgba(0,0,0,.9) 0%, rgba(0,0,0,0) 45%);
+          mask-image: linear-gradient(180deg, rgba(0,0,0,.9) 0%, rgba(0,0,0,0) 45%);
+  pointer-events: none;
+}
+/* Fundo: blob verde-claro */
+.slide::after {
+  content: "";
+  position: absolute;
+  width: 640px; height: 640px;
+  right: -240px; top: -220px;
+  background: var(--is-verde-claro);
+  border-radius: 42% 58% 63% 37% / 45% 40% 60% 55%;
+  pointer-events: none;
+  z-index: 0;
+}
+.slide:nth-child(even)::after { right: auto; left: -260px; top: -260px; }
+.slide > * { position: relative; z-index: 1; }
+
+/* ---------- Topo ---------- */
+.topo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 56px;
+}
+.chip {
+  display: inline-flex; align-items: center; gap: 12px;
+  background: var(--is-branco);
+  border: 2px solid var(--is-borda);
+  color: var(--is-verde-escuro);
+  font: 700 28px var(--is-fonte-titulo);
+  padding: 12px 26px;
+  border-radius: var(--is-raio-pill);
+  box-shadow: var(--is-sombra-1);
+}
+.chip .ponto { width: 14px; height: 14px; border-radius: 50%; background: var(--is-verde); }
+.contador {
+  font: 800 28px var(--is-fonte-titulo);
+  color: var(--is-cinza);
+  background: var(--is-verde-nevoa);
+  padding: 10px 22px;
+  border-radius: var(--is-raio-pill);
+}
+
+/* ---------- Tipografia ---------- */
+h1, h2 {
+  font-family: var(--is-fonte-titulo);
+  font-weight: 900;
+  color: var(--is-tinta);
+  letter-spacing: -1.5px;
+  line-height: 1.08;
+}
+h1 { font-size: 104px; }
+h2 { font-size: 72px; margin-bottom: 32px; }
+p { font-size: 40px; line-height: 1.45; color: var(--is-cinza); }
+p + p { margin-top: 24px; }
+strong { color: var(--is-tinta); font-weight: 700; }
+
+/* Marca-texto amarelo — efeito assinatura da marca */
+.hl {
+  background: var(--is-marca-texto);
+  padding: 0 6px;
+  -webkit-box-decoration-break: clone;
+          box-decoration-break: clone;
+}
+
+/* ---------- Ilustração ---------- */
+.ilustra { display: flex; justify-content: center; margin-top: auto; }
+.ilustra svg { width: 460px; height: 460px; filter: drop-shadow(0 18px 30px rgba(0,97,42,.12)); }
+.capa .ilustra svg { width: 540px; height: 540px; }
+
+/* ---------- Capa ---------- */
+.capa h1 { margin-top: 24px; }
+.capa .sub { margin-top: 32px; font-size: 44px; }
+
+/* ---------- Dica numerada ---------- */
+.numero {
+  width: 128px; height: 128px;
+  border-radius: 40px;
+  background: var(--is-verde);
+  color: var(--is-branco);
+  font: 900 72px var(--is-fonte-titulo);
+  display: grid; place-items: center;
+  margin-bottom: 40px;
+  box-shadow: var(--is-sombra-2);
+  transform: rotate(-4deg);
+}
+
+/* ---------- Card (superfície elevada estilo Material/GNOME) ---------- */
+.card {
+  background: var(--is-branco);
+  border: 2px solid var(--is-borda);
+  border-radius: var(--is-raio-lg);
+  box-shadow: var(--is-sombra-2);
+  padding: 44px 48px;
+}
+.card + .card { margin-top: 28px; }
+
+/* ---------- Lista ---------- */
+.lista { list-style: none; display: flex; flex-direction: column; gap: 24px; }
+.lista li {
+  display: flex; gap: 28px; align-items: flex-start;
+  background: var(--is-branco);
+  border: 2px solid var(--is-borda);
+  border-radius: var(--is-raio-md);
+  box-shadow: var(--is-sombra-1);
+  padding: 30px 36px;
+  font-size: 38px; line-height: 1.35; color: var(--is-tinta);
+}
+.lista .marca {
+  flex: 0 0 56px; height: 56px; border-radius: 18px;
+  display: grid; place-items: center;
+  background: var(--is-verde-claro); color: var(--is-verde-escuro);
+  font: 900 30px var(--is-fonte-titulo);
+}
+.lista.check .marca { background: var(--is-verde); color: var(--is-branco); }
+
+/* ---------- Comparação Faça / Evite ---------- */
+.compara { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+.compara .col { border-radius: var(--is-raio-lg); padding: 40px 36px; }
+.compara .faca { background: var(--is-verde-claro); }
+.compara .evite { background: var(--is-verde-nevoa); border: 2px dashed var(--is-borda); }
+.compara h3 { font: 900 44px var(--is-fonte-titulo); margin-bottom: 24px; color: var(--is-verde-escuro); }
+.compara .evite h3 { color: var(--is-cinza); }
+.compara ul { list-style: none; display: flex; flex-direction: column; gap: 20px; }
+.compara li { font-size: 34px; line-height: 1.35; color: var(--is-tinta); }
+
+/* ---------- Caixa "Você sabia?" ---------- */
+.sabia {
+  margin-top: 36px;
+  background: var(--is-amarelo-claro);
+  border-radius: var(--is-raio-md);
+  padding: 32px 40px;
+  font-size: 34px; line-height: 1.4;
+}
+.sabia b { font-family: var(--is-fonte-titulo); font-weight: 900; color: var(--is-verde-escuro); }
+
+/* ---------- CTA ---------- */
+.cta { align-items: center; text-align: center; }
+.cta .selo { width: 280px; height: 280px; margin: 40px auto 48px; }
+.cta .acoes { display: flex; flex-direction: column; gap: 22px; margin-top: 48px; width: 100%; }
+.cta .acao {
+  display: flex; align-items: center; gap: 24px;
+  background: var(--is-branco); border: 2px solid var(--is-borda);
+  border-radius: var(--is-raio-pill); box-shadow: var(--is-sombra-1);
+  padding: 24px 40px; font: 800 38px var(--is-fonte-titulo); color: var(--is-tinta);
+  text-align: left;
+}
+.cta .acao span { font-size: 44px; }
+
+/* ---------- Fita (onda verde/amarela contínua entre os slides) ---------- */
+.fita { position: absolute; left: 0; right: 0; bottom: 0; height: 210px; z-index: 0; }
+.fita svg { width: 1080px; height: 210px; display: block; }
+.rodape {
+  position: absolute; left: 88px; right: 88px; bottom: 44px; z-index: 2;
+  display: flex; justify-content: space-between; align-items: center;
+  color: var(--is-branco);
+}
+.marca-rodape { display: flex; align-items: center; gap: 18px; font: 800 32px var(--is-fonte-titulo); }
+.marca-rodape svg { width: 64px; height: 64px; }
+.arrasta {
+  display: inline-flex; align-items: center; gap: 12px;
+  background: var(--is-branco); color: var(--is-verde-escuro);
+  font: 800 28px var(--is-fonte-titulo);
+  padding: 14px 28px; border-radius: var(--is-raio-pill);
+}
+
+</style></head>
+<body><main class="preview ">
+  <section class="slide capa" data-n="1">
+    <div class="topo">
+      <span class="chip"><span class="ponto"></span>Senhas</span>
+      <span class="contador">1/7</span>
+    </div>
+    <h1>Sua senha é <span class="hl">forte</span> mesmo?</h1>
+      <p class="sub">4 dicas rápidas pra deixar suas contas bem mais seguras.</p>
+      <div class="ilustra"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+  <!-- senha: campo de senha + barra de força + dedo -->
+  <circle cx="200" cy="200" r="175" fill="#E6F5EC"/>
+  <circle cx="320" cy="96" r="18" fill="#FFDF00"/>
+  <rect x="58" y="138" width="284" height="84" rx="42" fill="#FFFFFF"/>
+  <rect x="58" y="138" width="284" height="84" rx="42" fill="none" stroke="#009C3B" stroke-width="6"/>
+  <g fill="#1B2B22">
+    <circle cx="106" cy="180" r="11"/><circle cx="140" cy="180" r="11"/><circle cx="174" cy="180" r="11"/>
+    <circle cx="208" cy="180" r="11"/><circle cx="242" cy="180" r="11"/><circle cx="276" cy="180" r="11"/>
+  </g>
+  <rect x="300" y="162" width="6" height="36" rx="3" fill="#009C3B"/>
+  <rect x="78" y="242" width="70" height="14" rx="7" fill="#009C3B"/>
+  <rect x="160" y="242" width="70" height="14" rx="7" fill="#009C3B"/>
+  <rect x="242" y="242" width="70" height="14" rx="7" fill="#009C3B"/>
+  <!-- dedo -->
+  <rect x="236" y="262" width="36" height="96" rx="18" fill="#E8B98F"/>
+  <rect x="226" y="314" width="96" height="86" rx="34" fill="#E8B98F"/>
+  <rect x="242" y="268" width="24" height="18" rx="8" fill="#F6D9BE"/>
+</svg>
+
+</div>
+    <div class="fita"><svg viewBox="0 0 1080 210" preserveAspectRatio="none">
+    <path d="M0 92.0 L0 92.0 L30 94.9 L60 97.7 L90 100.5 L120 103.2 L150 105.7 L180 108.0 L210 110.2 L240 112.2 L270 113.8 L300 115.3 L330 116.4 L360 117.3 L390 117.8 L420 118.0 L450 117.9 L480 117.5 L510 116.7 L540 115.7 L570 114.4 L600 112.7 L630 110.9 L660 108.8 L690 106.5 L720 104.0 L750 101.4 L780 98.7 L810 95.8 L840 93.0 L870 90.1 L900 87.2 L930 84.4 L960 81.7 L990 79.1 L1020 76.7 L1050 74.5 L1080 72.5 L1110 70.7 L1140 69.2 L1170 67.9 L1200 67.0 L1230 66.4 L1260 66.0 L1290 66.0 L1320 66.4 L1350 67.0 L1380 67.9 L1410 69.2 L1440 70.7 L1470 72.5 L1500 74.5 L1530 76.7 L1560 79.1 L1590 81.7 L1620 84.4 L1650 87.2 L1680 90.1 L1710 93.0 L1740 95.8 L1770 98.7 L1800 101.4 L1830 104.0 L1860 106.5 L1890 108.8 L1920 110.9 L1950 112.7 L1980 114.4 L2010 115.7 L2040 116.7 L2070 117.5 L2100 117.9 L2130 118.0 L2160 117.8 L2190 117.3 L2220 116.4 L2250 115.3 L2280 113.8 L2310 112.2 L2340 110.2 L2370 108.0 L2400 105.7 L2430 103.2 L2460 100.5 L2490 97.7 L2520 94.9 L2550 92.0 L2580 89.1 L2610 86.3 L2640 83.5 L2670 80.8 L2700 78.3 L2730 76.0 L2760 73.8 L2790 71.8 L2820 70.2 L2850 68.7 L2880 67.6 L2910 66.7 L2940 66.2 L2970 66.0 L3000 66.1 L3030 66.5 L3060 67.3 L3090 68.3 L3120 69.6 L3150 71.3 L3180 73.1 L3210 75.2 L3240 77.5 L3270 80.0 L3300 82.6 L3330 85.3 L3360 88.2 L3390 91.0 L3420 93.9 L3450 96.8 L3480 99.6 L3510 102.3 L3540 104.9 L3570 107.3 L3600 109.5 L3630 111.5 L3660 113.3 L3690 114.8 L3720 116.1 L3750 117.0 L3780 117.6 L3810 118.0 L3840 118.0 L3870 117.6 L3900 117.0 L3930 116.1 L3960 114.8 L3990 113.3 L4020 111.5 L4050 109.5 L4080 107.3 L4110 104.9 L4140 102.3 L4170 99.6 L4200 96.8 L4230 93.9 L4260 91.0 L4290 88.2 L4320 85.3 L4350 82.6 L4380 80.0 L4410 77.5 L4440 75.2 L4470 73.1 L4500 71.3 L4530 69.6 L4560 68.3 L4590 67.3 L4620 66.5 L4650 66.1 L4680 66.0 L4710 66.2 L4740 66.7 L4770 67.6 L4800 68.7 L4830 70.2 L4860 71.8 L4890 73.8 L4920 76.0 L4950 78.3 L4980 80.8 L5010 83.5 L5040 86.3 L5070 89.1 L5100 92.0 L5130 94.9 L5160 97.7 L5190 100.5 L5220 103.2 L5250 105.7 L5280 108.0 L5310 110.2 L5340 112.2 L5370 113.8 L5400 115.3 L5430 116.4 L5460 117.3 L5490 117.8 L5520 118.0 L5550 117.9 L5580 117.5 L5610 116.7 L5640 115.7 L5670 114.4 L5700 112.7 L5730 110.9 L5760 108.8 L5790 106.5 L5820 104.0 L5850 101.4 L5880 98.7 L5910 95.8 L5940 93.0 L5970 90.1 L6000 87.2 L6030 84.4 L6060 81.7 L6090 79.1 L6120 76.7 L6150 74.5 L6180 72.5 L6210 70.7 L6240 69.2 L6270 67.9 L6300 67.0 L6330 66.4 L6360 66.0 L6390 66.0 L6420 66.4 L6450 67.0 L6480 67.9 L6510 69.2 L6540 70.7 L6570 72.5 L6600 74.5 L6630 76.7 L6660 79.1 L6690 81.7 L6720 84.4 L6750 87.2 L6780 90.1 L6810 93.0 L6840 95.8 L6870 98.7 L6900 101.4 L6930 104.0 L6960 106.5 L6990 108.8 L7020 110.9 L7050 112.7 L7080 114.4 L7110 115.7 L7140 116.7 L7170 117.5 L7200 117.9 L7230 118.0 L7260 117.8 L7290 117.3 L7320 116.4 L7350 115.3 L7380 113.8 L7410 112.2 L7440 110.2 L7470 108.0 L7500 105.7 L7530 103.2 L7560 100.5" fill="none" stroke="#FFDF00" stroke-width="14" stroke-linecap="round"/>
+    <path d="M0 210 L0 110.0 L0 110.0 L30 112.9 L60 115.7 L90 118.5 L120 121.2 L150 123.7 L180 126.0 L210 128.2 L240 130.2 L270 131.8 L300 133.3 L330 134.4 L360 135.3 L390 135.8 L420 136.0 L450 135.9 L480 135.5 L510 134.7 L540 133.7 L570 132.4 L600 130.7 L630 128.9 L660 126.8 L690 124.5 L720 122.0 L750 119.4 L780 116.7 L810 113.8 L840 111.0 L870 108.1 L900 105.2 L930 102.4 L960 99.7 L990 97.1 L1020 94.7 L1050 92.5 L1080 90.5 L1110 88.7 L1140 87.2 L1170 85.9 L1200 85.0 L1230 84.4 L1260 84.0 L1290 84.0 L1320 84.4 L1350 85.0 L1380 85.9 L1410 87.2 L1440 88.7 L1470 90.5 L1500 92.5 L1530 94.7 L1560 97.1 L1590 99.7 L1620 102.4 L1650 105.2 L1680 108.1 L1710 111.0 L1740 113.8 L1770 116.7 L1800 119.4 L1830 122.0 L1860 124.5 L1890 126.8 L1920 128.9 L1950 130.7 L1980 132.4 L2010 133.7 L2040 134.7 L2070 135.5 L2100 135.9 L2130 136.0 L2160 135.8 L2190 135.3 L2220 134.4 L2250 133.3 L2280 131.8 L2310 130.2 L2340 128.2 L2370 126.0 L2400 123.7 L2430 121.2 L2460 118.5 L2490 115.7 L2520 112.9 L2550 110.0 L2580 107.1 L2610 104.3 L2640 101.5 L2670 98.8 L2700 96.3 L2730 94.0 L2760 91.8 L2790 89.8 L2820 88.2 L2850 86.7 L2880 85.6 L2910 84.7 L2940 84.2 L2970 84.0 L3000 84.1 L3030 84.5 L3060 85.3 L3090 86.3 L3120 87.6 L3150 89.3 L3180 91.1 L3210 93.2 L3240 95.5 L3270 98.0 L3300 100.6 L3330 103.3 L3360 106.2 L3390 109.0 L3420 111.9 L3450 114.8 L3480 117.6 L3510 120.3 L3540 122.9 L3570 125.3 L3600 127.5 L3630 129.5 L3660 131.3 L3690 132.8 L3720 134.1 L3750 135.0 L3780 135.6 L3810 136.0 L3840 136.0 L3870 135.6 L3900 135.0 L3930 134.1 L3960 132.8 L3990 131.3 L4020 129.5 L4050 127.5 L4080 125.3 L4110 122.9 L4140 120.3 L4170 117.6 L4200 114.8 L4230 111.9 L4260 109.0 L4290 106.2 L4320 103.3 L4350 100.6 L4380 98.0 L4410 95.5 L4440 93.2 L4470 91.1 L4500 89.3 L4530 87.6 L4560 86.3 L4590 85.3 L4620 84.5 L4650 84.1 L4680 84.0 L4710 84.2 L4740 84.7 L4770 85.6 L4800 86.7 L4830 88.2 L4860 89.8 L4890 91.8 L4920 94.0 L4950 96.3 L4980 98.8 L5010 101.5 L5040 104.3 L5070 107.1 L5100 110.0 L5130 112.9 L5160 115.7 L5190 118.5 L5220 121.2 L5250 123.7 L5280 126.0 L5310 128.2 L5340 130.2 L5370 131.8 L5400 133.3 L5430 134.4 L5460 135.3 L5490 135.8 L5520 136.0 L5550 135.9 L5580 135.5 L5610 134.7 L5640 133.7 L5670 132.4 L5700 130.7 L5730 128.9 L5760 126.8 L5790 124.5 L5820 122.0 L5850 119.4 L5880 116.7 L5910 113.8 L5940 111.0 L5970 108.1 L6000 105.2 L6030 102.4 L6060 99.7 L6090 97.1 L6120 94.7 L6150 92.5 L6180 90.5 L6210 88.7 L6240 87.2 L6270 85.9 L6300 85.0 L6330 84.4 L6360 84.0 L6390 84.0 L6420 84.4 L6450 85.0 L6480 85.9 L6510 87.2 L6540 88.7 L6570 90.5 L6600 92.5 L6630 94.7 L6660 97.1 L6690 99.7 L6720 102.4 L6750 105.2 L6780 108.1 L6810 111.0 L6840 113.8 L6870 116.7 L6900 119.4 L6930 122.0 L6960 124.5 L6990 126.8 L7020 128.9 L7050 130.7 L7080 132.4 L7110 133.7 L7140 134.7 L7170 135.5 L7200 135.9 L7230 136.0 L7260 135.8 L7290 135.3 L7320 134.4 L7350 133.3 L7380 131.8 L7410 130.2 L7440 128.2 L7470 126.0 L7500 123.7 L7530 121.2 L7560 118.5 L7560 210 Z" fill="#009C3B"/></svg></div>
+    <div class="rodape">
+      <span class="marca-rodape"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="t">
+  
+  <circle cx="256" cy="262" r="200" fill="none" stroke="#FFFFFF" stroke-width="26"/>
+  <circle cx="256" cy="262" r="170" fill="none" stroke="#FFDF00" stroke-width="12" stroke-linecap="round"
+          stroke-dasharray="300 769" transform="rotate(37 256 262)"/>
+  <g fill="none" stroke="#FFFFFF" stroke-width="16" stroke-linecap="round">
+    <line x1="256" y1="262" x2="256" y2="300"/>
+    <circle cx="256" cy="268" r="34" stroke-dasharray="160 54" transform="rotate(120 256 268)"/>
+    <circle cx="256" cy="268" r="68" stroke-dasharray="330 97" transform="rotate(135 256 268)"/>
+    <circle cx="256" cy="268" r="102" stroke-dasharray="280 46 230 85" transform="rotate(125 256 268)"/>
+    <circle cx="256" cy="268" r="136" stroke-dasharray="420 70 260 105" transform="rotate(150 256 268)"/>
+  </g>
+  <polygon points="400,50 414.69,91.77 458.97,92.84 423.78,119.73 436.44,162.16 400,137 363.56,162.16 376.22,119.73 341.03,92.84 385.31,91.77"
+           fill="#E1251B" stroke="#FFFFFF" stroke-width="10" stroke-linejoin="round" paint-order="stroke"/>
+</svg>
+
+@identidadesoberana</span>
+      <span class="arrasta">Arrasta pro lado →</span>
+    </div>
+  </section>
+
+  <section class="slide dica" data-n="2">
+    <div class="topo">
+      <span class="chip"><span class="ponto"></span>Senhas</span>
+      <span class="contador">2/7</span>
+    </div>
+    <div class="numero">1</div>
+      <h2>Frase é melhor que <span class="hl">palavra</span></h2>
+      <p>Em vez de <strong>Maria123</strong>, use uma frase que só você entende, tipo <strong>CafeComPaoNaPraia!</strong></p>
+      <div class="sabia"><b>Você sabia?</b> Senhas longas são muito mais difíceis de descobrir do que senhas curtas e “complicadas”.</div>
+      <div class="ilustra"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+  <!-- cadeado -->
+  <circle cx="200" cy="200" r="175" fill="#E6F5EC"/>
+  <circle cx="92" cy="104" r="18" fill="#FFDF00"/>
+  <circle cx="318" cy="300" r="12" fill="#00B347"/>
+  <path d="M146 190 V140 a54 54 0 0 1 108 0 V190" fill="none" stroke="#00612A" stroke-width="28" stroke-linecap="round"/>
+  <rect x="112" y="180" width="176" height="150" rx="32" fill="#009C3B"/>
+  <rect x="112" y="180" width="176" height="32" rx="16" fill="#00B347" opacity=".55"/>
+  <circle cx="200" cy="244" r="18" fill="#FFDF00"/>
+  <rect x="192" y="250" width="16" height="44" rx="8" fill="#FFDF00"/>
+</svg>
+
+</div>
+    <div class="fita"><svg viewBox="1080 0 1080 210" preserveAspectRatio="none">
+    <path d="M0 92.0 L0 92.0 L30 94.9 L60 97.7 L90 100.5 L120 103.2 L150 105.7 L180 108.0 L210 110.2 L240 112.2 L270 113.8 L300 115.3 L330 116.4 L360 117.3 L390 117.8 L420 118.0 L450 117.9 L480 117.5 L510 116.7 L540 115.7 L570 114.4 L600 112.7 L630 110.9 L660 108.8 L690 106.5 L720 104.0 L750 101.4 L780 98.7 L810 95.8 L840 93.0 L870 90.1 L900 87.2 L930 84.4 L960 81.7 L990 79.1 L1020 76.7 L1050 74.5 L1080 72.5 L1110 70.7 L1140 69.2 L1170 67.9 L1200 67.0 L1230 66.4 L1260 66.0 L1290 66.0 L1320 66.4 L1350 67.0 L1380 67.9 L1410 69.2 L1440 70.7 L1470 72.5 L1500 74.5 L1530 76.7 L1560 79.1 L1590 81.7 L1620 84.4 L1650 87.2 L1680 90.1 L1710 93.0 L1740 95.8 L1770 98.7 L1800 101.4 L1830 104.0 L1860 106.5 L1890 108.8 L1920 110.9 L1950 112.7 L1980 114.4 L2010 115.7 L2040 116.7 L2070 117.5 L2100 117.9 L2130 118.0 L2160 117.8 L2190 117.3 L2220 116.4 L2250 115.3 L2280 113.8 L2310 112.2 L2340 110.2 L2370 108.0 L2400 105.7 L2430 103.2 L2460 100.5 L2490 97.7 L2520 94.9 L2550 92.0 L2580 89.1 L2610 86.3 L2640 83.5 L2670 80.8 L2700 78.3 L2730 76.0 L2760 73.8 L2790 71.8 L2820 70.2 L2850 68.7 L2880 67.6 L2910 66.7 L2940 66.2 L2970 66.0 L3000 66.1 L3030 66.5 L3060 67.3 L3090 68.3 L3120 69.6 L3150 71.3 L3180 73.1 L3210 75.2 L3240 77.5 L3270 80.0 L3300 82.6 L3330 85.3 L3360 88.2 L3390 91.0 L3420 93.9 L3450 96.8 L3480 99.6 L3510 102.3 L3540 104.9 L3570 107.3 L3600 109.5 L3630 111.5 L3660 113.3 L3690 114.8 L3720 116.1 L3750 117.0 L3780 117.6 L3810 118.0 L3840 118.0 L3870 117.6 L3900 117.0 L3930 116.1 L3960 114.8 L3990 113.3 L4020 111.5 L4050 109.5 L4080 107.3 L4110 104.9 L4140 102.3 L4170 99.6 L4200 96.8 L4230 93.9 L4260 91.0 L4290 88.2 L4320 85.3 L4350 82.6 L4380 80.0 L4410 77.5 L4440 75.2 L4470 73.1 L4500 71.3 L4530 69.6 L4560 68.3 L4590 67.3 L4620 66.5 L4650 66.1 L4680 66.0 L4710 66.2 L4740 66.7 L4770 67.6 L4800 68.7 L4830 70.2 L4860 71.8 L4890 73.8 L4920 76.0 L4950 78.3 L4980 80.8 L5010 83.5 L5040 86.3 L5070 89.1 L5100 92.0 L5130 94.9 L5160 97.7 L5190 100.5 L5220 103.2 L5250 105.7 L5280 108.0 L5310 110.2 L5340 112.2 L5370 113.8 L5400 115.3 L5430 116.4 L5460 117.3 L5490 117.8 L5520 118.0 L5550 117.9 L5580 117.5 L5610 116.7 L5640 115.7 L5670 114.4 L5700 112.7 L5730 110.9 L5760 108.8 L5790 106.5 L5820 104.0 L5850 101.4 L5880 98.7 L5910 95.8 L5940 93.0 L5970 90.1 L6000 87.2 L6030 84.4 L6060 81.7 L6090 79.1 L6120 76.7 L6150 74.5 L6180 72.5 L6210 70.7 L6240 69.2 L6270 67.9 L6300 67.0 L6330 66.4 L6360 66.0 L6390 66.0 L6420 66.4 L6450 67.0 L6480 67.9 L6510 69.2 L6540 70.7 L6570 72.5 L6600 74.5 L6630 76.7 L6660 79.1 L6690 81.7 L6720 84.4 L6750 87.2 L6780 90.1 L6810 93.0 L6840 95.8 L6870 98.7 L6900 101.4 L6930 104.0 L6960 106.5 L6990 108.8 L7020 110.9 L7050 112.7 L7080 114.4 L7110 115.7 L7140 116.7 L7170 117.5 L7200 117.9 L7230 118.0 L7260 117.8 L7290 117.3 L7320 116.4 L7350 115.3 L7380 113.8 L7410 112.2 L7440 110.2 L7470 108.0 L7500 105.7 L7530 103.2 L7560 100.5" fill="none" stroke="#FFDF00" stroke-width="14" stroke-linecap="round"/>
+    <path d="M0 210 L0 110.0 L0 110.0 L30 112.9 L60 115.7 L90 118.5 L120 121.2 L150 123.7 L180 126.0 L210 128.2 L240 130.2 L270 131.8 L300 133.3 L330 134.4 L360 135.3 L390 135.8 L420 136.0 L450 135.9 L480 135.5 L510 134.7 L540 133.7 L570 132.4 L600 130.7 L630 128.9 L660 126.8 L690 124.5 L720 122.0 L750 119.4 L780 116.7 L810 113.8 L840 111.0 L870 108.1 L900 105.2 L930 102.4 L960 99.7 L990 97.1 L1020 94.7 L1050 92.5 L1080 90.5 L1110 88.7 L1140 87.2 L1170 85.9 L1200 85.0 L1230 84.4 L1260 84.0 L1290 84.0 L1320 84.4 L1350 85.0 L1380 85.9 L1410 87.2 L1440 88.7 L1470 90.5 L1500 92.5 L1530 94.7 L1560 97.1 L1590 99.7 L1620 102.4 L1650 105.2 L1680 108.1 L1710 111.0 L1740 113.8 L1770 116.7 L1800 119.4 L1830 122.0 L1860 124.5 L1890 126.8 L1920 128.9 L1950 130.7 L1980 132.4 L2010 133.7 L2040 134.7 L2070 135.5 L2100 135.9 L2130 136.0 L2160 135.8 L2190 135.3 L2220 134.4 L2250 133.3 L2280 131.8 L2310 130.2 L2340 128.2 L2370 126.0 L2400 123.7 L2430 121.2 L2460 118.5 L2490 115.7 L2520 112.9 L2550 110.0 L2580 107.1 L2610 104.3 L2640 101.5 L2670 98.8 L2700 96.3 L2730 94.0 L2760 91.8 L2790 89.8 L2820 88.2 L2850 86.7 L2880 85.6 L2910 84.7 L2940 84.2 L2970 84.0 L3000 84.1 L3030 84.5 L3060 85.3 L3090 86.3 L3120 87.6 L3150 89.3 L3180 91.1 L3210 93.2 L3240 95.5 L3270 98.0 L3300 100.6 L3330 103.3 L3360 106.2 L3390 109.0 L3420 111.9 L3450 114.8 L3480 117.6 L3510 120.3 L3540 122.9 L3570 125.3 L3600 127.5 L3630 129.5 L3660 131.3 L3690 132.8 L3720 134.1 L3750 135.0 L3780 135.6 L3810 136.0 L3840 136.0 L3870 135.6 L3900 135.0 L3930 134.1 L3960 132.8 L3990 131.3 L4020 129.5 L4050 127.5 L4080 125.3 L4110 122.9 L4140 120.3 L4170 117.6 L4200 114.8 L4230 111.9 L4260 109.0 L4290 106.2 L4320 103.3 L4350 100.6 L4380 98.0 L4410 95.5 L4440 93.2 L4470 91.1 L4500 89.3 L4530 87.6 L4560 86.3 L4590 85.3 L4620 84.5 L4650 84.1 L4680 84.0 L4710 84.2 L4740 84.7 L4770 85.6 L4800 86.7 L4830 88.2 L4860 89.8 L4890 91.8 L4920 94.0 L4950 96.3 L4980 98.8 L5010 101.5 L5040 104.3 L5070 107.1 L5100 110.0 L5130 112.9 L5160 115.7 L5190 118.5 L5220 121.2 L5250 123.7 L5280 126.0 L5310 128.2 L5340 130.2 L5370 131.8 L5400 133.3 L5430 134.4 L5460 135.3 L5490 135.8 L5520 136.0 L5550 135.9 L5580 135.5 L5610 134.7 L5640 133.7 L5670 132.4 L5700 130.7 L5730 128.9 L5760 126.8 L5790 124.5 L5820 122.0 L5850 119.4 L5880 116.7 L5910 113.8 L5940 111.0 L5970 108.1 L6000 105.2 L6030 102.4 L6060 99.7 L6090 97.1 L6120 94.7 L6150 92.5 L6180 90.5 L6210 88.7 L6240 87.2 L6270 85.9 L6300 85.0 L6330 84.4 L6360 84.0 L6390 84.0 L6420 84.4 L6450 85.0 L6480 85.9 L6510 87.2 L6540 88.7 L6570 90.5 L6600 92.5 L6630 94.7 L6660 97.1 L6690 99.7 L6720 102.4 L6750 105.2 L6780 108.1 L6810 111.0 L6840 113.8 L6870 116.7 L6900 119.4 L6930 122.0 L6960 124.5 L6990 126.8 L7020 128.9 L7050 130.7 L7080 132.4 L7110 133.7 L7140 134.7 L7170 135.5 L7200 135.9 L7230 136.0 L7260 135.8 L7290 135.3 L7320 134.4 L7350 133.3 L7380 131.8 L7410 130.2 L7440 128.2 L7470 126.0 L7500 123.7 L7530 121.2 L7560 118.5 L7560 210 Z" fill="#009C3B"/></svg></div>
+    <div class="rodape">
+      <span class="marca-rodape"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="t">
+  
+  <circle cx="256" cy="262" r="200" fill="none" stroke="#FFFFFF" stroke-width="26"/>
+  <circle cx="256" cy="262" r="170" fill="none" stroke="#FFDF00" stroke-width="12" stroke-linecap="round"
+          stroke-dasharray="300 769" transform="rotate(37 256 262)"/>
+  <g fill="none" stroke="#FFFFFF" stroke-width="16" stroke-linecap="round">
+    <line x1="256" y1="262" x2="256" y2="300"/>
+    <circle cx="256" cy="268" r="34" stroke-dasharray="160 54" transform="rotate(120 256 268)"/>
+    <circle cx="256" cy="268" r="68" stroke-dasharray="330 97" transform="rotate(135 256 268)"/>
+    <circle cx="256" cy="268" r="102" stroke-dasharray="280 46 230 85" transform="rotate(125 256 268)"/>
+    <circle cx="256" cy="268" r="136" stroke-dasharray="420 70 260 105" transform="rotate(150 256 268)"/>
+  </g>
+  <polygon points="400,50 414.69,91.77 458.97,92.84 423.78,119.73 436.44,162.16 400,137 363.56,162.16 376.22,119.73 341.03,92.84 385.31,91.77"
+           fill="#E1251B" stroke="#FFFFFF" stroke-width="10" stroke-linejoin="round" paint-order="stroke"/>
+</svg>
+
+@identidadesoberana</span>
+      <span class="arrasta">Continua →</span>
+    </div>
+  </section>
+
+  <section class="slide dica" data-n="3">
+    <div class="topo">
+      <span class="chip"><span class="ponto"></span>Senhas</span>
+      <span class="contador">3/7</span>
+    </div>
+    <div class="numero">2</div>
+      <h2>Uma senha pra <span class="hl">cada</span> conta</h2>
+      <p>Se você usa a mesma senha em tudo, basta um site vazar pra todas as suas contas ficarem expostas.</p>
+      
+      <div class="ilustra"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+  <!-- email -->
+  <circle cx="200" cy="200" r="175" fill="#E6F5EC"/>
+  <circle cx="96" cy="300" r="14" fill="#00B347"/>
+  <rect x="80" y="126" width="240" height="160" rx="22" fill="#FFFFFF"/>
+  <rect x="80" y="126" width="240" height="160" rx="22" fill="none" stroke="#009C3B" stroke-width="10"/>
+  <path d="M92 142 L200 222 L308 142" fill="none" stroke="#009C3B" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="306" cy="126" r="34" fill="#FFDF00"/>
+  <path d="M291 126 L302 137 L322 116" fill="none" stroke="#00612A" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+
+</div>
+    <div class="fita"><svg viewBox="2160 0 1080 210" preserveAspectRatio="none">
+    <path d="M0 92.0 L0 92.0 L30 94.9 L60 97.7 L90 100.5 L120 103.2 L150 105.7 L180 108.0 L210 110.2 L240 112.2 L270 113.8 L300 115.3 L330 116.4 L360 117.3 L390 117.8 L420 118.0 L450 117.9 L480 117.5 L510 116.7 L540 115.7 L570 114.4 L600 112.7 L630 110.9 L660 108.8 L690 106.5 L720 104.0 L750 101.4 L780 98.7 L810 95.8 L840 93.0 L870 90.1 L900 87.2 L930 84.4 L960 81.7 L990 79.1 L1020 76.7 L1050 74.5 L1080 72.5 L1110 70.7 L1140 69.2 L1170 67.9 L1200 67.0 L1230 66.4 L1260 66.0 L1290 66.0 L1320 66.4 L1350 67.0 L1380 67.9 L1410 69.2 L1440 70.7 L1470 72.5 L1500 74.5 L1530 76.7 L1560 79.1 L1590 81.7 L1620 84.4 L1650 87.2 L1680 90.1 L1710 93.0 L1740 95.8 L1770 98.7 L1800 101.4 L1830 104.0 L1860 106.5 L1890 108.8 L1920 110.9 L1950 112.7 L1980 114.4 L2010 115.7 L2040 116.7 L2070 117.5 L2100 117.9 L2130 118.0 L2160 117.8 L2190 117.3 L2220 116.4 L2250 115.3 L2280 113.8 L2310 112.2 L2340 110.2 L2370 108.0 L2400 105.7 L2430 103.2 L2460 100.5 L2490 97.7 L2520 94.9 L2550 92.0 L2580 89.1 L2610 86.3 L2640 83.5 L2670 80.8 L2700 78.3 L2730 76.0 L2760 73.8 L2790 71.8 L2820 70.2 L2850 68.7 L2880 67.6 L2910 66.7 L2940 66.2 L2970 66.0 L3000 66.1 L3030 66.5 L3060 67.3 L3090 68.3 L3120 69.6 L3150 71.3 L3180 73.1 L3210 75.2 L3240 77.5 L3270 80.0 L3300 82.6 L3330 85.3 L3360 88.2 L3390 91.0 L3420 93.9 L3450 96.8 L3480 99.6 L3510 102.3 L3540 104.9 L3570 107.3 L3600 109.5 L3630 111.5 L3660 113.3 L3690 114.8 L3720 116.1 L3750 117.0 L3780 117.6 L3810 118.0 L3840 118.0 L3870 117.6 L3900 117.0 L3930 116.1 L3960 114.8 L3990 113.3 L4020 111.5 L4050 109.5 L4080 107.3 L4110 104.9 L4140 102.3 L4170 99.6 L4200 96.8 L4230 93.9 L4260 91.0 L4290 88.2 L4320 85.3 L4350 82.6 L4380 80.0 L4410 77.5 L4440 75.2 L4470 73.1 L4500 71.3 L4530 69.6 L4560 68.3 L4590 67.3 L4620 66.5 L4650 66.1 L4680 66.0 L4710 66.2 L4740 66.7 L4770 67.6 L4800 68.7 L4830 70.2 L4860 71.8 L4890 73.8 L4920 76.0 L4950 78.3 L4980 80.8 L5010 83.5 L5040 86.3 L5070 89.1 L5100 92.0 L5130 94.9 L5160 97.7 L5190 100.5 L5220 103.2 L5250 105.7 L5280 108.0 L5310 110.2 L5340 112.2 L5370 113.8 L5400 115.3 L5430 116.4 L5460 117.3 L5490 117.8 L5520 118.0 L5550 117.9 L5580 117.5 L5610 116.7 L5640 115.7 L5670 114.4 L5700 112.7 L5730 110.9 L5760 108.8 L5790 106.5 L5820 104.0 L5850 101.4 L5880 98.7 L5910 95.8 L5940 93.0 L5970 90.1 L6000 87.2 L6030 84.4 L6060 81.7 L6090 79.1 L6120 76.7 L6150 74.5 L6180 72.5 L6210 70.7 L6240 69.2 L6270 67.9 L6300 67.0 L6330 66.4 L6360 66.0 L6390 66.0 L6420 66.4 L6450 67.0 L6480 67.9 L6510 69.2 L6540 70.7 L6570 72.5 L6600 74.5 L6630 76.7 L6660 79.1 L6690 81.7 L6720 84.4 L6750 87.2 L6780 90.1 L6810 93.0 L6840 95.8 L6870 98.7 L6900 101.4 L6930 104.0 L6960 106.5 L6990 108.8 L7020 110.9 L7050 112.7 L7080 114.4 L7110 115.7 L7140 116.7 L7170 117.5 L7200 117.9 L7230 118.0 L7260 117.8 L7290 117.3 L7320 116.4 L7350 115.3 L7380 113.8 L7410 112.2 L7440 110.2 L7470 108.0 L7500 105.7 L7530 103.2 L7560 100.5" fill="none" stroke="#FFDF00" stroke-width="14" stroke-linecap="round"/>
+    <path d="M0 210 L0 110.0 L0 110.0 L30 112.9 L60 115.7 L90 118.5 L120 121.2 L150 123.7 L180 126.0 L210 128.2 L240 130.2 L270 131.8 L300 133.3 L330 134.4 L360 135.3 L390 135.8 L420 136.0 L450 135.9 L480 135.5 L510 134.7 L540 133.7 L570 132.4 L600 130.7 L630 128.9 L660 126.8 L690 124.5 L720 122.0 L750 119.4 L780 116.7 L810 113.8 L840 111.0 L870 108.1 L900 105.2 L930 102.4 L960 99.7 L990 97.1 L1020 94.7 L1050 92.5 L1080 90.5 L1110 88.7 L1140 87.2 L1170 85.9 L1200 85.0 L1230 84.4 L1260 84.0 L1290 84.0 L1320 84.4 L1350 85.0 L1380 85.9 L1410 87.2 L1440 88.7 L1470 90.5 L1500 92.5 L1530 94.7 L1560 97.1 L1590 99.7 L1620 102.4 L1650 105.2 L1680 108.1 L1710 111.0 L1740 113.8 L1770 116.7 L1800 119.4 L1830 122.0 L1860 124.5 L1890 126.8 L1920 128.9 L1950 130.7 L1980 132.4 L2010 133.7 L2040 134.7 L2070 135.5 L2100 135.9 L2130 136.0 L2160 135.8 L2190 135.3 L2220 134.4 L2250 133.3 L2280 131.8 L2310 130.2 L2340 128.2 L2370 126.0 L2400 123.7 L2430 121.2 L2460 118.5 L2490 115.7 L2520 112.9 L2550 110.0 L2580 107.1 L2610 104.3 L2640 101.5 L2670 98.8 L2700 96.3 L2730 94.0 L2760 91.8 L2790 89.8 L2820 88.2 L2850 86.7 L2880 85.6 L2910 84.7 L2940 84.2 L2970 84.0 L3000 84.1 L3030 84.5 L3060 85.3 L3090 86.3 L3120 87.6 L3150 89.3 L3180 91.1 L3210 93.2 L3240 95.5 L3270 98.0 L3300 100.6 L3330 103.3 L3360 106.2 L3390 109.0 L3420 111.9 L3450 114.8 L3480 117.6 L3510 120.3 L3540 122.9 L3570 125.3 L3600 127.5 L3630 129.5 L3660 131.3 L3690 132.8 L3720 134.1 L3750 135.0 L3780 135.6 L3810 136.0 L3840 136.0 L3870 135.6 L3900 135.0 L3930 134.1 L3960 132.8 L3990 131.3 L4020 129.5 L4050 127.5 L4080 125.3 L4110 122.9 L4140 120.3 L4170 117.6 L4200 114.8 L4230 111.9 L4260 109.0 L4290 106.2 L4320 103.3 L4350 100.6 L4380 98.0 L4410 95.5 L4440 93.2 L4470 91.1 L4500 89.3 L4530 87.6 L4560 86.3 L4590 85.3 L4620 84.5 L4650 84.1 L4680 84.0 L4710 84.2 L4740 84.7 L4770 85.6 L4800 86.7 L4830 88.2 L4860 89.8 L4890 91.8 L4920 94.0 L4950 96.3 L4980 98.8 L5010 101.5 L5040 104.3 L5070 107.1 L5100 110.0 L5130 112.9 L5160 115.7 L5190 118.5 L5220 121.2 L5250 123.7 L5280 126.0 L5310 128.2 L5340 130.2 L5370 131.8 L5400 133.3 L5430 134.4 L5460 135.3 L5490 135.8 L5520 136.0 L5550 135.9 L5580 135.5 L5610 134.7 L5640 133.7 L5670 132.4 L5700 130.7 L5730 128.9 L5760 126.8 L5790 124.5 L5820 122.0 L5850 119.4 L5880 116.7 L5910 113.8 L5940 111.0 L5970 108.1 L6000 105.2 L6030 102.4 L6060 99.7 L6090 97.1 L6120 94.7 L6150 92.5 L6180 90.5 L6210 88.7 L6240 87.2 L6270 85.9 L6300 85.0 L6330 84.4 L6360 84.0 L6390 84.0 L6420 84.4 L6450 85.0 L6480 85.9 L6510 87.2 L6540 88.7 L6570 90.5 L6600 92.5 L6630 94.7 L6660 97.1 L6690 99.7 L6720 102.4 L6750 105.2 L6780 108.1 L6810 111.0 L6840 113.8 L6870 116.7 L6900 119.4 L6930 122.0 L6960 124.5 L6990 126.8 L7020 128.9 L7050 130.7 L7080 132.4 L7110 133.7 L7140 134.7 L7170 135.5 L7200 135.9 L7230 136.0 L7260 135.8 L7290 135.3 L7320 134.4 L7350 133.3 L7380 131.8 L7410 130.2 L7440 128.2 L7470 126.0 L7500 123.7 L7530 121.2 L7560 118.5 L7560 210 Z" fill="#009C3B"/></svg></div>
+    <div class="rodape">
+      <span class="marca-rodape"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="t">
+  
+  <circle cx="256" cy="262" r="200" fill="none" stroke="#FFFFFF" stroke-width="26"/>
+  <circle cx="256" cy="262" r="170" fill="none" stroke="#FFDF00" stroke-width="12" stroke-linecap="round"
+          stroke-dasharray="300 769" transform="rotate(37 256 262)"/>
+  <g fill="none" stroke="#FFFFFF" stroke-width="16" stroke-linecap="round">
+    <line x1="256" y1="262" x2="256" y2="300"/>
+    <circle cx="256" cy="268" r="34" stroke-dasharray="160 54" transform="rotate(120 256 268)"/>
+    <circle cx="256" cy="268" r="68" stroke-dasharray="330 97" transform="rotate(135 256 268)"/>
+    <circle cx="256" cy="268" r="102" stroke-dasharray="280 46 230 85" transform="rotate(125 256 268)"/>
+    <circle cx="256" cy="268" r="136" stroke-dasharray="420 70 260 105" transform="rotate(150 256 268)"/>
+  </g>
+  <polygon points="400,50 414.69,91.77 458.97,92.84 423.78,119.73 436.44,162.16 400,137 363.56,162.16 376.22,119.73 341.03,92.84 385.31,91.77"
+           fill="#E1251B" stroke="#FFFFFF" stroke-width="10" stroke-linejoin="round" paint-order="stroke"/>
+</svg>
+
+@identidadesoberana</span>
+      <span class="arrasta">Continua →</span>
+    </div>
+  </section>
+
+  <section class="slide dica" data-n="4">
+    <div class="topo">
+      <span class="chip"><span class="ponto"></span>Senhas</span>
+      <span class="contador">4/7</span>
+    </div>
+    <div class="numero">3</div>
+      <h2>Ative a <span class="hl">verificação em duas etapas</span></h2>
+      <p>É aquele código que chega no seu celular. Mesmo que alguém descubra sua senha, não consegue entrar sem ele.</p>
+      
+      <div class="ilustra"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+  <!-- celular: mão segurando um celular protegido -->
+  <circle cx="200" cy="200" r="175" fill="#E6F5EC"/>
+  <circle cx="320" cy="90" r="22" fill="#FFDF00"/>
+  <rect x="135" y="48" width="130" height="250" rx="26" fill="#1B2B22"/>
+  <rect x="146" y="66" width="108" height="214" rx="16" fill="#FFFFFF"/>
+  <rect x="180" y="56" width="40" height="6" rx="3" fill="#5B6B62"/>
+  <path d="M200 100 L236 113 V145 C236 170 220 184 200 192 C180 184 164 170 164 145 V113 Z" fill="#009C3B"/>
+  <path d="M184 146 L196 158 L218 134" fill="none" stroke="#FFDF00" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="164" y="210" width="72" height="10" rx="5" fill="#DDE7E0"/>
+  <rect x="174" y="230" width="52" height="10" rx="5" fill="#DDE7E0"/>
+  <!-- mão -->
+  <rect x="250" y="160" width="46" height="26" rx="13" fill="#E8B98F"/>
+  <rect x="252" y="192" width="46" height="26" rx="13" fill="#E8B98F"/>
+  <rect x="250" y="224" width="42" height="26" rx="13" fill="#E8B98F"/>
+  <rect x="118" y="236" width="178" height="118" rx="54" fill="#E8B98F"/>
+  <ellipse cx="146" cy="232" rx="22" ry="52" transform="rotate(-28 146 232)" fill="#D9A77C"/>
+  <rect x="140" y="336" width="140" height="64" rx="14" fill="#009C3B"/>
+</svg>
+
+</div>
+    <div class="fita"><svg viewBox="3240 0 1080 210" preserveAspectRatio="none">
+    <path d="M0 92.0 L0 92.0 L30 94.9 L60 97.7 L90 100.5 L120 103.2 L150 105.7 L180 108.0 L210 110.2 L240 112.2 L270 113.8 L300 115.3 L330 116.4 L360 117.3 L390 117.8 L420 118.0 L450 117.9 L480 117.5 L510 116.7 L540 115.7 L570 114.4 L600 112.7 L630 110.9 L660 108.8 L690 106.5 L720 104.0 L750 101.4 L780 98.7 L810 95.8 L840 93.0 L870 90.1 L900 87.2 L930 84.4 L960 81.7 L990 79.1 L1020 76.7 L1050 74.5 L1080 72.5 L1110 70.7 L1140 69.2 L1170 67.9 L1200 67.0 L1230 66.4 L1260 66.0 L1290 66.0 L1320 66.4 L1350 67.0 L1380 67.9 L1410 69.2 L1440 70.7 L1470 72.5 L1500 74.5 L1530 76.7 L1560 79.1 L1590 81.7 L1620 84.4 L1650 87.2 L1680 90.1 L1710 93.0 L1740 95.8 L1770 98.7 L1800 101.4 L1830 104.0 L1860 106.5 L1890 108.8 L1920 110.9 L1950 112.7 L1980 114.4 L2010 115.7 L2040 116.7 L2070 117.5 L2100 117.9 L2130 118.0 L2160 117.8 L2190 117.3 L2220 116.4 L2250 115.3 L2280 113.8 L2310 112.2 L2340 110.2 L2370 108.0 L2400 105.7 L2430 103.2 L2460 100.5 L2490 97.7 L2520 94.9 L2550 92.0 L2580 89.1 L2610 86.3 L2640 83.5 L2670 80.8 L2700 78.3 L2730 76.0 L2760 73.8 L2790 71.8 L2820 70.2 L2850 68.7 L2880 67.6 L2910 66.7 L2940 66.2 L2970 66.0 L3000 66.1 L3030 66.5 L3060 67.3 L3090 68.3 L3120 69.6 L3150 71.3 L3180 73.1 L3210 75.2 L3240 77.5 L3270 80.0 L3300 82.6 L3330 85.3 L3360 88.2 L3390 91.0 L3420 93.9 L3450 96.8 L3480 99.6 L3510 102.3 L3540 104.9 L3570 107.3 L3600 109.5 L3630 111.5 L3660 113.3 L3690 114.8 L3720 116.1 L3750 117.0 L3780 117.6 L3810 118.0 L3840 118.0 L3870 117.6 L3900 117.0 L3930 116.1 L3960 114.8 L3990 113.3 L4020 111.5 L4050 109.5 L4080 107.3 L4110 104.9 L4140 102.3 L4170 99.6 L4200 96.8 L4230 93.9 L4260 91.0 L4290 88.2 L4320 85.3 L4350 82.6 L4380 80.0 L4410 77.5 L4440 75.2 L4470 73.1 L4500 71.3 L4530 69.6 L4560 68.3 L4590 67.3 L4620 66.5 L4650 66.1 L4680 66.0 L4710 66.2 L4740 66.7 L4770 67.6 L4800 68.7 L4830 70.2 L4860 71.8 L4890 73.8 L4920 76.0 L4950 78.3 L4980 80.8 L5010 83.5 L5040 86.3 L5070 89.1 L5100 92.0 L5130 94.9 L5160 97.7 L5190 100.5 L5220 103.2 L5250 105.7 L5280 108.0 L5310 110.2 L5340 112.2 L5370 113.8 L5400 115.3 L5430 116.4 L5460 117.3 L5490 117.8 L5520 118.0 L5550 117.9 L5580 117.5 L5610 116.7 L5640 115.7 L5670 114.4 L5700 112.7 L5730 110.9 L5760 108.8 L5790 106.5 L5820 104.0 L5850 101.4 L5880 98.7 L5910 95.8 L5940 93.0 L5970 90.1 L6000 87.2 L6030 84.4 L6060 81.7 L6090 79.1 L6120 76.7 L6150 74.5 L6180 72.5 L6210 70.7 L6240 69.2 L6270 67.9 L6300 67.0 L6330 66.4 L6360 66.0 L6390 66.0 L6420 66.4 L6450 67.0 L6480 67.9 L6510 69.2 L6540 70.7 L6570 72.5 L6600 74.5 L6630 76.7 L6660 79.1 L6690 81.7 L6720 84.4 L6750 87.2 L6780 90.1 L6810 93.0 L6840 95.8 L6870 98.7 L6900 101.4 L6930 104.0 L6960 106.5 L6990 108.8 L7020 110.9 L7050 112.7 L7080 114.4 L7110 115.7 L7140 116.7 L7170 117.5 L7200 117.9 L7230 118.0 L7260 117.8 L7290 117.3 L7320 116.4 L7350 115.3 L7380 113.8 L7410 112.2 L7440 110.2 L7470 108.0 L7500 105.7 L7530 103.2 L7560 100.5" fill="none" stroke="#FFDF00" stroke-width="14" stroke-linecap="round"/>
+    <path d="M0 210 L0 110.0 L0 110.0 L30 112.9 L60 115.7 L90 118.5 L120 121.2 L150 123.7 L180 126.0 L210 128.2 L240 130.2 L270 131.8 L300 133.3 L330 134.4 L360 135.3 L390 135.8 L420 136.0 L450 135.9 L480 135.5 L510 134.7 L540 133.7 L570 132.4 L600 130.7 L630 128.9 L660 126.8 L690 124.5 L720 122.0 L750 119.4 L780 116.7 L810 113.8 L840 111.0 L870 108.1 L900 105.2 L930 102.4 L960 99.7 L990 97.1 L1020 94.7 L1050 92.5 L1080 90.5 L1110 88.7 L1140 87.2 L1170 85.9 L1200 85.0 L1230 84.4 L1260 84.0 L1290 84.0 L1320 84.4 L1350 85.0 L1380 85.9 L1410 87.2 L1440 88.7 L1470 90.5 L1500 92.5 L1530 94.7 L1560 97.1 L1590 99.7 L1620 102.4 L1650 105.2 L1680 108.1 L1710 111.0 L1740 113.8 L1770 116.7 L1800 119.4 L1830 122.0 L1860 124.5 L1890 126.8 L1920 128.9 L1950 130.7 L1980 132.4 L2010 133.7 L2040 134.7 L2070 135.5 L2100 135.9 L2130 136.0 L2160 135.8 L2190 135.3 L2220 134.4 L2250 133.3 L2280 131.8 L2310 130.2 L2340 128.2 L2370 126.0 L2400 123.7 L2430 121.2 L2460 118.5 L2490 115.7 L2520 112.9 L2550 110.0 L2580 107.1 L2610 104.3 L2640 101.5 L2670 98.8 L2700 96.3 L2730 94.0 L2760 91.8 L2790 89.8 L2820 88.2 L2850 86.7 L2880 85.6 L2910 84.7 L2940 84.2 L2970 84.0 L3000 84.1 L3030 84.5 L3060 85.3 L3090 86.3 L3120 87.6 L3150 89.3 L3180 91.1 L3210 93.2 L3240 95.5 L3270 98.0 L3300 100.6 L3330 103.3 L3360 106.2 L3390 109.0 L3420 111.9 L3450 114.8 L3480 117.6 L3510 120.3 L3540 122.9 L3570 125.3 L3600 127.5 L3630 129.5 L3660 131.3 L3690 132.8 L3720 134.1 L3750 135.0 L3780 135.6 L3810 136.0 L3840 136.0 L3870 135.6 L3900 135.0 L3930 134.1 L3960 132.8 L3990 131.3 L4020 129.5 L4050 127.5 L4080 125.3 L4110 122.9 L4140 120.3 L4170 117.6 L4200 114.8 L4230 111.9 L4260 109.0 L4290 106.2 L4320 103.3 L4350 100.6 L4380 98.0 L4410 95.5 L4440 93.2 L4470 91.1 L4500 89.3 L4530 87.6 L4560 86.3 L4590 85.3 L4620 84.5 L4650 84.1 L4680 84.0 L4710 84.2 L4740 84.7 L4770 85.6 L4800 86.7 L4830 88.2 L4860 89.8 L4890 91.8 L4920 94.0 L4950 96.3 L4980 98.8 L5010 101.5 L5040 104.3 L5070 107.1 L5100 110.0 L5130 112.9 L5160 115.7 L5190 118.5 L5220 121.2 L5250 123.7 L5280 126.0 L5310 128.2 L5340 130.2 L5370 131.8 L5400 133.3 L5430 134.4 L5460 135.3 L5490 135.8 L5520 136.0 L5550 135.9 L5580 135.5 L5610 134.7 L5640 133.7 L5670 132.4 L5700 130.7 L5730 128.9 L5760 126.8 L5790 124.5 L5820 122.0 L5850 119.4 L5880 116.7 L5910 113.8 L5940 111.0 L5970 108.1 L6000 105.2 L6030 102.4 L6060 99.7 L6090 97.1 L6120 94.7 L6150 92.5 L6180 90.5 L6210 88.7 L6240 87.2 L6270 85.9 L6300 85.0 L6330 84.4 L6360 84.0 L6390 84.0 L6420 84.4 L6450 85.0 L6480 85.9 L6510 87.2 L6540 88.7 L6570 90.5 L6600 92.5 L6630 94.7 L6660 97.1 L6690 99.7 L6720 102.4 L6750 105.2 L6780 108.1 L6810 111.0 L6840 113.8 L6870 116.7 L6900 119.4 L6930 122.0 L6960 124.5 L6990 126.8 L7020 128.9 L7050 130.7 L7080 132.4 L7110 133.7 L7140 134.7 L7170 135.5 L7200 135.9 L7230 136.0 L7260 135.8 L7290 135.3 L7320 134.4 L7350 133.3 L7380 131.8 L7410 130.2 L7440 128.2 L7470 126.0 L7500 123.7 L7530 121.2 L7560 118.5 L7560 210 Z" fill="#009C3B"/></svg></div>
+    <div class="rodape">
+      <span class="marca-rodape"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="t">
+  
+  <circle cx="256" cy="262" r="200" fill="none" stroke="#FFFFFF" stroke-width="26"/>
+  <circle cx="256" cy="262" r="170" fill="none" stroke="#FFDF00" stroke-width="12" stroke-linecap="round"
+          stroke-dasharray="300 769" transform="rotate(37 256 262)"/>
+  <g fill="none" stroke="#FFFFFF" stroke-width="16" stroke-linecap="round">
+    <line x1="256" y1="262" x2="256" y2="300"/>
+    <circle cx="256" cy="268" r="34" stroke-dasharray="160 54" transform="rotate(120 256 268)"/>
+    <circle cx="256" cy="268" r="68" stroke-dasharray="330 97" transform="rotate(135 256 268)"/>
+    <circle cx="256" cy="268" r="102" stroke-dasharray="280 46 230 85" transform="rotate(125 256 268)"/>
+    <circle cx="256" cy="268" r="136" stroke-dasharray="420 70 260 105" transform="rotate(150 256 268)"/>
+  </g>
+  <polygon points="400,50 414.69,91.77 458.97,92.84 423.78,119.73 436.44,162.16 400,137 363.56,162.16 376.22,119.73 341.03,92.84 385.31,91.77"
+           fill="#E1251B" stroke="#FFFFFF" stroke-width="10" stroke-linejoin="round" paint-order="stroke"/>
+</svg>
+
+@identidadesoberana</span>
+      <span class="arrasta">Continua →</span>
+    </div>
+  </section>
+
+  <section class="slide comparacao" data-n="5">
+    <div class="topo">
+      <span class="chip"><span class="ponto"></span>Senhas</span>
+      <span class="contador">5/7</span>
+    </div>
+    <h2>Na prática</h2>
+      <div class="compara">
+        <div class="col faca"><h3>👍 Faça</h3><ul><li>Usar frases longas</li><li>Guardar senhas num <strong>gerenciador de senhas</strong></li><li>Trocar a senha se o site avisar de vazamento</li></ul></div>
+        <div class="col evite"><h3>✋ Evite</h3><ul><li>Data de aniversário</li><li>Nome do pet ou do time</li><li>Anotar senha num papel na carteira</li></ul></div>
+      </div>
+      <div class="ilustra"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+  <!-- escudo -->
+  <circle cx="200" cy="200" r="175" fill="#E6F5EC"/>
+  <circle cx="88" cy="110" r="16" fill="#FFDF00"/>
+  <circle cx="320" cy="290" r="12" fill="#00B347"/>
+  <path d="M200 62 L314 104 V196 C314 268 264 314 200 342 C136 314 86 268 86 196 V104 Z" fill="#009C3B"/>
+  <path d="M200 62 L314 104 V196 C314 268 264 314 200 342 Z" fill="#00612A" opacity=".35"/>
+  <path d="M148 204 L188 244 L258 168" fill="none" stroke="#FFDF00" stroke-width="24" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+
+</div>
+    <div class="fita"><svg viewBox="4320 0 1080 210" preserveAspectRatio="none">
+    <path d="M0 92.0 L0 92.0 L30 94.9 L60 97.7 L90 100.5 L120 103.2 L150 105.7 L180 108.0 L210 110.2 L240 112.2 L270 113.8 L300 115.3 L330 116.4 L360 117.3 L390 117.8 L420 118.0 L450 117.9 L480 117.5 L510 116.7 L540 115.7 L570 114.4 L600 112.7 L630 110.9 L660 108.8 L690 106.5 L720 104.0 L750 101.4 L780 98.7 L810 95.8 L840 93.0 L870 90.1 L900 87.2 L930 84.4 L960 81.7 L990 79.1 L1020 76.7 L1050 74.5 L1080 72.5 L1110 70.7 L1140 69.2 L1170 67.9 L1200 67.0 L1230 66.4 L1260 66.0 L1290 66.0 L1320 66.4 L1350 67.0 L1380 67.9 L1410 69.2 L1440 70.7 L1470 72.5 L1500 74.5 L1530 76.7 L1560 79.1 L1590 81.7 L1620 84.4 L1650 87.2 L1680 90.1 L1710 93.0 L1740 95.8 L1770 98.7 L1800 101.4 L1830 104.0 L1860 106.5 L1890 108.8 L1920 110.9 L1950 112.7 L1980 114.4 L2010 115.7 L2040 116.7 L2070 117.5 L2100 117.9 L2130 118.0 L2160 117.8 L2190 117.3 L2220 116.4 L2250 115.3 L2280 113.8 L2310 112.2 L2340 110.2 L2370 108.0 L2400 105.7 L2430 103.2 L2460 100.5 L2490 97.7 L2520 94.9 L2550 92.0 L2580 89.1 L2610 86.3 L2640 83.5 L2670 80.8 L2700 78.3 L2730 76.0 L2760 73.8 L2790 71.8 L2820 70.2 L2850 68.7 L2880 67.6 L2910 66.7 L2940 66.2 L2970 66.0 L3000 66.1 L3030 66.5 L3060 67.3 L3090 68.3 L3120 69.6 L3150 71.3 L3180 73.1 L3210 75.2 L3240 77.5 L3270 80.0 L3300 82.6 L3330 85.3 L3360 88.2 L3390 91.0 L3420 93.9 L3450 96.8 L3480 99.6 L3510 102.3 L3540 104.9 L3570 107.3 L3600 109.5 L3630 111.5 L3660 113.3 L3690 114.8 L3720 116.1 L3750 117.0 L3780 117.6 L3810 118.0 L3840 118.0 L3870 117.6 L3900 117.0 L3930 116.1 L3960 114.8 L3990 113.3 L4020 111.5 L4050 109.5 L4080 107.3 L4110 104.9 L4140 102.3 L4170 99.6 L4200 96.8 L4230 93.9 L4260 91.0 L4290 88.2 L4320 85.3 L4350 82.6 L4380 80.0 L4410 77.5 L4440 75.2 L4470 73.1 L4500 71.3 L4530 69.6 L4560 68.3 L4590 67.3 L4620 66.5 L4650 66.1 L4680 66.0 L4710 66.2 L4740 66.7 L4770 67.6 L4800 68.7 L4830 70.2 L4860 71.8 L4890 73.8 L4920 76.0 L4950 78.3 L4980 80.8 L5010 83.5 L5040 86.3 L5070 89.1 L5100 92.0 L5130 94.9 L5160 97.7 L5190 100.5 L5220 103.2 L5250 105.7 L5280 108.0 L5310 110.2 L5340 112.2 L5370 113.8 L5400 115.3 L5430 116.4 L5460 117.3 L5490 117.8 L5520 118.0 L5550 117.9 L5580 117.5 L5610 116.7 L5640 115.7 L5670 114.4 L5700 112.7 L5730 110.9 L5760 108.8 L5790 106.5 L5820 104.0 L5850 101.4 L5880 98.7 L5910 95.8 L5940 93.0 L5970 90.1 L6000 87.2 L6030 84.4 L6060 81.7 L6090 79.1 L6120 76.7 L6150 74.5 L6180 72.5 L6210 70.7 L6240 69.2 L6270 67.9 L6300 67.0 L6330 66.4 L6360 66.0 L6390 66.0 L6420 66.4 L6450 67.0 L6480 67.9 L6510 69.2 L6540 70.7 L6570 72.5 L6600 74.5 L6630 76.7 L6660 79.1 L6690 81.7 L6720 84.4 L6750 87.2 L6780 90.1 L6810 93.0 L6840 95.8 L6870 98.7 L6900 101.4 L6930 104.0 L6960 106.5 L6990 108.8 L7020 110.9 L7050 112.7 L7080 114.4 L7110 115.7 L7140 116.7 L7170 117.5 L7200 117.9 L7230 118.0 L7260 117.8 L7290 117.3 L7320 116.4 L7350 115.3 L7380 113.8 L7410 112.2 L7440 110.2 L7470 108.0 L7500 105.7 L7530 103.2 L7560 100.5" fill="none" stroke="#FFDF00" stroke-width="14" stroke-linecap="round"/>
+    <path d="M0 210 L0 110.0 L0 110.0 L30 112.9 L60 115.7 L90 118.5 L120 121.2 L150 123.7 L180 126.0 L210 128.2 L240 130.2 L270 131.8 L300 133.3 L330 134.4 L360 135.3 L390 135.8 L420 136.0 L450 135.9 L480 135.5 L510 134.7 L540 133.7 L570 132.4 L600 130.7 L630 128.9 L660 126.8 L690 124.5 L720 122.0 L750 119.4 L780 116.7 L810 113.8 L840 111.0 L870 108.1 L900 105.2 L930 102.4 L960 99.7 L990 97.1 L1020 94.7 L1050 92.5 L1080 90.5 L1110 88.7 L1140 87.2 L1170 85.9 L1200 85.0 L1230 84.4 L1260 84.0 L1290 84.0 L1320 84.4 L1350 85.0 L1380 85.9 L1410 87.2 L1440 88.7 L1470 90.5 L1500 92.5 L1530 94.7 L1560 97.1 L1590 99.7 L1620 102.4 L1650 105.2 L1680 108.1 L1710 111.0 L1740 113.8 L1770 116.7 L1800 119.4 L1830 122.0 L1860 124.5 L1890 126.8 L1920 128.9 L1950 130.7 L1980 132.4 L2010 133.7 L2040 134.7 L2070 135.5 L2100 135.9 L2130 136.0 L2160 135.8 L2190 135.3 L2220 134.4 L2250 133.3 L2280 131.8 L2310 130.2 L2340 128.2 L2370 126.0 L2400 123.7 L2430 121.2 L2460 118.5 L2490 115.7 L2520 112.9 L2550 110.0 L2580 107.1 L2610 104.3 L2640 101.5 L2670 98.8 L2700 96.3 L2730 94.0 L2760 91.8 L2790 89.8 L2820 88.2 L2850 86.7 L2880 85.6 L2910 84.7 L2940 84.2 L2970 84.0 L3000 84.1 L3030 84.5 L3060 85.3 L3090 86.3 L3120 87.6 L3150 89.3 L3180 91.1 L3210 93.2 L3240 95.5 L3270 98.0 L3300 100.6 L3330 103.3 L3360 106.2 L3390 109.0 L3420 111.9 L3450 114.8 L3480 117.6 L3510 120.3 L3540 122.9 L3570 125.3 L3600 127.5 L3630 129.5 L3660 131.3 L3690 132.8 L3720 134.1 L3750 135.0 L3780 135.6 L3810 136.0 L3840 136.0 L3870 135.6 L3900 135.0 L3930 134.1 L3960 132.8 L3990 131.3 L4020 129.5 L4050 127.5 L4080 125.3 L4110 122.9 L4140 120.3 L4170 117.6 L4200 114.8 L4230 111.9 L4260 109.0 L4290 106.2 L4320 103.3 L4350 100.6 L4380 98.0 L4410 95.5 L4440 93.2 L4470 91.1 L4500 89.3 L4530 87.6 L4560 86.3 L4590 85.3 L4620 84.5 L4650 84.1 L4680 84.0 L4710 84.2 L4740 84.7 L4770 85.6 L4800 86.7 L4830 88.2 L4860 89.8 L4890 91.8 L4920 94.0 L4950 96.3 L4980 98.8 L5010 101.5 L5040 104.3 L5070 107.1 L5100 110.0 L5130 112.9 L5160 115.7 L5190 118.5 L5220 121.2 L5250 123.7 L5280 126.0 L5310 128.2 L5340 130.2 L5370 131.8 L5400 133.3 L5430 134.4 L5460 135.3 L5490 135.8 L5520 136.0 L5550 135.9 L5580 135.5 L5610 134.7 L5640 133.7 L5670 132.4 L5700 130.7 L5730 128.9 L5760 126.8 L5790 124.5 L5820 122.0 L5850 119.4 L5880 116.7 L5910 113.8 L5940 111.0 L5970 108.1 L6000 105.2 L6030 102.4 L6060 99.7 L6090 97.1 L6120 94.7 L6150 92.5 L6180 90.5 L6210 88.7 L6240 87.2 L6270 85.9 L6300 85.0 L6330 84.4 L6360 84.0 L6390 84.0 L6420 84.4 L6450 85.0 L6480 85.9 L6510 87.2 L6540 88.7 L6570 90.5 L6600 92.5 L6630 94.7 L6660 97.1 L6690 99.7 L6720 102.4 L6750 105.2 L6780 108.1 L6810 111.0 L6840 113.8 L6870 116.7 L6900 119.4 L6930 122.0 L6960 124.5 L6990 126.8 L7020 128.9 L7050 130.7 L7080 132.4 L7110 133.7 L7140 134.7 L7170 135.5 L7200 135.9 L7230 136.0 L7260 135.8 L7290 135.3 L7320 134.4 L7350 133.3 L7380 131.8 L7410 130.2 L7440 128.2 L7470 126.0 L7500 123.7 L7530 121.2 L7560 118.5 L7560 210 Z" fill="#009C3B"/></svg></div>
+    <div class="rodape">
+      <span class="marca-rodape"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="t">
+  
+  <circle cx="256" cy="262" r="200" fill="none" stroke="#FFFFFF" stroke-width="26"/>
+  <circle cx="256" cy="262" r="170" fill="none" stroke="#FFDF00" stroke-width="12" stroke-linecap="round"
+          stroke-dasharray="300 769" transform="rotate(37 256 262)"/>
+  <g fill="none" stroke="#FFFFFF" stroke-width="16" stroke-linecap="round">
+    <line x1="256" y1="262" x2="256" y2="300"/>
+    <circle cx="256" cy="268" r="34" stroke-dasharray="160 54" transform="rotate(120 256 268)"/>
+    <circle cx="256" cy="268" r="68" stroke-dasharray="330 97" transform="rotate(135 256 268)"/>
+    <circle cx="256" cy="268" r="102" stroke-dasharray="280 46 230 85" transform="rotate(125 256 268)"/>
+    <circle cx="256" cy="268" r="136" stroke-dasharray="420 70 260 105" transform="rotate(150 256 268)"/>
+  </g>
+  <polygon points="400,50 414.69,91.77 458.97,92.84 423.78,119.73 436.44,162.16 400,137 363.56,162.16 376.22,119.73 341.03,92.84 385.31,91.77"
+           fill="#E1251B" stroke="#FFFFFF" stroke-width="10" stroke-linejoin="round" paint-order="stroke"/>
+</svg>
+
+@identidadesoberana</span>
+      <span class="arrasta">Continua →</span>
+    </div>
+  </section>
+
+  <section class="slide resumo" data-n="6">
+    <div class="topo">
+      <span class="chip"><span class="ponto"></span>Senhas</span>
+      <span class="contador">6/7</span>
+    </div>
+    <h2>Resumindo</h2>
+      
+      <ul class="lista check">
+        <li><span class="marca">✓</span><span>Senha boa é senha <span class="hl">longa</span></span></li><li><span class="marca">✓</span><span>Uma senha diferente pra cada conta</span></li><li><span class="marca">✓</span><span>Verificação em duas etapas ligada</span></li><li><span class="marca">✓</span><span>Um gerenciador lembra tudo por você</span></li>
+      </ul>
+      
+    <div class="fita"><svg viewBox="5400 0 1080 210" preserveAspectRatio="none">
+    <path d="M0 92.0 L0 92.0 L30 94.9 L60 97.7 L90 100.5 L120 103.2 L150 105.7 L180 108.0 L210 110.2 L240 112.2 L270 113.8 L300 115.3 L330 116.4 L360 117.3 L390 117.8 L420 118.0 L450 117.9 L480 117.5 L510 116.7 L540 115.7 L570 114.4 L600 112.7 L630 110.9 L660 108.8 L690 106.5 L720 104.0 L750 101.4 L780 98.7 L810 95.8 L840 93.0 L870 90.1 L900 87.2 L930 84.4 L960 81.7 L990 79.1 L1020 76.7 L1050 74.5 L1080 72.5 L1110 70.7 L1140 69.2 L1170 67.9 L1200 67.0 L1230 66.4 L1260 66.0 L1290 66.0 L1320 66.4 L1350 67.0 L1380 67.9 L1410 69.2 L1440 70.7 L1470 72.5 L1500 74.5 L1530 76.7 L1560 79.1 L1590 81.7 L1620 84.4 L1650 87.2 L1680 90.1 L1710 93.0 L1740 95.8 L1770 98.7 L1800 101.4 L1830 104.0 L1860 106.5 L1890 108.8 L1920 110.9 L1950 112.7 L1980 114.4 L2010 115.7 L2040 116.7 L2070 117.5 L2100 117.9 L2130 118.0 L2160 117.8 L2190 117.3 L2220 116.4 L2250 115.3 L2280 113.8 L2310 112.2 L2340 110.2 L2370 108.0 L2400 105.7 L2430 103.2 L2460 100.5 L2490 97.7 L2520 94.9 L2550 92.0 L2580 89.1 L2610 86.3 L2640 83.5 L2670 80.8 L2700 78.3 L2730 76.0 L2760 73.8 L2790 71.8 L2820 70.2 L2850 68.7 L2880 67.6 L2910 66.7 L2940 66.2 L2970 66.0 L3000 66.1 L3030 66.5 L3060 67.3 L3090 68.3 L3120 69.6 L3150 71.3 L3180 73.1 L3210 75.2 L3240 77.5 L3270 80.0 L3300 82.6 L3330 85.3 L3360 88.2 L3390 91.0 L3420 93.9 L3450 96.8 L3480 99.6 L3510 102.3 L3540 104.9 L3570 107.3 L3600 109.5 L3630 111.5 L3660 113.3 L3690 114.8 L3720 116.1 L3750 117.0 L3780 117.6 L3810 118.0 L3840 118.0 L3870 117.6 L3900 117.0 L3930 116.1 L3960 114.8 L3990 113.3 L4020 111.5 L4050 109.5 L4080 107.3 L4110 104.9 L4140 102.3 L4170 99.6 L4200 96.8 L4230 93.9 L4260 91.0 L4290 88.2 L4320 85.3 L4350 82.6 L4380 80.0 L4410 77.5 L4440 75.2 L4470 73.1 L4500 71.3 L4530 69.6 L4560 68.3 L4590 67.3 L4620 66.5 L4650 66.1 L4680 66.0 L4710 66.2 L4740 66.7 L4770 67.6 L4800 68.7 L4830 70.2 L4860 71.8 L4890 73.8 L4920 76.0 L4950 78.3 L4980 80.8 L5010 83.5 L5040 86.3 L5070 89.1 L5100 92.0 L5130 94.9 L5160 97.7 L5190 100.5 L5220 103.2 L5250 105.7 L5280 108.0 L5310 110.2 L5340 112.2 L5370 113.8 L5400 115.3 L5430 116.4 L5460 117.3 L5490 117.8 L5520 118.0 L5550 117.9 L5580 117.5 L5610 116.7 L5640 115.7 L5670 114.4 L5700 112.7 L5730 110.9 L5760 108.8 L5790 106.5 L5820 104.0 L5850 101.4 L5880 98.7 L5910 95.8 L5940 93.0 L5970 90.1 L6000 87.2 L6030 84.4 L6060 81.7 L6090 79.1 L6120 76.7 L6150 74.5 L6180 72.5 L6210 70.7 L6240 69.2 L6270 67.9 L6300 67.0 L6330 66.4 L6360 66.0 L6390 66.0 L6420 66.4 L6450 67.0 L6480 67.9 L6510 69.2 L6540 70.7 L6570 72.5 L6600 74.5 L6630 76.7 L6660 79.1 L6690 81.7 L6720 84.4 L6750 87.2 L6780 90.1 L6810 93.0 L6840 95.8 L6870 98.7 L6900 101.4 L6930 104.0 L6960 106.5 L6990 108.8 L7020 110.9 L7050 112.7 L7080 114.4 L7110 115.7 L7140 116.7 L7170 117.5 L7200 117.9 L7230 118.0 L7260 117.8 L7290 117.3 L7320 116.4 L7350 115.3 L7380 113.8 L7410 112.2 L7440 110.2 L7470 108.0 L7500 105.7 L7530 103.2 L7560 100.5" fill="none" stroke="#FFDF00" stroke-width="14" stroke-linecap="round"/>
+    <path d="M0 210 L0 110.0 L0 110.0 L30 112.9 L60 115.7 L90 118.5 L120 121.2 L150 123.7 L180 126.0 L210 128.2 L240 130.2 L270 131.8 L300 133.3 L330 134.4 L360 135.3 L390 135.8 L420 136.0 L450 135.9 L480 135.5 L510 134.7 L540 133.7 L570 132.4 L600 130.7 L630 128.9 L660 126.8 L690 124.5 L720 122.0 L750 119.4 L780 116.7 L810 113.8 L840 111.0 L870 108.1 L900 105.2 L930 102.4 L960 99.7 L990 97.1 L1020 94.7 L1050 92.5 L1080 90.5 L1110 88.7 L1140 87.2 L1170 85.9 L1200 85.0 L1230 84.4 L1260 84.0 L1290 84.0 L1320 84.4 L1350 85.0 L1380 85.9 L1410 87.2 L1440 88.7 L1470 90.5 L1500 92.5 L1530 94.7 L1560 97.1 L1590 99.7 L1620 102.4 L1650 105.2 L1680 108.1 L1710 111.0 L1740 113.8 L1770 116.7 L1800 119.4 L1830 122.0 L1860 124.5 L1890 126.8 L1920 128.9 L1950 130.7 L1980 132.4 L2010 133.7 L2040 134.7 L2070 135.5 L2100 135.9 L2130 136.0 L2160 135.8 L2190 135.3 L2220 134.4 L2250 133.3 L2280 131.8 L2310 130.2 L2340 128.2 L2370 126.0 L2400 123.7 L2430 121.2 L2460 118.5 L2490 115.7 L2520 112.9 L2550 110.0 L2580 107.1 L2610 104.3 L2640 101.5 L2670 98.8 L2700 96.3 L2730 94.0 L2760 91.8 L2790 89.8 L2820 88.2 L2850 86.7 L2880 85.6 L2910 84.7 L2940 84.2 L2970 84.0 L3000 84.1 L3030 84.5 L3060 85.3 L3090 86.3 L3120 87.6 L3150 89.3 L3180 91.1 L3210 93.2 L3240 95.5 L3270 98.0 L3300 100.6 L3330 103.3 L3360 106.2 L3390 109.0 L3420 111.9 L3450 114.8 L3480 117.6 L3510 120.3 L3540 122.9 L3570 125.3 L3600 127.5 L3630 129.5 L3660 131.3 L3690 132.8 L3720 134.1 L3750 135.0 L3780 135.6 L3810 136.0 L3840 136.0 L3870 135.6 L3900 135.0 L3930 134.1 L3960 132.8 L3990 131.3 L4020 129.5 L4050 127.5 L4080 125.3 L4110 122.9 L4140 120.3 L4170 117.6 L4200 114.8 L4230 111.9 L4260 109.0 L4290 106.2 L4320 103.3 L4350 100.6 L4380 98.0 L4410 95.5 L4440 93.2 L4470 91.1 L4500 89.3 L4530 87.6 L4560 86.3 L4590 85.3 L4620 84.5 L4650 84.1 L4680 84.0 L4710 84.2 L4740 84.7 L4770 85.6 L4800 86.7 L4830 88.2 L4860 89.8 L4890 91.8 L4920 94.0 L4950 96.3 L4980 98.8 L5010 101.5 L5040 104.3 L5070 107.1 L5100 110.0 L5130 112.9 L5160 115.7 L5190 118.5 L5220 121.2 L5250 123.7 L5280 126.0 L5310 128.2 L5340 130.2 L5370 131.8 L5400 133.3 L5430 134.4 L5460 135.3 L5490 135.8 L5520 136.0 L5550 135.9 L5580 135.5 L5610 134.7 L5640 133.7 L5670 132.4 L5700 130.7 L5730 128.9 L5760 126.8 L5790 124.5 L5820 122.0 L5850 119.4 L5880 116.7 L5910 113.8 L5940 111.0 L5970 108.1 L6000 105.2 L6030 102.4 L6060 99.7 L6090 97.1 L6120 94.7 L6150 92.5 L6180 90.5 L6210 88.7 L6240 87.2 L6270 85.9 L6300 85.0 L6330 84.4 L6360 84.0 L6390 84.0 L6420 84.4 L6450 85.0 L6480 85.9 L6510 87.2 L6540 88.7 L6570 90.5 L6600 92.5 L6630 94.7 L6660 97.1 L6690 99.7 L6720 102.4 L6750 105.2 L6780 108.1 L6810 111.0 L6840 113.8 L6870 116.7 L6900 119.4 L6930 122.0 L6960 124.5 L6990 126.8 L7020 128.9 L7050 130.7 L7080 132.4 L7110 133.7 L7140 134.7 L7170 135.5 L7200 135.9 L7230 136.0 L7260 135.8 L7290 135.3 L7320 134.4 L7350 133.3 L7380 131.8 L7410 130.2 L7440 128.2 L7470 126.0 L7500 123.7 L7530 121.2 L7560 118.5 L7560 210 Z" fill="#009C3B"/></svg></div>
+    <div class="rodape">
+      <span class="marca-rodape"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="t">
+  
+  <circle cx="256" cy="262" r="200" fill="none" stroke="#FFFFFF" stroke-width="26"/>
+  <circle cx="256" cy="262" r="170" fill="none" stroke="#FFDF00" stroke-width="12" stroke-linecap="round"
+          stroke-dasharray="300 769" transform="rotate(37 256 262)"/>
+  <g fill="none" stroke="#FFFFFF" stroke-width="16" stroke-linecap="round">
+    <line x1="256" y1="262" x2="256" y2="300"/>
+    <circle cx="256" cy="268" r="34" stroke-dasharray="160 54" transform="rotate(120 256 268)"/>
+    <circle cx="256" cy="268" r="68" stroke-dasharray="330 97" transform="rotate(135 256 268)"/>
+    <circle cx="256" cy="268" r="102" stroke-dasharray="280 46 230 85" transform="rotate(125 256 268)"/>
+    <circle cx="256" cy="268" r="136" stroke-dasharray="420 70 260 105" transform="rotate(150 256 268)"/>
+  </g>
+  <polygon points="400,50 414.69,91.77 458.97,92.84 423.78,119.73 436.44,162.16 400,137 363.56,162.16 376.22,119.73 341.03,92.84 385.31,91.77"
+           fill="#E1251B" stroke="#FFFFFF" stroke-width="10" stroke-linejoin="round" paint-order="stroke"/>
+</svg>
+
+@identidadesoberana</span>
+      <span class="arrasta">Continua →</span>
+    </div>
+  </section>
+
+  <section class="slide cta" data-n="7">
+    <div class="topo">
+      <span class="chip"><span class="ponto"></span>Senhas</span>
+      <span class="contador">7/7</span>
+    </div>
+    <div class="selo"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="t">
+  
+  <!-- Selo: anel verde -->
+  <circle cx="256" cy="262" r="200" fill="#FFFFFF" stroke="#009C3B" stroke-width="26"/>
+  <!-- Arco amarelo (toque Brasil) na base do selo -->
+  <circle cx="256" cy="262" r="170" fill="none" stroke="#FFDF00" stroke-width="12" stroke-linecap="round"
+          stroke-dasharray="300 769" transform="rotate(37 256 262)"/>
+  <!-- Impressão digital (identidade) -->
+  <g fill="none" stroke="#00612A" stroke-width="16" stroke-linecap="round">
+    <line x1="256" y1="262" x2="256" y2="300"/>
+    <circle cx="256" cy="268" r="34" stroke-dasharray="160 54" transform="rotate(120 256 268)"/>
+    <circle cx="256" cy="268" r="68" stroke-dasharray="330 97" transform="rotate(135 256 268)"/>
+    <circle cx="256" cy="268" r="102" stroke-dasharray="280 46 230 85" transform="rotate(125 256 268)"/>
+    <circle cx="256" cy="268" r="136" stroke-dasharray="420 70 260 105" transform="rotate(150 256 268)"/>
+  </g>
+  <!-- Estrela vermelha (5 pontas) com halo branco -->
+  <polygon points="400,50 414.69,91.77 458.97,92.84 423.78,119.73 436.44,162.16 400,137 363.56,162.16 376.22,119.73 341.03,92.84 385.31,91.77"
+           fill="#FFFFFF" stroke="#FFFFFF" stroke-width="34" stroke-linejoin="round"/>
+  <polygon points="400,50 414.69,91.77 458.97,92.84 423.78,119.73 436.44,162.16 400,137 363.56,162.16 376.22,119.73 341.03,92.84 385.31,91.77"
+           fill="#E1251B" stroke="#E1251B" stroke-width="8" stroke-linejoin="round"/>
+</svg>
+
+</div>
+      <h2>Gostou? <span class="hl">Salva</span> esse post!</h2>
+      <p>E manda pra aquela pessoa que usa “123456” em tudo 😅</p>
+      <div class="acoes">
+        <div class="acao"><span>🔖</span> Salve para lembrar depois</div>
+        <div class="acao"><span>📤</span> Mande para quem precisa ver</div>
+        <div class="acao"><span>➕</span> Siga @identidadesoberana</div>
+      </div>
+    <div class="fita"><svg viewBox="6480 0 1080 210" preserveAspectRatio="none">
+    <path d="M0 92.0 L0 92.0 L30 94.9 L60 97.7 L90 100.5 L120 103.2 L150 105.7 L180 108.0 L210 110.2 L240 112.2 L270 113.8 L300 115.3 L330 116.4 L360 117.3 L390 117.8 L420 118.0 L450 117.9 L480 117.5 L510 116.7 L540 115.7 L570 114.4 L600 112.7 L630 110.9 L660 108.8 L690 106.5 L720 104.0 L750 101.4 L780 98.7 L810 95.8 L840 93.0 L870 90.1 L900 87.2 L930 84.4 L960 81.7 L990 79.1 L1020 76.7 L1050 74.5 L1080 72.5 L1110 70.7 L1140 69.2 L1170 67.9 L1200 67.0 L1230 66.4 L1260 66.0 L1290 66.0 L1320 66.4 L1350 67.0 L1380 67.9 L1410 69.2 L1440 70.7 L1470 72.5 L1500 74.5 L1530 76.7 L1560 79.1 L1590 81.7 L1620 84.4 L1650 87.2 L1680 90.1 L1710 93.0 L1740 95.8 L1770 98.7 L1800 101.4 L1830 104.0 L1860 106.5 L1890 108.8 L1920 110.9 L1950 112.7 L1980 114.4 L2010 115.7 L2040 116.7 L2070 117.5 L2100 117.9 L2130 118.0 L2160 117.8 L2190 117.3 L2220 116.4 L2250 115.3 L2280 113.8 L2310 112.2 L2340 110.2 L2370 108.0 L2400 105.7 L2430 103.2 L2460 100.5 L2490 97.7 L2520 94.9 L2550 92.0 L2580 89.1 L2610 86.3 L2640 83.5 L2670 80.8 L2700 78.3 L2730 76.0 L2760 73.8 L2790 71.8 L2820 70.2 L2850 68.7 L2880 67.6 L2910 66.7 L2940 66.2 L2970 66.0 L3000 66.1 L3030 66.5 L3060 67.3 L3090 68.3 L3120 69.6 L3150 71.3 L3180 73.1 L3210 75.2 L3240 77.5 L3270 80.0 L3300 82.6 L3330 85.3 L3360 88.2 L3390 91.0 L3420 93.9 L3450 96.8 L3480 99.6 L3510 102.3 L3540 104.9 L3570 107.3 L3600 109.5 L3630 111.5 L3660 113.3 L3690 114.8 L3720 116.1 L3750 117.0 L3780 117.6 L3810 118.0 L3840 118.0 L3870 117.6 L3900 117.0 L3930 116.1 L3960 114.8 L3990 113.3 L4020 111.5 L4050 109.5 L4080 107.3 L4110 104.9 L4140 102.3 L4170 99.6 L4200 96.8 L4230 93.9 L4260 91.0 L4290 88.2 L4320 85.3 L4350 82.6 L4380 80.0 L4410 77.5 L4440 75.2 L4470 73.1 L4500 71.3 L4530 69.6 L4560 68.3 L4590 67.3 L4620 66.5 L4650 66.1 L4680 66.0 L4710 66.2 L4740 66.7 L4770 67.6 L4800 68.7 L4830 70.2 L4860 71.8 L4890 73.8 L4920 76.0 L4950 78.3 L4980 80.8 L5010 83.5 L5040 86.3 L5070 89.1 L5100 92.0 L5130 94.9 L5160 97.7 L5190 100.5 L5220 103.2 L5250 105.7 L5280 108.0 L5310 110.2 L5340 112.2 L5370 113.8 L5400 115.3 L5430 116.4 L5460 117.3 L5490 117.8 L5520 118.0 L5550 117.9 L5580 117.5 L5610 116.7 L5640 115.7 L5670 114.4 L5700 112.7 L5730 110.9 L5760 108.8 L5790 106.5 L5820 104.0 L5850 101.4 L5880 98.7 L5910 95.8 L5940 93.0 L5970 90.1 L6000 87.2 L6030 84.4 L6060 81.7 L6090 79.1 L6120 76.7 L6150 74.5 L6180 72.5 L6210 70.7 L6240 69.2 L6270 67.9 L6300 67.0 L6330 66.4 L6360 66.0 L6390 66.0 L6420 66.4 L6450 67.0 L6480 67.9 L6510 69.2 L6540 70.7 L6570 72.5 L6600 74.5 L6630 76.7 L6660 79.1 L6690 81.7 L6720 84.4 L6750 87.2 L6780 90.1 L6810 93.0 L6840 95.8 L6870 98.7 L6900 101.4 L6930 104.0 L6960 106.5 L6990 108.8 L7020 110.9 L7050 112.7 L7080 114.4 L7110 115.7 L7140 116.7 L7170 117.5 L7200 117.9 L7230 118.0 L7260 117.8 L7290 117.3 L7320 116.4 L7350 115.3 L7380 113.8 L7410 112.2 L7440 110.2 L7470 108.0 L7500 105.7 L7530 103.2 L7560 100.5" fill="none" stroke="#FFDF00" stroke-width="14" stroke-linecap="round"/>
+    <path d="M0 210 L0 110.0 L0 110.0 L30 112.9 L60 115.7 L90 118.5 L120 121.2 L150 123.7 L180 126.0 L210 128.2 L240 130.2 L270 131.8 L300 133.3 L330 134.4 L360 135.3 L390 135.8 L420 136.0 L450 135.9 L480 135.5 L510 134.7 L540 133.7 L570 132.4 L600 130.7 L630 128.9 L660 126.8 L690 124.5 L720 122.0 L750 119.4 L780 116.7 L810 113.8 L840 111.0 L870 108.1 L900 105.2 L930 102.4 L960 99.7 L990 97.1 L1020 94.7 L1050 92.5 L1080 90.5 L1110 88.7 L1140 87.2 L1170 85.9 L1200 85.0 L1230 84.4 L1260 84.0 L1290 84.0 L1320 84.4 L1350 85.0 L1380 85.9 L1410 87.2 L1440 88.7 L1470 90.5 L1500 92.5 L1530 94.7 L1560 97.1 L1590 99.7 L1620 102.4 L1650 105.2 L1680 108.1 L1710 111.0 L1740 113.8 L1770 116.7 L1800 119.4 L1830 122.0 L1860 124.5 L1890 126.8 L1920 128.9 L1950 130.7 L1980 132.4 L2010 133.7 L2040 134.7 L2070 135.5 L2100 135.9 L2130 136.0 L2160 135.8 L2190 135.3 L2220 134.4 L2250 133.3 L2280 131.8 L2310 130.2 L2340 128.2 L2370 126.0 L2400 123.7 L2430 121.2 L2460 118.5 L2490 115.7 L2520 112.9 L2550 110.0 L2580 107.1 L2610 104.3 L2640 101.5 L2670 98.8 L2700 96.3 L2730 94.0 L2760 91.8 L2790 89.8 L2820 88.2 L2850 86.7 L2880 85.6 L2910 84.7 L2940 84.2 L2970 84.0 L3000 84.1 L3030 84.5 L3060 85.3 L3090 86.3 L3120 87.6 L3150 89.3 L3180 91.1 L3210 93.2 L3240 95.5 L3270 98.0 L3300 100.6 L3330 103.3 L3360 106.2 L3390 109.0 L3420 111.9 L3450 114.8 L3480 117.6 L3510 120.3 L3540 122.9 L3570 125.3 L3600 127.5 L3630 129.5 L3660 131.3 L3690 132.8 L3720 134.1 L3750 135.0 L3780 135.6 L3810 136.0 L3840 136.0 L3870 135.6 L3900 135.0 L3930 134.1 L3960 132.8 L3990 131.3 L4020 129.5 L4050 127.5 L4080 125.3 L4110 122.9 L4140 120.3 L4170 117.6 L4200 114.8 L4230 111.9 L4260 109.0 L4290 106.2 L4320 103.3 L4350 100.6 L4380 98.0 L4410 95.5 L4440 93.2 L4470 91.1 L4500 89.3 L4530 87.6 L4560 86.3 L4590 85.3 L4620 84.5 L4650 84.1 L4680 84.0 L4710 84.2 L4740 84.7 L4770 85.6 L4800 86.7 L4830 88.2 L4860 89.8 L4890 91.8 L4920 94.0 L4950 96.3 L4980 98.8 L5010 101.5 L5040 104.3 L5070 107.1 L5100 110.0 L5130 112.9 L5160 115.7 L5190 118.5 L5220 121.2 L5250 123.7 L5280 126.0 L5310 128.2 L5340 130.2 L5370 131.8 L5400 133.3 L5430 134.4 L5460 135.3 L5490 135.8 L5520 136.0 L5550 135.9 L5580 135.5 L5610 134.7 L5640 133.7 L5670 132.4 L5700 130.7 L5730 128.9 L5760 126.8 L5790 124.5 L5820 122.0 L5850 119.4 L5880 116.7 L5910 113.8 L5940 111.0 L5970 108.1 L6000 105.2 L6030 102.4 L6060 99.7 L6090 97.1 L6120 94.7 L6150 92.5 L6180 90.5 L6210 88.7 L6240 87.2 L6270 85.9 L6300 85.0 L6330 84.4 L6360 84.0 L6390 84.0 L6420 84.4 L6450 85.0 L6480 85.9 L6510 87.2 L6540 88.7 L6570 90.5 L6600 92.5 L6630 94.7 L6660 97.1 L6690 99.7 L6720 102.4 L6750 105.2 L6780 108.1 L6810 111.0 L6840 113.8 L6870 116.7 L6900 119.4 L6930 122.0 L6960 124.5 L6990 126.8 L7020 128.9 L7050 130.7 L7080 132.4 L7110 133.7 L7140 134.7 L7170 135.5 L7200 135.9 L7230 136.0 L7260 135.8 L7290 135.3 L7320 134.4 L7350 133.3 L7380 131.8 L7410 130.2 L7440 128.2 L7470 126.0 L7500 123.7 L7530 121.2 L7560 118.5 L7560 210 Z" fill="#009C3B"/></svg></div>
+    <div class="rodape">
+      <span class="marca-rodape"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="t">
+  
+  <circle cx="256" cy="262" r="200" fill="none" stroke="#FFFFFF" stroke-width="26"/>
+  <circle cx="256" cy="262" r="170" fill="none" stroke="#FFDF00" stroke-width="12" stroke-linecap="round"
+          stroke-dasharray="300 769" transform="rotate(37 256 262)"/>
+  <g fill="none" stroke="#FFFFFF" stroke-width="16" stroke-linecap="round">
+    <line x1="256" y1="262" x2="256" y2="300"/>
+    <circle cx="256" cy="268" r="34" stroke-dasharray="160 54" transform="rotate(120 256 268)"/>
+    <circle cx="256" cy="268" r="68" stroke-dasharray="330 97" transform="rotate(135 256 268)"/>
+    <circle cx="256" cy="268" r="102" stroke-dasharray="280 46 230 85" transform="rotate(125 256 268)"/>
+    <circle cx="256" cy="268" r="136" stroke-dasharray="420 70 260 105" transform="rotate(150 256 268)"/>
+  </g>
+  <polygon points="400,50 414.69,91.77 458.97,92.84 423.78,119.73 436.44,162.16 400,137 363.56,162.16 376.22,119.73 341.03,92.84 385.31,91.77"
+           fill="#E1251B" stroke="#FFFFFF" stroke-width="10" stroke-linejoin="round" paint-order="stroke"/>
+</svg>
+
+@identidadesoberana</span>
+      
+    </div>
+  </section></main></body></html>

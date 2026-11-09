@@ -1,0 +1,40 @@
+---
+import Base from "../layouts/Base.astro";
+import PostCard from "../components/PostCard.astro";
+import { getPosts, CATEGORIAS } from "../lib/posts";
+const posts = (await getPosts()).slice(0, 6);
+---
+<Base>
+  <section class="hero">
+    <div class="container">
+      <span class="chip">SOC · IAM · Compliance · Privacidade</span>
+      <h1>Segurança e identidade <span class="hl">sem complicação</span>.</h1>
+      <p>Conteúdo prático para quem opera segurança no dia a dia: analistas de SOC, times de Identity &amp; Access Management e profissionais de Compliance.</p>
+      <p style="display:flex;gap:.75rem;flex-wrap:wrap;margin-top:1.75rem">
+        <a class="btn" href="/blog/">Ler os artigos →</a>
+        <a class="btn sec" href="https://instagram.com/identidadesoberana">Dicas no Instagram</a>
+      </p>
+    </div>
+  </section>
+
+  <section class="secao">
+    <div class="container">
+      <div class="grid">
+        {Object.entries(CATEGORIAS).map(([slug, c]) => (
+          <a class="card" href={`/categoria/${slug}/`}>
+            <span class="chip">{c.nome}</span>
+            <p>{c.desc}</p>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="secao">
+    <div class="container">
+      <div class="secao-titulo"><h2>Últimos artigos</h2><a href="/blog/">Ver todos →</a></div>
+      <div class="grid">{posts.map((post) => <PostCard post={post} />)}</div>
+    </div>
+  </section>
+</Base>
+

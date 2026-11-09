@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+  <!-- escudo -->
+  <circle cx="200" cy="200" r="175" fill="#E6F5EC"/>
+  <circle cx="88" cy="110" r="16" fill="#FFDF00"/>
+  <circle cx="320" cy="290" r="12" fill="#00B347"/>
+  <path d="M200 62 L314 104 V196 C314 268 264 314 200 342 C136 314 86 268 86 196 V104 Z" fill="#009C3B"/>
+  <path d="M200 62 L314 104 V196 C314 268 264 314 200 342 Z" fill="#00612A" opacity=".35"/>
+  <path d="M148 204 L188 244 L258 168" fill="none" stroke="#FFDF00" stroke-width="24" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+

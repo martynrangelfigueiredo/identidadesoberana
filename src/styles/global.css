@@ -1,0 +1,125 @@
+/*
+ * Identidade Soberana — estilos do site.
+ * Cores/fontes/raios vêm de brand/tokens.css (importado no layout). Não crie cores novas aqui.
+ * Site = versão "sóbria" da marca: mais tipografia, menos ilustração.
+ */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--is-branco);
+  color: var(--is-tinta);
+  font: 400 1.0625rem/1.7 var(--is-fonte-texto);
+}
+img, svg { max-width: 100%; }
+a { color: var(--is-verde-escuro); text-decoration-thickness: 2px; text-underline-offset: 3px; }
+a:hover { color: var(--is-verde); }
+
+h1, h2, h3, h4 {
+  font-family: var(--is-fonte-titulo);
+  font-weight: 900;
+  line-height: 1.15;
+  letter-spacing: -.02em;
+  color: var(--is-tinta);
+}
+.hl { background: var(--is-marca-texto); padding: 0 .15em; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+
+.container { width: min(1120px, 100% - 2.5rem); margin-inline: auto; }
+.estreito { width: min(760px, 100% - 2.5rem); margin-inline: auto; }
+
+/* ---------- Header ---------- */
+.site-header {
+  position: sticky; top: 0; z-index: 10;
+  background: rgba(255, 255, 255, .88);
+  backdrop-filter: saturate(1.4) blur(12px);
+  border-bottom: 1px solid var(--is-borda);
+}
+.site-header .container { display: flex; align-items: center; justify-content: space-between; height: 72px; gap: 1rem; }
+.marca { display: flex; align-items: center; gap: .65rem; text-decoration: none; }
+.marca svg { width: 44px; height: 44px; }
+.marca-nome { font: 900 1.2rem/1 var(--is-fonte-titulo); color: var(--is-verde-escuro); letter-spacing: -.02em; }
+.marca-nome b { color: var(--is-verde); font-weight: 900; }
+.nav { display: flex; gap: .25rem; flex-wrap: wrap; }
+.nav a {
+  text-decoration: none; color: var(--is-cinza);
+  font: 700 .95rem var(--is-fonte-titulo);
+  padding: .5rem .9rem; border-radius: var(--is-raio-pill);
+}
+.nav a:hover, .nav a[aria-current="page"] { background: var(--is-verde-claro); color: var(--is-verde-escuro); }
+
+/* ---------- Hero ---------- */
+.hero { position: relative; padding: 5rem 0 4rem; overflow: hidden; }
+.hero::before {
+  content: ""; position: absolute; inset: 0;
+  background-image: radial-gradient(var(--is-borda) 1.4px, transparent 1.8px);
+  background-size: 24px 24px;
+  mask-image: linear-gradient(180deg, #000 0%, transparent 85%);
+  z-index: -1;
+}
+.hero h1 { font-size: clamp(2.3rem, 5vw, 3.8rem); margin: .75rem 0 1rem; max-width: 16ch; }
+.hero p { font-size: 1.2rem; color: var(--is-cinza); max-width: 60ch; }
+
+/* ---------- Chips, botões ---------- */
+.chip {
+  display: inline-flex; align-items: center; gap: .45rem;
+  font: 700 .8rem var(--is-fonte-titulo); letter-spacing: .02em;
+  color: var(--is-verde-escuro); background: var(--is-verde-claro);
+  padding: .3rem .8rem; border-radius: var(--is-raio-pill); text-decoration: none;
+}
+.chip::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--is-verde); }
+.btn {
+  display: inline-flex; align-items: center; gap: .5rem;
+  font: 800 1rem var(--is-fonte-titulo); text-decoration: none;
+  padding: .8rem 1.4rem; border-radius: var(--is-raio-pill);
+  background: var(--is-verde); color: var(--is-branco); box-shadow: var(--is-sombra-1);
+}
+.btn:hover { background: var(--is-verde-escuro); color: var(--is-branco); }
+.btn.sec { background: var(--is-branco); color: var(--is-verde-escuro); border: 2px solid var(--is-borda); }
+
+/* ---------- Cards ---------- */
+.grid { display: grid; gap: 1.25rem; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
+.card {
+  display: flex; flex-direction: column; gap: .6rem;
+  background: var(--is-branco); border: 1px solid var(--is-borda);
+  border-radius: var(--is-raio-md); padding: 1.5rem;
+  box-shadow: var(--is-sombra-1); text-decoration: none; color: inherit;
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+a.card:hover { transform: translateY(-3px); box-shadow: var(--is-sombra-2); border-color: var(--is-verde); color: inherit; }
+.card h3 { font-size: 1.3rem; margin: 0; }
+.card p { margin: 0; color: var(--is-cinza); font-size: .98rem; }
+.meta { font-size: .85rem; color: var(--is-cinza-claro); display: flex; gap: .75rem; align-items: center; flex-wrap: wrap; }
+
+.secao { padding: 3rem 0; }
+.secao-titulo { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 1.5rem; }
+.secao-titulo h2 { font-size: 1.8rem; margin: 0; }
+
+/* ---------- Artigo ---------- */
+.artigo-header { padding: 3.5rem 0 2rem; border-bottom: 1px solid var(--is-borda); margin-bottom: 2.5rem; }
+.artigo-header h1 { font-size: clamp(2rem, 4.5vw, 3rem); margin: .8rem 0; }
+.artigo-header p { font-size: 1.2rem; color: var(--is-cinza); margin: 0 0 1rem; }
+.prosa h2 { font-size: 1.75rem; margin: 2.75rem 0 1rem; }
+.prosa h3 { font-size: 1.3rem; margin: 2rem 0 .75rem; }
+.prosa h2::before { content: ""; display: block; width: 48px; height: 6px; border-radius: 3px; background: var(--is-amarelo); margin-bottom: .75rem; }
+.prosa code { font: .9em var(--is-fonte-codigo); background: var(--is-verde-nevoa); border: 1px solid var(--is-borda); padding: .1em .4em; border-radius: 6px; }
+.prosa pre { border: 1px solid var(--is-borda); border-radius: var(--is-raio-sm); padding: 1.1rem 1.25rem; overflow-x: auto; font-size: .9rem; background: var(--is-verde-nevoa) !important; }
+.prosa pre code { background: none; border: 0; padding: 0; }
+.prosa blockquote {
+  margin: 1.75rem 0; padding: 1rem 1.25rem;
+  background: var(--is-amarelo-claro); border-left: 5px solid var(--is-amarelo);
+  border-radius: 0 var(--is-raio-sm) var(--is-raio-sm) 0;
+}
+.prosa blockquote p { margin: 0; }
+.prosa table { width: 100%; border-collapse: collapse; margin: 1.75rem 0; font-size: .95rem; display: block; overflow-x: auto; }
+.prosa th { font-family: var(--is-fonte-titulo); text-align: left; background: var(--is-verde-claro); color: var(--is-verde-escuro); }
+.prosa th, .prosa td { padding: .65rem .9rem; border-bottom: 1px solid var(--is-borda); }
+.prosa img { border-radius: var(--is-raio-md); }
+.prosa hr { border: 0; height: 1px; background: var(--is-borda); margin: 3rem 0; }
+
+/* ---------- Footer com a fita verde/amarela ---------- */
+.site-footer { margin-top: 5rem; color: var(--is-branco); background: var(--is-verde); position: relative; }
+.site-footer .fita { display: block; width: 100%; height: 70px; margin-bottom: -1px; background: var(--is-branco); }
+.site-footer .container { padding: 2rem 0 2.5rem; display: flex; justify-content: space-between; gap: 1.5rem; flex-wrap: wrap; align-items: center; }
+.site-footer a { color: var(--is-branco); }
+.site-footer .marca-nome, .site-footer .marca-nome b { color: var(--is-branco); }
+

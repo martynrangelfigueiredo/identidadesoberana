@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+  <!-- senha: campo de senha + barra de força + dedo -->
+  <circle cx="200" cy="200" r="175" fill="#E6F5EC"/>
+  <circle cx="320" cy="96" r="18" fill="#FFDF00"/>
+  <rect x="58" y="138" width="284" height="84" rx="42" fill="#FFFFFF"/>
+  <rect x="58" y="138" width="284" height="84" rx="42" fill="none" stroke="#009C3B" stroke-width="6"/>
+  <g fill="#1B2B22">
+    <circle cx="106" cy="180" r="11"/><circle cx="140" cy="180" r="11"/><circle cx="174" cy="180" r="11"/>
+    <circle cx="208" cy="180" r="11"/><circle cx="242" cy="180" r="11"/><circle cx="276" cy="180" r="11"/>
+  </g>
+  <rect x="300" y="162" width="6" height="36" rx="3" fill="#009C3B"/>
+  <rect x="78" y="242" width="70" height="14" rx="7" fill="#009C3B"/>
+  <rect x="160" y="242" width="70" height="14" rx="7" fill="#009C3B"/>
+  <rect x="242" y="242" width="70" height="14" rx="7" fill="#009C3B"/>
+  <!-- dedo -->
+  <rect x="236" y="262" width="36" height="96" rx="18" fill="#E8B98F"/>
+  <rect x="226" y="314" width="96" height="86" rx="34" fill="#E8B98F"/>
+  <rect x="242" y="268" width="24" height="18" rx="8" fill="#F6D9BE"/>
+</svg>
+

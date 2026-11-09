@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+  <!-- cartao: mão segurando cartão -->
+  <circle cx="200" cy="200" r="175" fill="#E6F5EC"/>
+  <circle cx="318" cy="96" r="20" fill="#FFDF00"/>
+  <g transform="rotate(-10 200 190)">
+    <rect x="80" y="110" width="240" height="150" rx="20" fill="#009C3B"/>
+    <rect x="80" y="140" width="240" height="28" fill="#00612A"/>
+    <rect x="104" y="188" width="44" height="34" rx="7" fill="#FFDF00"/>
+    <rect x="166" y="194" width="30" height="10" rx="5" fill="#FFFFFF" opacity=".85"/>
+    <rect x="204" y="194" width="30" height="10" rx="5" fill="#FFFFFF" opacity=".85"/>
+    <rect x="242" y="194" width="52" height="10" rx="5" fill="#FFFFFF"/>
+    <rect x="104" y="232" width="90" height="8" rx="4" fill="#FFFFFF" opacity=".6"/>
+  </g>
+  <!-- mão -->
+  <rect x="200" y="250" width="150" height="100" rx="48" fill="#A86B43"/>
+  <ellipse cx="228" cy="246" rx="20" ry="46" transform="rotate(-50 228 246)" fill="#8E5735"/>
+  <rect x="290" y="335" width="90" height="65" rx="14" fill="#00612A"/>
+</svg>
+

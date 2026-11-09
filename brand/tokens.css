@@ -1,0 +1,51 @@
+/*
+ * Identidade Soberana — Design Tokens
+ * Fonte única de verdade para cores, fontes, raios e sombras.
+ * Usado pelo SITE (src/styles/global.css) e pelos CARROSSÉIS (instagram/template/carrossel.css).
+ * NÃO crie cores novas fora deste arquivo. Veja brand/BRAND.md.
+ */
+@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap");
+
+:root {
+  /* ---------- Cores principais ---------- */
+  --is-verde: #009C3B;          /* Verde Soberano — cor principal da marca */
+  --is-verde-escuro: #00612A;   /* Verde Profundo — títulos, links, texto verde */
+  --is-verde-medio: #00B347;    /* brilho/realce de ilustrações */
+  --is-verde-claro: #E6F5EC;    /* fundos suaves, blobs, chips */
+  --is-verde-nevoa: #F3FAF5;    /* superfície alternativa */
+
+  --is-amarelo: #FFDF00;        /* Amarelo Ouro — SOMENTE destaques (marca-texto, selos) */
+  --is-amarelo-claro: #FFF7CC;  /* fundo de dica/caixa de atenção leve */
+
+  --is-vermelho: #E1251B;       /* Vermelho Estrela — SOMENTE a estrela do logo */
+
+  /* ---------- Neutros ---------- */
+  --is-branco: #FFFFFF;         /* fundo padrão — SEMPRE branco */
+  --is-tinta: #1B2B22;          /* texto principal (verde quase preto) */
+  --is-cinza: #5B6B62;          /* texto secundário */
+  --is-cinza-claro: #9AA8A0;    /* legendas, metadados */
+  --is-borda: #DDE7E0;          /* bordas e divisórias */
+
+  /* ---------- Ilustração (mãos) ---------- */
+  --is-pele-1: #E8B98F;
+  --is-pele-2: #A86B43;
+
+  /* ---------- Tipografia ---------- */
+  --is-fonte-titulo: "Nunito", "Quicksand", system-ui, sans-serif;  /* 800/900 */
+  --is-fonte-texto: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --is-fonte-codigo: "JetBrains Mono", ui-monospace, "Cascadia Code", monospace;
+
+  /* ---------- Forma (estilo Material/GNOME) ---------- */
+  --is-raio-sm: 12px;
+  --is-raio-md: 20px;
+  --is-raio-lg: 28px;
+  --is-raio-pill: 999px;
+
+  --is-sombra-1: 0 1px 2px rgba(27, 43, 34, .06), 0 2px 6px rgba(27, 43, 34, .06);
+  --is-sombra-2: 0 4px 12px rgba(27, 43, 34, .08), 0 12px 32px rgba(0, 97, 42, .08);
+  --is-sombra-3: 0 10px 30px rgba(27, 43, 34, .10), 0 24px 60px rgba(0, 97, 42, .12);
+
+  /* Marca-texto amarelo (efeito assinatura da marca) */
+  --is-marca-texto: linear-gradient(transparent 55%, var(--is-amarelo) 55%, var(--is-amarelo) 92%, transparent 92%);
+}
+

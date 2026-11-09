@@ -1,0 +1,67 @@
+{
+  "titulo": "Sua senha é forte mesmo?",
+  "categoria": "Senhas",
+  "data": "2026-11-09",
+  "slides": [
+    {
+      "tipo": "capa",
+      "titulo": "Sua senha é *forte* mesmo?",
+      "subtitulo": "4 dicas rápidas pra deixar suas contas bem mais seguras.",
+      "ilustracao": "senha"
+    },
+    {
+      "tipo": "dica",
+      "numero": 1,
+      "titulo": "Frase é melhor que *palavra*",
+      "texto": "Em vez de **Maria123**, use uma frase que só você entende, tipo **CafeComPaoNaPraia!**",
+      "sabia": "Senhas longas são muito mais difíceis de descobrir do que senhas curtas e “complicadas”.",
+      "ilustracao": "cadeado"
+    },
+    {
+      "tipo": "dica",
+      "numero": 2,
+      "titulo": "Uma senha pra *cada* conta",
+      "texto": "Se você usa a mesma senha em tudo, basta um site vazar pra todas as suas contas ficarem expostas.",
+      "ilustracao": "email"
+    },
+    {
+      "tipo": "dica",
+      "numero": 3,
+      "titulo": "Ative a *verificação em duas etapas*",
+      "texto": "É aquele código que chega no seu celular. Mesmo que alguém descubra sua senha, não consegue entrar sem ele.",
+      "ilustracao": "celular"
+    },
+    {
+      "tipo": "comparacao",
+      "titulo": "Na prática",
+      "faca": [
+        "Usar frases longas",
+        "Guardar senhas num **gerenciador de senhas**",
+        "Trocar a senha se o site avisar de vazamento"
+      ],
+      "evite": [
+        "Data de aniversário",
+        "Nome do pet ou do time",
+        "Anotar senha num papel na carteira"
+      ],
+      "ilustracao": "escudo"
+    },
+    {
+      "tipo": "resumo",
+      "itens": [
+        "Senha boa é senha *longa*",
+        "Uma senha diferente pra cada conta",
+        "Verificação em duas etapas ligada",
+        "Um gerenciador lembra tudo por você"
+      ]
+    },
+    {
+      "tipo": "cta",
+      "titulo": "Gostou? *Salva* esse post!",
+      "texto": "E manda pra aquela pessoa que usa “123456” em tudo 😅"
+    }
+  ],
+  "legenda": "Sua senha aguenta o tranco? 🔐\n\nA maioria das contas invadidas não é culpa de hacker gênio: é senha fraca ou repetida. A boa notícia é que dá pra resolver em 10 minutos.\n\nArrasta pro lado e vê as 4 dicas 👉\n\nSalva pra fazer depois e manda pra quem precisa! 💚💛",
+  "hashtags": ["segurancadigital", "senhaforte", "privacidade", "dicasdeseguranca", "golpesnainternet", "identidadesoberana"]
+}
+

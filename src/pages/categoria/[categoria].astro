@@ -1,0 +1,27 @@
+---
+import Base from "../../layouts/Base.astro";
+import PostCard from "../../components/PostCard.astro";
+import { getPosts, CATEGORIAS } from "../../lib/posts";
+
+export async function getStaticPaths() {
+  const posts = await getPosts();
+  return Object.entries(CATEGORIAS).map(([slug, c]) => ({
+    params: { categoria: slug },
+    props: { cat: c, posts: posts.filter((p) => p.data.categoria === c.nome) },
+  }));
+}
+const { cat, posts } = Astro.props;
+---
+<Base title={cat.nome} description={cat.desc}>
+  <section class="artigo-header">
+    <div class="container">
+      <span class="chip">Categoria</span>
+      <h1><span class="hl">{cat.nome}</span></h1>
+      <p>{cat.desc}</p>
+    </div>
+  </section>
+  <div class="container">
+    {posts.length ? <div class="grid">{posts.map((post) => <PostCard post={post} />)}</div> : <p>Em breve.</p>}
+  </div>
+</Base>
+
