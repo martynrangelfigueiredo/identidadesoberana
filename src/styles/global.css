@@ -69,12 +69,34 @@ h1, h2, h3, h4 {
 }
 .marca-nome b { color: var(--is-verde); font-weight: 900; }
 
-.header-actions {
+.header-right {
   display: flex;
   align-items: center;
-  gap: .4rem;
-  flex-wrap: nowrap;
+  gap: .75rem;
   flex-shrink: 0;
+}
+
+/* Navegação Desktop (Pills elegantes) */
+.nav {
+  display: flex;
+  gap: .35rem;
+  align-items: center;
+}
+.nav a {
+  text-decoration: none;
+  color: var(--is-cinza);
+  font: 700 .92rem var(--is-fonte-titulo);
+  padding: .45rem .85rem;
+  border-radius: var(--is-raio-pill);
+  min-height: 38px;
+  display: inline-flex;
+  align-items: center;
+  transition: all .15s ease;
+}
+.nav a:hover,
+.nav a[aria-current="page"] {
+  background: var(--is-verde-claro);
+  color: var(--is-verde-escuro);
 }
 
 /* Menu Hambúrguer (Mobile) */
@@ -100,22 +122,10 @@ h1, h2, h3, h4 {
   border-color: var(--is-verde);
 }
 
-@media (max-width: 480px) {
-  .site-header .container {
-    min-height: 56px;
-    padding-inline: .75rem;
-  }
-  .marca { gap: .4rem; }
-  .marca svg { width: 32px; height: 32px; }
-  .marca-nome { font-size: 1.02rem; }
-  .header-actions { gap: .3rem; }
-}
-
-@media (max-width: 360px) {
-  .marca-nome { font-size: .92rem; }
-}
-
 @media (max-width: 900px) {
+  .header-right {
+    gap: .4rem;
+  }
   .mobile-toggle { display: inline-flex; }
   .nav {
     display: none;
@@ -136,6 +146,21 @@ h1, h2, h3, h4 {
     padding: .75rem 1rem;
     font-size: 1.05rem;
   }
+}
+
+@media (max-width: 480px) {
+  .site-header .container {
+    min-height: 56px;
+    padding-inline: .75rem;
+  }
+  .marca { gap: .4rem; }
+  .marca svg { width: 32px; height: 32px; }
+  .marca-nome { font-size: 1.02rem; }
+  .header-right { gap: .35rem; }
+}
+
+@media (max-width: 360px) {
+  .marca-nome { font-size: .92rem; }
 }
 
 /* ---------- Google Translate Cleanup ---------- */

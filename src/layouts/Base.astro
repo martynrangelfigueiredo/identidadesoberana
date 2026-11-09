@@ -117,7 +117,11 @@ const nav = [
           <span class="marca-nome">identidade <b>soberana</b></span>
         </a>
 
-        <div class="header-actions">
+        <div class="header-right">
+          <nav id="site-nav" class="nav">
+            {nav.map((i) => <a href={i.href} aria-current={path.startsWith(i.href) ? "page" : undefined}>{i.label}</a>)}
+          </nav>
+
           <LanguageSelector />
           
           <button id="mobile-menu-btn" class="mobile-toggle" type="button" aria-label="Abrir menu de navegação" aria-expanded="false">
@@ -128,10 +132,6 @@ const nav = [
             </svg>
           </button>
         </div>
-
-        <nav id="site-nav" class="nav">
-          {nav.map((i) => <a href={i.href} aria-current={path.startsWith(i.href) ? "page" : undefined}>{i.label}</a>)}
-        </nav>
       </div>
     </header>
 
