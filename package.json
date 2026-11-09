@@ -8,7 +8,9 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "carrossel": "node scripts/carrossel.mjs"
+    "carrossel": "node scripts/carrossel.mjs",
+    "novo:artigo": "node scripts/novo.mjs artigo",
+    "novo:carrossel": "node scripts/novo.mjs carrossel"
   },
   "dependencies": {
     "astro": "^5.0.0"
