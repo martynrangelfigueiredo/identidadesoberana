@@ -37,7 +37,7 @@ h1, h2, h3, h4 {
 /* ---------- Header & Navegação Mobile/Desktop ---------- */
 .site-header {
   position: sticky; top: 0; z-index: 100;
-  background: rgba(255, 255, 255, .95);
+  background: rgba(255, 255, 255, .96);
   backdrop-filter: saturate(1.4) blur(12px);
   border-bottom: 1px solid var(--is-borda);
 }
@@ -45,48 +45,36 @@ h1, h2, h3, h4 {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  min-height: 68px;
-  gap: .75rem;
-  padding-block: .4rem;
+  min-height: 64px;
+  gap: .5rem;
+  padding-block: .35rem;
+  flex-wrap: nowrap;
 }
-.marca { display: flex; align-items: center; gap: .65rem; text-decoration: none; flex-shrink: 0; }
-.marca svg { width: 42px; height: 42px; }
-.marca-nome { font: 900 1.2rem/1 var(--is-fonte-titulo); color: var(--is-verde-escuro); letter-spacing: -.02em; }
+.marca {
+  display: flex;
+  align-items: center;
+  gap: .55rem;
+  text-decoration: none;
+  flex-shrink: 1;
+  min-width: 0;
+}
+.marca svg { width: 38px; height: 38px; flex-shrink: 0; }
+.marca-nome {
+  font: 900 1.15rem/1.1 var(--is-fonte-titulo);
+  color: var(--is-verde-escuro);
+  letter-spacing: -.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 .marca-nome b { color: var(--is-verde); font-weight: 900; }
-
-@media (max-width: 480px) {
-  .marca { gap: .45rem; }
-  .marca-nome { font-size: 1.05rem; }
-  .marca svg { width: 34px; height: 34px; }
-  .site-header .container { min-height: 58px; }
-  .header-actions { gap: .3rem; }
-}
 
 .header-actions {
   display: flex;
   align-items: center;
-  gap: .5rem;
-  flex-wrap: wrap;
-}
-
-.nav {
-  display: flex;
-  gap: .25rem;
-  align-items: center;
-}
-.nav a {
-  text-decoration: none;
-  color: var(--is-cinza);
-  font: 700 .95rem var(--is-fonte-titulo);
-  padding: .5rem .85rem;
-  border-radius: var(--is-raio-pill);
-  min-height: 40px;
-  display: inline-flex;
-  align-items: center;
-}
-.nav a:hover, .nav a[aria-current="page"] {
-  background: var(--is-verde-claro);
-  color: var(--is-verde-escuro);
+  gap: .4rem;
+  flex-wrap: nowrap;
+  flex-shrink: 0;
 }
 
 /* Menu Hambúrguer (Mobile) */
@@ -94,14 +82,37 @@ h1, h2, h3, h4 {
   display: none;
   background: var(--is-verde-nevoa);
   border: 1px solid var(--is-borda);
-  border-radius: var(--is-raio-md);
-  padding: .5rem;
+  border-radius: var(--is-raio-pill);
+  width: 38px;
+  height: 38px;
+  min-width: 38px;
+  min-height: 38px;
+  padding: 0;
   cursor: pointer;
   color: var(--is-verde-escuro);
-  min-width: 44px;
-  min-height: 44px;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
+  transition: all .15s ease;
+}
+.mobile-toggle:hover {
+  background: var(--is-verde-claro);
+  border-color: var(--is-verde);
+}
+
+@media (max-width: 480px) {
+  .site-header .container {
+    min-height: 56px;
+    padding-inline: .75rem;
+  }
+  .marca { gap: .4rem; }
+  .marca svg { width: 32px; height: 32px; }
+  .marca-nome { font-size: 1.02rem; }
+  .header-actions { gap: .3rem; }
+}
+
+@media (max-width: 360px) {
+  .marca-nome { font-size: .92rem; }
 }
 
 @media (max-width: 900px) {
