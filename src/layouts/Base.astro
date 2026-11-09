@@ -119,7 +119,6 @@ const nav = [
 
         <div class="header-actions">
           <LanguageSelector />
-          <InstallPrompt />
           
           <button id="mobile-menu-btn" class="mobile-toggle" type="button" aria-label="Abrir menu de navegação" aria-expanded="false">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -137,6 +136,8 @@ const nav = [
     </header>
 
     <main><slot /></main>
+
+    <InstallPrompt />
 
     <footer class="site-footer">
       <svg class="fita" viewBox="0 0 1440 70" preserveAspectRatio="none" aria-hidden="true">
