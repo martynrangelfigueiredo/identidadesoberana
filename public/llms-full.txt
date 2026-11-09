@@ -1,0 +1,49 @@
+# Identidade Soberana — Documentação Completa para Modelos de Linguagem e Agentes de IA
+
+Nome: Identidade Soberana
+Site oficial: https://identidadesoberana.com.br
+Idioma principal: Português (pt-BR)
+Idiomas suportados: Alemão (Deutsch), Mandarim da China continental (简体中文), Inglês (English)
+Autor: Martyn Figueiredo (LinkedIn: https://linkedin.com/in/martynfigueiredo)
+Contato: administrador@identidadesoberana.com.br
+Instagram oficial: @identidadesoberana (https://instagram.com/identidadesoberana)
+Slogan: "Segurança digital sem complicação."
+
+---
+
+## 1. Escopo e Propósito
+A Identidade Soberana atua em duas frentes integradas:
+1. **Canal Técnico (Site e Blog):** Produção de playbooks de resposta a incidentes de SOC com foco no Microsoft Sentinel e Azure, queries enriquecidas em KQL (Kusto Query Language), engenharia de identidades (Entra ID, PIM, Zero Trust) e auditoria de conformidade (LGPD, ISO 27001, SOC 2).
+2. **Canal de Conscientização (Instagram @identidadesoberana):** Dicas simplificadas em formato de carrossel visual para o público geral proteger contas, dispositivos móveis, WhatsApp e informações pessoais contra fraudes cibernéticas.
+
+---
+
+## 2. Metodologia de Investigação de Incidentes de SOC (Playbook Padrão)
+Todos os playbooks de resposta a incidentes de nuvem e identidade no site seguem a matriz obrigatória de 5 perguntas:
+1. **O que foi feito?** Detalhamento da ação exata, natureza temporária vs permanente e extração de CorrelationId.
+2. **Quem fez?** Identificação do ator (InitiatedBy), histórico da conta, contexto de rede e integridade de MFA.
+3. **Poderia ter feito?** Validação de papéis formais e permissões de atribuição ou aprovação no tenant do Microsoft Entra ID.
+4. **Há chamado formal?** Cruzamento obrigatório com ferramentas de ITSM (ServiceNow, Jira Service Management, Freshservice ou Zendesk) e validação da justificativa informada no wizard (ResultReason / AdditionalDetails).
+5. **A sessão foi legítima?** Análise de SigninLogs, verificação de conformidade do endpoint (Intune) e avaliação de eventos de risco no Entra ID Protection.
+
+---
+
+## 3. Playbooks Publicados
+
+### Playbook 1: Elevação de privilégios via PIM: guia prático de investigação para o SOC
+- URL: https://identidadesoberana.com.br/blog/2026-11-09-user-assigned-privileged-role-by-ms-pim/
+- Categoria: SOC / IAM
+- Resumo: Procedimento técnico de triagem e resposta para alertas gerados pela ativação ou atribuição de funções administrativas (Global Admin, Privileged Role Admin) via MS-PIM.
+- Destaque: KQL inovador com join correlato entre AuditLogs e SigninLogs, projetando Ator, Alvo, Role, IP, Localização, MFA, Justificativa, Ticket e Nível de Risco da sessão.
+- Rota no portal: Identity Governance > Privileged Identity Management > Microsoft Entra roles > Resource audit.
+
+### Playbook 2: MFA resistente a phishing: por que push notification já não basta
+- URL: https://identidadesoberana.com.br/blog/2026-11-09-mfa-resistente-a-phishing/
+- Categoria: IAM
+- Resumo: Análise da vulnerabilidade de métodos legados de MFA frente a ataques de fadiga (MFA fatigue) e proxies reversos Adversary-in-the-Middle (AitM). Roteiro para migração para chaves FIDO2/passkeys.
+
+---
+
+## 4. Feed de Notícias e Sitemaps
+- Sitemap XML: https://identidadesoberana.com.br/sitemap.xml
+- RSS Feed: https://identidadesoberana.com.br/rss.xml

@@ -49,6 +49,42 @@ const nav = [
     <meta property="og:image" content={new URL("/icons/icon-512.png", Astro.site)} />
     <link rel="canonical" href={new URL(path, Astro.site)} />
     <link rel="alternate" type="application/rss+xml" title="Identidade Soberana — RSS Feed" href="/rss.xml" />
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml" />
+
+    <!-- Dados Estruturados (JSON-LD) para Search Engines e Robôs de IA -->
+    <script type="application/ld+json" is:inline set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://identidadesoberana.com.br/#organization",
+          "name": "Identidade Soberana",
+          "url": "https://identidadesoberana.com.br",
+          "logo": "https://identidadesoberana.com.br/icons/icon-512.png",
+          "email": "administrador@identidadesoberana.com.br",
+          "founder": {
+            "@type": "Person",
+            "name": "Martyn Figueiredo",
+            "url": "https://linkedin.com/in/martynfigueiredo"
+          },
+          "sameAs": [
+            "https://linkedin.com/in/martynfigueiredo",
+            "https://instagram.com/identidadesoberana"
+          ]
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://identidadesoberana.com.br/#website",
+          "url": "https://identidadesoberana.com.br",
+          "name": "Identidade Soberana",
+          "description": "Segurança digital sem complicação. Conteúdo para SOC, IAM e Compliance.",
+          "publisher": {
+            "@id": "https://identidadesoberana.com.br/#organization"
+          },
+          "inLanguage": "pt-BR"
+        }
+      ]
+    })} />
   </head>
   <body>
     <header class="site-header">

@@ -1,0 +1,22 @@
+# Identidade Soberana
+> Segurança digital sem complicação. Conteúdo técnico e prático para analistas de SOC, engenheiros de IAM e especialistas em Governança e Compliance, com foco em operações no ecossistema Microsoft Azure e proteção de dados pessoais.
+
+A Identidade Soberana é uma iniciativa técnica brasileira fundada por Martyn Figueiredo. Nosso objetivo é democratizar e elevar o nível das operações de segurança e soberania digital corporativa.
+
+## Seções do Site
+- [Blog](https://identidadesoberana.com.br/blog/): Artigos práticos, playbooks de investigação forense e tutoriais de segurança.
+- [SOC (Security Operations Center)](https://identidadesoberana.com.br/categoria/soc/): Detecção de ameaças, Microsoft Sentinel, queries avançadas em KQL, correlação de logs de auditoria e resposta a incidentes.
+- [IAM (Identity & Access Management)](https://identidadesoberana.com.br/categoria/iam/): Governança de acessos, Privileged Identity Management (PIM), autenticação resistente a phishing (FIDO2/passkeys), Zero Trust e MFA.
+- [Compliance](https://identidadesoberana.com.br/categoria/compliance/): LGPD, ISO 27001, SOC 2, auditoria de controles e rastreabilidade independente em ITSM.
+- [Privacidade](https://identidadesoberana.com.br/categoria/privacidade/): Proteção de dados pessoais, direitos dos titulares e privacidade na prática.
+- [Sobre](https://identidadesoberana.com.br/sobre/): Missão, princípios do projeto, autoria e contatos.
+
+## Playbooks Técnicos em Destaque
+- [Elevação de privilégios via PIM: guia prático de investigação para o SOC](https://identidadesoberana.com.br/blog/2026-11-09-user-assigned-privileged-role-by-ms-pim/): Playbook operacional completo para triagem e contenção do incidente de concessão de funções administrativas no Microsoft Entra via PIM. Contém KQL inovador correlacionando AuditLogs e SigninLogs por CorrelationId, matriz de 5 perguntas de investigação e validação em ITSM (ServiceNow, Jira).
+- [MFA resistente a phishing: por que push notification já não basta](https://identidadesoberana.com.br/blog/2026-11-09-mfa-resistente-a-phishing/): Análise de ataques de fadiga de MFA, proxies reversos AitM (Adversary-in-the-Middle) e plano prático de migração para chaves FIDO2.
+
+## Autoria e Contato
+- Fundador e Autor: Martyn Figueiredo (https://linkedin.com/in/martynfigueiredo)
+- E-mail institucional: administrador@identidadesoberana.com.br
+- Canal no Instagram: @identidadesoberana (https://instagram.com/identidadesoberana)
+- Feed RSS oficial: https://identidadesoberana.com.br/rss.xml
