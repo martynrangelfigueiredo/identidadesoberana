@@ -36,12 +36,30 @@ A query abaixo projeta algumas informações adicionais para contextualizar o ev
 
 ```kql
 // ====================================================================================
-// Detecção & Enriquecimento: Privileged Role Assignment via PIM
+// Deteccao & Enriquecimento: Privileged Role Assignment via PIM
 // Autor: Identidade Soberana (identidadesoberana.com.br)
-// Objetivo: Mapear ator, alvo, role, justificativa, IP, MFA e correlação de risco
+// Objetivo: Mapear ator, alvo, role, justificativa, IP, MFA e correlacao de risco
 // ====================================================================================
 let tempoAnalise = 24h;
-let rolesCriticas = dynamic([
+// 1. Extracao dos eventos de auditoria do PIM
+let EventosPIM = AuditLogs
+| where TimeGenerated >= ago(tempoAnalise)
+| where LoggedByService == "Privileged Identity Management" or LoggedByService == "Core Directory"
+| where ActivityDisplayName in (
+    "Add member to role in PIM completed (permanent)",
+    "Add member to role in PIM completed (time-bound)",
+    "Add member to role completed (PIM activation)",
+    "Add eligible member to role in PIM completed",
+    "Add member to role in PIM request approved"
+)
+| mv-expand Target = TargetResources
+| mv-expand ModProp = Target.modifiedProperties
+| extend InitiatorUPN = tostring(InitiatedBy.user.userPrincipalName),
+         InitiatorIP = tostring(InitiatedBy.user.ipAddress),
+         InitiatorApp = tostring(InitiatedBy.app.displayName),
+         TargetUPN = tostring(Target.userPrincipalName),
+         RoleAssigned = tostring(ModProp.newValue)
+| where RoleAssigned in (
     "Global Administrator",
     "Privileged Role Administrator",
     "Security Administrator",
@@ -52,33 +70,8 @@ let rolesCriticas = dynamic([
     "SharePoint Administrator",
     "Intune Administrator",
     "Conditional Access Administrator"
-]);
-// 1. Extração dos eventos de auditoria do PIM
-let EventosPIM = AuditLogs
-| where TimeGenerated >= ago(tempoAnalise)
-| where LoggedByService =~ "Privileged Identity Management" or LoggedByService =~ "Core Directory"
-| where ActivityDisplayName in~ (
-    "Add member to role in PIM completed (permanent)",
-    "Add member to role in PIM completed (time-bound)",
-    "Add member to role completed (PIM activation)",
-    "Add eligible member to role in PIM completed",
-    "Add member to role in PIM request approved"
-)
-| extend InitiatorUPN = tostring(InitiatedBy.user.userPrincipalName),
-         InitiatorIP = tostring(InitiatedBy.user.ipAddress),
-         InitiatorApp = tostring(InitiatedBy.app.displayName),
-         TargetUPN = tostring(TargetResources[0].userPrincipalName),
-         RoleAssigned = tostring(TargetResources[0].modifiedProperties[1].newValue)
-| extend RoleAssigned = trim(@'["\\]', RoleAssigned)
-| where RoleAssigned in~ (rolesCriticas) or isempty(RoleAssigned) or RoleAssigned has_any (rolesCriticas)
-| extend ResultReason = tostring(ResultReason)
-| extend AdditionalDetailsDynamic = parse_json(AdditionalDetails)
-| mv-apply Detail = AdditionalDetailsDynamic on (
-    where Detail.key in~ ("Justification", "TicketNumber", "TicketSystem")
-    | summarize Justification = take_anyif(tostring(Detail.value), Detail.key =~ "Justification"),
-                TicketNumber = take_anyif(tostring(Detail.value), Detail.key =~ "TicketNumber")
-)
-| extend JustificativaFinal = coalesce(Justification, ResultReason, "Nenhuma justificativa informada")
+) or isempty(RoleAssigned)
+| extend JustificativaFinal = iff(isempty(ResultReason), "Nenhuma justificativa informada", tostring(ResultReason))
 | project 
     TimeGenerated,
     CorrelationId,
@@ -87,24 +80,23 @@ let EventosPIM = AuditLogs
     TargetUPN,
     InitiatorUPN = iff(isempty(InitiatorUPN), InitiatorApp, InitiatorUPN),
     JustificativaFinal,
-    TicketNumber,
     Result;
-// 2. Cruzamento com SigninLogs para capturar contexto de autenticação e risco
+// 2. Cruzamento com SigninLogs para capturar contexto de autenticacao e risco
+let SinaisLogon = SigninLogs
+| where TimeGenerated >= ago(tempoAnalise)
+| mv-expand AuthDetail = AuthenticationDetails
+| project 
+    CorrelationId,
+    UserPrincipalName,
+    IPAddress,
+    Location = strcat(LocationDetails.city, ", ", LocationDetails.countryOrRegion),
+    AuthMFA = AuthenticationRequirement,
+    MfaResult = tostring(AuthDetail.authenticationStepResultDetail),
+    ClientApp = ClientAppUsed,
+    UserAgent = DeviceDetail.operatingSystem,
+    RiskLevel = RiskLevelDuringSignIn;
 EventosPIM
-| join kind=leftouter (
-    SigninLogs
-    | where TimeGenerated >= ago(tempoAnalise)
-    | project 
-        CorrelationId,
-        UserPrincipalName,
-        IPAddress,
-        Location = strcat(LocationDetails.city, ", ", LocationDetails.countryOrRegion),
-        AuthMFA = AuthenticationRequirement,
-        MfaResult = AuthenticationDetails[0].authenticationStepResultDetail,
-        ClientApp = ClientAppUsed,
-        UserAgent = DeviceDetail.operatingSystem,
-        RiskLevel = RiskLevelDuringSignIn
-) on CorrelationId
+| join kind=leftouter (SinaisLogon) on CorrelationId
 | project
     DataHora = TimeGenerated,
     Acao = ActivityDisplayName,
@@ -112,11 +104,10 @@ EventosPIM
     UsuarioAlvo = TargetUPN,
     AtorOriginador = InitiatorUPN,
     Justificativa = JustificativaFinal,
-    TicketReferencia = TicketNumber,
-    IPOrigem = coalesce(IPAddress, "N/A"),
-    Localizacao = coalesce(Location, "N/A"),
-    MFAStatus = coalesce(AuthMFA, "N/A"),
-    NivelRiscoSessao = coalesce(RiskLevel, "none"),
+    IPOrigem = iff(isempty(IPAddress), "N/A", IPAddress),
+    Localizacao = iff(isempty(Location), "N/A", Location),
+    MFAStatus = iff(isempty(AuthMFA), "N/A", AuthMFA),
+    NivelRiscoSessao = iff(isempty(RiskLevel), "none", tostring(RiskLevel)),
     IDCorrelacao = CorrelationId
 | order by DataHora desc
 ```
@@ -216,14 +207,15 @@ let inicioJanela = datetime(2026-11-09T14:00:00Z);
 let fimJanela = datetime(2026-11-09T18:00:00Z);
 AuditLogs
 | where TimeGenerated between (inicioJanela .. fimJanela)
-| where InitiatedBy.user.userPrincipalName =~ usuarioSuspeito
+| mv-expand Target = TargetResources
+| where InitiatedBy.user.userPrincipalName == usuarioSuspeito
 | project 
     TimeGenerated,
     OperationName = ActivityDisplayName,
     Category,
-    Target = tostring(TargetResources[0].displayName),
-    TargetType = tostring(TargetResources[0].type),
-    ModifiedProperties = TargetResources[0].modifiedProperties,
+    Target = tostring(Target.displayName),
+    TargetType = tostring(Target.type),
+    ModifiedProperties = Target.modifiedProperties,
     Result
 | order by TimeGenerated asc
 ```

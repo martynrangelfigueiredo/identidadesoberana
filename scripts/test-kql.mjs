@@ -7,8 +7,9 @@
  * 2. Valida balanceamento de parênteses, colchetes e chaves.
  * 3. Valida se declarações 'let' terminam com ponto-e-vírgula ';'.
  * 4. Valida operadores canônicos de pipeline (| where, | project, | summarize, etc.).
+ * 5. Valida AST e compatibilidade direta com o parser/transpiler do Bryce Maxheimer KQL Playground.
  *
- * Uso: node scripts/test-kql.mjs
+ * Uso: npm run test:kql
  */
 import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
@@ -16,9 +17,21 @@ import { fileURLToPath } from "node:url";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const BLOG_DIR = path.join(ROOT, "src", "content", "blog");
+const BRYCE_ENGINE_PATH = path.join(ROOT, "scripts", "kql-engine-engine.js");
+
+// Carrega o motor do Bryce Maxheimer KQL Playground
+let KqlEngine = null;
+try {
+  const engineCode = await readFile(BRYCE_ENGINE_PATH, "utf8");
+  const engineContext = {};
+  new Function("window", engineCode)(engineContext);
+  KqlEngine = engineContext.KqlEngine;
+} catch (e) {
+  console.warn("⚠️ Aviso: Não foi possível carregar o motor KqlEngine do Bryce:", e.message);
+}
 
 const KQL_OPERATORS = new Set([
-  "where", "project", "project-away", "project-keep", "project-rename", "project-reorder",
+  "where", "project", "project-keep", "project-away", "project-rename", "project-reorder",
   "extend", "summarize", "join", "lookup", "union", "mv-apply", "mv-expand",
   "order", "sort", "top", "take", "limit", "distinct", "count",
   "parse", "parse-where", "extract", "search", "find", "sample",
@@ -26,7 +39,6 @@ const KQL_OPERATORS = new Set([
 ]);
 
 function stripCommentsAndStrings(code) {
-  // Substitui strings e comentários por espaços para preservar linha/coluna exata
   let inString = null;
   let inLineComment = false;
   let inBlockComment = false;
@@ -74,7 +86,6 @@ function stripCommentsAndStrings(code) {
       continue;
     }
 
-    // Abertura de comentários
     if (ch === "/" && next === "/") {
       inLineComment = true;
       result += "  ";
@@ -88,7 +99,6 @@ function stripCommentsAndStrings(code) {
       continue;
     }
 
-    // Abertura de strings
     if (ch === '"' || ch === "'") {
       inString = ch;
       result += " ";
@@ -112,11 +122,10 @@ function validateKql(query, fileName, blockIndex) {
     const line = strippedLines[l];
     for (let c = 0; c < line.length; c++) {
       const code = line.charCodeAt(c);
-      // Qualquer caractere fora da tabela ASCII padrão (0 a 127)
       if (code > 127) {
         const char = lines[l][c] || line[c];
         errors.push(
-          `Caractere inválido em identificador KQL: '${char}' (linha ${l + 1}, col ${c + 1}). Identificadores, aliases e variáveis devem ser estritamente ASCII (sem acentos ou cedilha).`
+          `Caractere inválido em identificador KQL: '${char}' (linha ${l + 1}, col ${c + 1}). Identificadores, aliases e variáveis devem ser estritamente ASCII.`
         );
       }
     }
@@ -153,7 +162,6 @@ function validateKql(query, fileName, blockIndex) {
   let match;
   while ((match = letRegex.exec(stripped)) !== null) {
     const varName = match[1];
-    // Procura o fechamento ';' correspondente
     const rest = stripped.slice(match.index);
     const semiIndex = rest.indexOf(";");
     if (semiIndex === -1) {
@@ -167,6 +175,23 @@ function validateKql(query, fileName, blockIndex) {
     const op = match[1].toLowerCase();
     if (!KQL_OPERATORS.has(op)) {
       errors.push(`Operador de pipeline desconhecido após '|': '${match[1]}'.`);
+    }
+  }
+
+  // 5. Validação com o Parser do Bryce Maxheimer Playground
+  if (KqlEngine) {
+    try {
+      const tokens = KqlEngine.tokenize(query);
+      const ast = KqlEngine.parse(tokens, query);
+      KqlEngine.translate(ast);
+    } catch (err) {
+      let msg = `Bryce Playground Parser Error: ${err.message}`;
+      if (err.pos !== undefined) {
+        msg += ` (col ${err.pos})`;
+        const snippet = query.slice(Math.max(0, err.pos - 20), Math.min(query.length, err.pos + 30));
+        msg += ` perto de: "${snippet.replace(/\n/g, "\\n")}"`;
+      }
+      errors.push(msg);
     }
   }
 
@@ -198,7 +223,7 @@ for (const file of files) {
         console.error(`   - ${err}`);
       }
     } else {
-      console.log(`✔ [${file}] Query #${blockIndex} validada com sucesso.`);
+      console.log(`✔ [${file}] Query #${blockIndex} validada com sucesso (Linter + Bryce Engine).`);
     }
   }
 }

@@ -59,6 +59,7 @@ let NegacoesMFA = SigninLogs
 let LogonsSucesso = SigninLogs
 | where TimeGenerated >= ago(janelaAnalise)
 | where ResultType == 0 // Sucesso
+| mv-expand AuthDetail = AuthenticationDetails
 | project 
     HoraSucesso = TimeGenerated,
     UserPrincipalName,
@@ -66,8 +67,8 @@ let LogonsSucesso = SigninLogs
     LocalSucesso = strcat(LocationDetails.city, ", ", LocationDetails.countryOrRegion),
     Dispositivo = DeviceDetail.operatingSystem,
     Navegador = ClientAppUsed,
-    MetodoMFA = tostring(AuthenticationDetails[0].authenticationMethod),
-    DetalheMFA = tostring(AuthenticationDetails[0].authenticationStepResultDetail),
+    MetodoMFA = tostring(AuthDetail.authenticationMethod),
+    DetalheMFA = tostring(AuthDetail.authenticationStepResultDetail),
     RiscoSessao = RiskLevelDuringSignIn,
     IDCorrelacao = CorrelationId;
 // 3. Cruzamento temporal: Sucesso nos 30 minutos seguintes às negações repetidas
@@ -179,9 +180,10 @@ let usuarioComprometido = "colaborador@seudominio.com.br";
 let inicioIncidente = datetime(2026-11-09T00:00:00Z);
 AuditLogs
 | where TimeGenerated >= inicioIncidente
-| where InitiatedBy.user.userPrincipalName =~ usuarioComprometido
-   or TargetResources[0].userPrincipalName =~ usuarioComprometido
-| where ActivityDisplayName in~ (
+| mv-expand Target = TargetResources
+| where InitiatedBy.user.userPrincipalName == usuarioComprometido
+   or Target.userPrincipalName == usuarioComprometido
+| where ActivityDisplayName in (
     "User registered security info",
     "User deleted security info",
     "User registered all required security info",
@@ -194,8 +196,8 @@ AuditLogs
     DataHora = TimeGenerated,
     Operacao = ActivityDisplayName,
     Ator = tostring(InitiatedBy.user.userPrincipalName),
-    Alvo = tostring(TargetResources[0].userPrincipalName),
-    PropriedadesModificadas = TargetResources[0].modifiedProperties,
+    Alvo = tostring(Target.userPrincipalName),
+    PropriedadesModificadas = Target.modifiedProperties,
     IDCorrelacao = CorrelationId
 | order by DataHora asc
 ```
