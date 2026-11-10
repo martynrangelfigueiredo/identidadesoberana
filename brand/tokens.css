@@ -4,7 +4,6 @@
  * Usado pelo SITE (src/styles/global.css) e pelos CARROSSÉIS (instagram/template/carrossel.css).
  * NÃO crie cores novas fora deste arquivo. Veja brand/BRAND.md.
  */
-@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap");
 
 :root {
   /* ---------- Cores principais ---------- */

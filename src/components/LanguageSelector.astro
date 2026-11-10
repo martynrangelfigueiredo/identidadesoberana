@@ -171,23 +171,36 @@
 </style>
 
 <script is:inline>
-  function googleTranslateElementInit() {
-    if (window.google && window.google.translate) {
-      new window.google.translate.TranslateElement({
-        pageLanguage: 'pt',
-        includedLanguages: 'de,zh-CN,en',
-        autoDisplay: false
-      }, 'google_translate_element');
-    }
-  }
-  window.googleTranslateElementInit = googleTranslateElementInit;
+  let translateLoaded = false;
+  let translateLoading = false;
 
-  if (!document.getElementById('google-translate-script')) {
-    const s = document.createElement('script');
-    s.id = 'google-translate-script';
-    s.src = '//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
-    s.async = true;
-    document.head.appendChild(s);
+  function loadGoogleTranslate(callback) {
+    if (translateLoaded) {
+      if (callback) callback();
+      return;
+    }
+    
+    window.googleTranslateElementInit = function () {
+      if (window.google && window.google.translate) {
+        new window.google.translate.TranslateElement({
+          pageLanguage: 'pt',
+          includedLanguages: 'de,zh-CN,en',
+          autoDisplay: false
+        }, 'google_translate_element');
+        translateLoaded = true;
+        translateLoading = false;
+        if (callback) callback();
+      }
+    };
+
+    if (!document.getElementById('google-translate-script')) {
+      translateLoading = true;
+      const s = document.createElement('script');
+      s.id = 'google-translate-script';
+      s.src = '//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+      s.async = true;
+      document.head.appendChild(s);
+    }
   }
 
   function initLangDropdown() {
@@ -210,9 +223,29 @@
       if (activeL) activeL.textContent = currentItem.getAttribute('data-l');
     }
 
+    // Se usuario ja estiver traduzido, carrega o script imediatamente
+    if (activeLang !== 'pt') {
+      loadGoogleTranslate();
+    } else {
+      // Caso contrario, adia o carregamento para nao bloquear o caminho critico de renderizacao
+      const preload = () => {
+        loadGoogleTranslate();
+        ['pointerenter', 'touchstart', 'focus'].forEach(ev => container.removeEventListener(ev, preload));
+      };
+      ['pointerenter', 'touchstart', 'focus'].forEach(ev => container.addEventListener(ev, preload, { passive: true }));
+
+      // Fallback em ociosidade (apos First Contentful Paint e LCP)
+      if ('requestIdleCallback' in window) {
+        requestIdleCallback(() => loadGoogleTranslate(), { timeout: 4500 });
+      } else {
+        setTimeout(loadGoogleTranslate, 4500);
+      }
+    }
+
     // Toggle menu
     trigger.addEventListener('click', (e) => {
       e.stopPropagation();
+      loadGoogleTranslate();
       const isOpen = container.classList.toggle('open');
       trigger.setAttribute('aria-expanded', String(isOpen));
     });
@@ -242,13 +275,21 @@
         document.cookie = `googtrans=/pt/${targetLang}; path=/;`;
         document.cookie = `googtrans=/pt/${targetLang}; path=/; domain=${location.hostname};`;
 
-        const combo = document.querySelector('.goog-te-combo');
-        if (combo) {
-          combo.value = targetLang;
-          combo.dispatchEvent(new Event('change'));
-        } else {
-          location.reload();
-        }
+        loadGoogleTranslate(() => {
+          let tries = 0;
+          const poll = setInterval(() => {
+            tries++;
+            const combo = document.querySelector('.goog-te-combo');
+            if (combo) {
+              clearInterval(poll);
+              combo.value = targetLang;
+              combo.dispatchEvent(new Event('change'));
+            } else if (tries > 25) {
+              clearInterval(poll);
+              location.reload();
+            }
+          }, 80);
+        });
       });
     });
   }

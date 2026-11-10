@@ -217,7 +217,7 @@ pre, code, .notranslate {
 a.card:hover { transform: translateY(-3px); box-shadow: var(--is-sombra-2); border-color: var(--is-verde); color: inherit; }
 .card h3 { font-size: 1.25rem; margin: 0; }
 .card p { margin: 0; color: var(--is-cinza); font-size: .95rem; }
-.meta { font-size: .85rem; color: var(--is-cinza-claro); display: flex; gap: .75rem; align-items: center; flex-wrap: wrap; }
+.meta { font-size: .85rem; color: var(--is-cinza); display: flex; gap: .75rem; align-items: center; flex-wrap: wrap; }
 
 .secao { padding: 2.75rem 0; }
 .secao-titulo { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 1.5rem; flex-wrap: wrap; gap: .5rem; }

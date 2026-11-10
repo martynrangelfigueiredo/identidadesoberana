@@ -1,5 +1,5 @@
 // Service Worker — Identidade Soberana PWA
-const CACHE_NAME = "is-cache-v1";
+const CACHE_NAME = "is-cache-v2";
 const OFFLINE_URL = "/";
 
 const PRECACHE_ASSETS = [
