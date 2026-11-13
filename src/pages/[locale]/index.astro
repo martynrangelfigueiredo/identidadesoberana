@@ -1,0 +1,14 @@
+---
+import HomeTemplate from "../../components/HomeTemplate.astro";
+import type { Locale } from "../../lib/i18n";
+
+export function getStaticPaths() {
+  return [
+    { params: { locale: "de" } },
+    { params: { locale: "zh" } },
+    { params: { locale: "en" } },
+  ];
+}
+const { locale } = Astro.params as { locale: Locale };
+---
+<HomeTemplate locale={locale} />

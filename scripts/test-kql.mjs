@@ -198,14 +198,29 @@ function validateKql(query, fileName, blockIndex) {
   return errors;
 }
 
-const files = (await readdir(BLOG_DIR)).filter((f) => f.endsWith(".md"));
+async function getAllMdFiles(dir) {
+  const entries = await readdir(dir, { withFileTypes: true });
+  let files = [];
+  for (const entry of entries) {
+    const fullPath = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      files.push(...await getAllMdFiles(fullPath));
+    } else if (entry.name.endsWith(".md")) {
+      files.push(fullPath);
+    }
+  }
+  return files;
+}
+
+const files = await getAllMdFiles(BLOG_DIR);
 let totalQueries = 0;
 let totalErrors = 0;
 
 console.log(`\n🔍 Validando sintaxe KQL nos artigos em ${path.relative(ROOT, BLOG_DIR)}...\n`);
 
-for (const file of files) {
-  const content = await readFile(path.join(BLOG_DIR, file), "utf8");
+for (const filePath of files) {
+  const relativeFile = path.relative(BLOG_DIR, filePath);
+  const content = await readFile(filePath, "utf8");
   const kqlRegex = /```kql\r?\n([\s\S]*?)```/g;
   let match;
   let blockIndex = 0;
@@ -214,16 +229,16 @@ for (const file of files) {
     blockIndex++;
     totalQueries++;
     const query = match[1];
-    const errors = validateKql(query, file, blockIndex);
+    const errors = validateKql(query, relativeFile, blockIndex);
 
     if (errors.length > 0) {
       totalErrors += errors.length;
-      console.error(`❌ [${file}] Query #${blockIndex} com erro:`);
+      console.error(`❌ [${relativeFile}] Query #${blockIndex} com erro:`);
       for (const err of errors) {
         console.error(`   - ${err}`);
       }
     } else {
-      console.log(`✔ [${file}] Query #${blockIndex} validada com sucesso (Linter + Bryce Engine).`);
+      console.log(`✔ [${relativeFile}] Query #${blockIndex} validada com sucesso (Linter + Bryce Engine).`);
     }
   }
 }

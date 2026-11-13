@@ -1,0 +1,89 @@
+---
+import { render } from "astro:content";
+import Base from "../../../layouts/Base.astro";
+import { getPosts } from "../../../lib/posts";
+import { UI, type Locale } from "../../../lib/i18n";
+
+export async function getStaticPaths() {
+  const locales: Locale[] = ["de", "zh", "en"];
+  const paths = [];
+
+  for (const locale of locales) {
+    const posts = await getPosts(locale);
+    for (const post of posts) {
+      const cleanSlug = post.id.replace(new RegExp(`^${locale}/`), "");
+      paths.push({
+        params: { locale, slug: cleanSlug },
+        props: { post, locale },
+      });
+    }
+  }
+
+  return paths;
+}
+
+const { post, locale } = Astro.props as { post: any; locale: Locale };
+const { Content } = await render(post);
+const ui = UI[locale];
+
+const dateLocales: Record<Locale, string> = {
+  pt: "pt-BR",
+  de: "de-DE",
+  zh: "zh-CN",
+  en: "en-US",
+};
+const data = post.data.date.toLocaleDateString(dateLocales[locale], { day: "2-digit", month: "long", year: "numeric" });
+const catUrl = `/${locale}/categoria/${post.data.categoria.toLowerCase()}/`;
+---
+<Base title={post.data.title} description={post.data.description} locale={locale}>
+  <!-- Dados Estruturados (JSON-LD) para o Artigo / Playbook de SOC -->
+  <script type="application/ld+json" is:inline set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "TechArticle",
+        "headline": post.data.title,
+        "description": post.data.description,
+        "datePublished": post.data.date.toISOString(),
+        "dateModified": post.data.date.toISOString(),
+        "inLanguage": locale === "zh" ? "zh-CN" : locale,
+        "keywords": post.data.tags.join(", "),
+        "articleSection": post.data.categoria,
+        "proficiencyLevel": post.data.nivel,
+        "author": {
+          "@type": "Person",
+          "name": "Martyn Figueiredo",
+          "url": "https://linkedin.com/in/martynfigueiredo"
+        },
+        "publisher": {
+          "@type": "Organization",
+          "name": "Identidade Soberana",
+          "url": "https://identidadesoberana.com.br",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://identidadesoberana.com.br/icons/icon-512.png"
+          }
+        },
+        "mainEntityOfPage": {
+          "@type": "WebPage",
+          "@id": `https://identidadesoberana.com.br/${locale}/blog/${post.id.replace(/^[a-z]{2}\//, "")}/`
+        }
+      }
+    ]
+  })} />
+
+  <article>
+    <header class="artigo-header">
+      <div class="estreito">
+        <a class="chip" href={catUrl}>{post.data.categoria}</a>
+        <h1>{post.data.title}</h1>
+        <p>{post.data.description}</p>
+        <div class="meta">
+          <time datetime={post.data.date.toISOString()}>{data}</time> · {post.data.nivel}
+          {post.data.tags.map((t: string) => <span>#{t}</span>)}
+        </div>
+      </div>
+    </header>
+    <div class="estreito prosa"><Content /></div>
+  </article>
+</Base>

@@ -1,0 +1,25 @@
+---
+import Base from "../layouts/Base.astro";
+import PostCard from "./PostCard.astro";
+import { getPosts } from "../lib/posts";
+import { UI, type Locale } from "../lib/i18n";
+
+interface Props {
+  locale: Locale;
+}
+const { locale } = Astro.props;
+const ui = UI[locale];
+const posts = await getPosts(locale);
+---
+<Base title={ui.blog.title} description={ui.blog.description} locale={locale}>
+  <section class="artigo-header">
+    <div class="container">
+      <span class="chip">{ui.blog.title}</span>
+      <h1><span class="hl">{ui.blog.allArticles}</span></h1>
+      <p>{ui.blog.description}</p>
+    </div>
+  </section>
+  <div class="container" style="padding-bottom:3.5rem;">
+    <div class="grid">{posts.map((post) => <PostCard post={post} locale={locale} />)}</div>
+  </div>
+</Base>

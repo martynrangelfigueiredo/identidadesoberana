@@ -1,0 +1,72 @@
+---
+import Base from "../layouts/Base.astro";
+import PostCard from "./PostCard.astro";
+import { getPosts } from "../lib/posts";
+import { UI, type Locale } from "../lib/i18n";
+
+interface Props {
+  locale: Locale;
+}
+const { locale } = Astro.props;
+const ui = UI[locale];
+const posts = (await getPosts(locale)).slice(0, 6);
+const blogUrl = locale === "pt" ? "/blog/" : `/${locale}/blog/`;
+const aboutUrl = locale === "pt" ? "/sobre/" : `/${locale}/sobre/`;
+const getCatUrl = (cat: string) => (locale === "pt" ? `/categoria/${cat}/` : `/${locale}/categoria/${cat}/`);
+---
+<Base locale={locale}>
+  <section class="hero">
+    <div class="container">
+      <span class="chip">{ui.hero.chip}</span>
+      <h1>{ui.hero.titleStart}<span class="hl">{ui.hero.titleHighlight}</span></h1>
+      <p>{ui.hero.description}</p>
+      <p style="display:flex;gap:.75rem;flex-wrap:wrap;margin-top:1.75rem">
+        <a class="btn" href={blogUrl}>{ui.hero.btnBlog} →</a>
+        <a class="btn sec" href={aboutUrl}>{ui.hero.btnAbout}</a>
+      </p>
+    </div>
+  </section>
+
+  <section class="secao">
+    <div class="container">
+      <div class="grid">
+        {Object.entries(ui.categoriesDesc).map(([slug, c]) => (
+          <a class="card" href={getCatUrl(slug)}>
+            <span class="chip">{c.nome}</span>
+            <p>{c.desc}</p>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="secao">
+    <div class="container">
+      <div class="secao-titulo">
+        <h2>{ui.sections.latest}</h2>
+        <a href={blogUrl}>{ui.sections.viewAll}</a>
+      </div>
+      <div class="grid">{posts.map((post) => <PostCard post={post} locale={locale} />)}</div>
+    </div>
+  </section>
+
+  <section class="secao" style="background:var(--is-verde-nevoa);border-top:1px solid var(--is-borda);border-bottom:1px solid var(--is-borda);">
+    <div class="container">
+      <h2 style="font-size:1.75rem;margin-bottom:1.5rem;">{ui.sections.whyTitle}</h2>
+      <div class="grid" style="grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));">
+        <div class="card" style="border:none;box-shadow:none;background:transparent;padding:0;">
+          <h3 style="font-size:1.15rem;color:var(--is-verde-escuro);margin-bottom:.4rem;">✓ {ui.sections.why1Title}</h3>
+          <p>{ui.sections.why1Desc}</p>
+        </div>
+        <div class="card" style="border:none;box-shadow:none;background:transparent;padding:0;">
+          <h3 style="font-size:1.15rem;color:var(--is-verde-escuro);margin-bottom:.4rem;">✓ {ui.sections.why2Title}</h3>
+          <p>{ui.sections.why2Desc}</p>
+        </div>
+        <div class="card" style="border:none;box-shadow:none;background:transparent;padding:0;">
+          <h3 style="font-size:1.15rem;color:var(--is-verde-escuro);margin-bottom:.4rem;">✓ {ui.sections.why3Title}</h3>
+          <p>{ui.sections.why3Desc}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>

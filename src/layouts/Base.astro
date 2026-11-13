@@ -6,25 +6,25 @@ import InstallPrompt from "../components/InstallPrompt.astro";
 import logo from "../../brand/logo/logo-icone.svg?raw";
 import logoBranco from "../../brand/logo/logo-icone-branco.svg?raw";
 import favicon from "../../brand/logo/logo-icone.svg?url";
+import { getLocaleFromPath, getLocalizedPath, UI, type Locale } from "../lib/i18n";
 
 interface Props {
   title?: string;
   description?: string;
+  locale?: Locale;
 }
-const { title, description = "Segurança digital sem complicação. Conteúdo para SOC, IAM e Compliance." } = Astro.props;
-const fullTitle = title ? `${title} · Identidade Soberana` : "Identidade Soberana — Segurança digital sem complicação";
+
 const path = Astro.url.pathname;
-const nav = [
-  { href: "/blog/", label: "Blog" },
-  { href: "/categoria/soc/", label: "SOC" },
-  { href: "/categoria/iam/", label: "IAM" },
-  { href: "/categoria/compliance/", label: "Compliance" },
-  { href: "/categoria/privacidade/", label: "Privacidade" },
-  { href: "/sobre/", label: "Sobre" },
-];
+const currentLocale = Astro.props.locale || getLocaleFromPath(path);
+const ui = UI[currentLocale];
+
+const { title, description = ui.tagline } = Astro.props;
+const fullTitle = title ? `${title} · ${ui.siteName}` : `${ui.siteName} — ${ui.tagline}`;
+const htmlLang = currentLocale === "pt" ? "pt-BR" : currentLocale === "zh" ? "zh-CN" : currentLocale;
+const homeUrl = currentLocale === "pt" ? "/" : `/${currentLocale}/`;
 ---
 <!doctype html>
-<html lang="pt-BR">
+<html lang={htmlLang}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -52,6 +52,16 @@ const nav = [
     <noscript>
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" />
     </noscript>
+
+    <!-- Links Canônicos e hreflang Internacionais para SEO -->
+    <link rel="canonical" href={new URL(path, Astro.site)} />
+    <link rel="alternate" hreflang="pt-BR" href={new URL(getLocalizedPath(path, "pt"), Astro.site)} />
+    <link rel="alternate" hreflang="de" href={new URL(getLocalizedPath(path, "de"), Astro.site)} />
+    <link rel="alternate" hreflang="zh-Hans" href={new URL(getLocalizedPath(path, "zh"), Astro.site)} />
+    <link rel="alternate" hreflang="en" href={new URL(getLocalizedPath(path, "en"), Astro.site)} />
+    <link rel="alternate" hreflang="x-default" href={new URL(getLocalizedPath(path, "pt"), Astro.site)} />
+    <link rel="alternate" type="application/rss+xml" title="Identidade Soberana — RSS Feed" href="/rss.xml" />
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml" />
 
     <!-- Diretivas Globais de Indexação para Buscadores (Google, Bing, Baidu, etc.) -->
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
@@ -121,14 +131,14 @@ const nav = [
   <body>
     <header class="site-header">
       <div class="container">
-        <a class="marca" href="/" aria-label="Identidade Soberana — início">
+        <a class="marca" href={homeUrl} aria-label={`${ui.siteName} — início`}>
           <Fragment set:html={logo} />
           <span class="marca-nome">identidade <b>soberana</b></span>
         </a>
 
         <div class="header-right">
           <nav id="site-nav" class="nav">
-            {nav.map((i) => <a href={i.href} aria-current={path.startsWith(i.href) ? "page" : undefined}>{i.label}</a>)}
+            {ui.nav.map((i) => <a href={i.href} aria-current={path === i.href || (i.href !== homeUrl && path.startsWith(i.href)) ? "page" : undefined}>{i.label}</a>)}
           </nav>
 
           <LanguageSelector />
@@ -154,11 +164,11 @@ const nav = [
         <path d="M0 52 C 240 22, 480 22, 720 47 S 1200 74, 1440 42 L1440 70 L0 70 Z" fill="#009C3B" />
       </svg>
       <div class="container">
-        <a class="marca" href="/">
+        <a class="marca" href={homeUrl}>
           <Fragment set:html={logoBranco} />
           <span class="marca-nome">identidade <b>soberana</b></span>
         </a>
-        <span>Segurança digital sem complicação.</span>
+        <span>{ui.footerText}</span>
         <div style="display:flex;gap:1rem;align-items:center;">
           <a href="/rss.xml" title="Assinar via RSS">Feed RSS</a>
           <a href="https://instagram.com/identidadesoberana" rel="me noopener" target="_blank">Instagram @identidadesoberana</a>

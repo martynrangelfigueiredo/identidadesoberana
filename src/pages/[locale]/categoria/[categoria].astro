@@ -1,0 +1,22 @@
+---
+import CategoryTemplate from "../../../components/CategoryTemplate.astro";
+import type { Locale } from "../../../lib/i18n";
+
+export function getStaticPaths() {
+  const locales: Locale[] = ["de", "zh", "en"];
+  const cats = ["soc", "iam", "compliance", "privacidade"];
+  const paths = [];
+
+  for (const locale of locales) {
+    for (const cat of cats) {
+      paths.push({
+        params: { locale, categoria: cat },
+      });
+    }
+  }
+
+  return paths;
+}
+const { locale, categoria } = Astro.params as { locale: Locale; categoria: string };
+---
+<CategoryTemplate categoriaSlug={categoria} locale={locale} />

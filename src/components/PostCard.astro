@@ -1,13 +1,28 @@
 ---
 import type { CollectionEntry } from "astro:content";
-interface Props { post: CollectionEntry<"blog"> }
+import type { Locale } from "../lib/i18n";
+
+interface Props {
+  post: CollectionEntry<"blog">;
+  locale?: Locale;
+}
 const { post } = Astro.props;
-const data = post.data.date.toLocaleDateString("pt-BR", { day: "2-digit", month: "short", year: "numeric" });
+const postLocale = Astro.props.locale || (post.id.startsWith("de/") ? "de" : post.id.startsWith("zh/") ? "zh" : post.id.startsWith("en/") ? "en" : "pt");
+
+const cleanSlug = post.id.replace(/^(de|zh|en)\//, "");
+const href = postLocale === "pt" ? `/blog/${cleanSlug}/` : `/${postLocale}/blog/${cleanSlug}/`;
+
+const dateLocales: Record<Locale, string> = {
+  pt: "pt-BR",
+  de: "de-DE",
+  zh: "zh-CN",
+  en: "en-US",
+};
+const data = post.data.date.toLocaleDateString(dateLocales[postLocale] || "pt-BR", { day: "2-digit", month: "short", year: "numeric" });
 ---
-<a class="card" href={`/blog/${post.id}/`}>
+<a class="card" href={href}>
   <span class="chip">{post.data.categoria}</span>
   <h3>{post.data.title}</h3>
   <p>{post.data.description}</p>
   <span class="meta"><time datetime={post.data.date.toISOString()}>{data}</time> · {post.data.nivel}</span>
 </a>
-

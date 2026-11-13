@@ -1,17 +1,4 @@
 ---
-import Base from "../../layouts/Base.astro";
-import PostCard from "../../components/PostCard.astro";
-import { getPosts } from "../../lib/posts";
-const posts = await getPosts();
+import BlogListTemplate from "../../components/BlogListTemplate.astro";
 ---
-<Base title="Blog" description="Artigos sobre SOC, IAM, Compliance e Privacidade.">
-  <section class="artigo-header">
-    <div class="container">
-      <span class="chip">Blog</span>
-      <h1>Todos os <span class="hl">artigos</span></h1>
-      <p>Operações de segurança, identidade e conformidade — na prática.</p>
-    </div>
-  </section>
-  <div class="container"><div class="grid">{posts.map((post) => <PostCard post={post} />)}</div></div>
-</Base>
-
+<BlogListTemplate locale="pt" />

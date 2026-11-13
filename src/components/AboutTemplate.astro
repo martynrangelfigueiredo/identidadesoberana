@@ -1,0 +1,143 @@
+---
+import Base from "../layouts/Base.astro";
+import { type Locale } from "../lib/i18n";
+
+interface Props {
+  locale: Locale;
+}
+const { locale } = Astro.props;
+
+const content = {
+  pt: {
+    title: "Sobre",
+    description: "A proposta da Identidade Soberana: segurança técnica para quem opera e dicas simples para quem usa.",
+    chip: "Sobre nós",
+    h1Start: "Segurança, identidade e soberania em ",
+    h1Highlight: "dois mundos",
+    lead: "Acreditamos que segurança da informação e proteção de dados só funcionam quando atingem o especialista e o cidadão ao mesmo tempo.",
+    whyTitle: "Por que existimos?",
+    whyP1: "O ecossistema digital lida diariamente com milhões de tentativas de fraudes, vazamentos de credenciais e ameaças cibernéticas cada vez mais sofisticadas. No entanto, a comunicação de segurança quase sempre comete um de dois erros: ou é técnica demais para o usuário comum entender, ou é superficial demais para ajudar o profissional que está no plantão do SOC.",
+    whyP2: "A Identidade Soberana nasceu para quebrar essa barreira. Temos uma única identidade visual, um único compromisso com a privacidade e a soberania dos dados, mas nos expressamos em dois canais com propostas diferentes que se complementam:",
+    box1Chip: "💻 No Site & Blog",
+    box1Title: "Operação & Tecnologia Profunda",
+    box1Desc: "Focado em analistas de SOC, engenheiros de IAM, DPOs e especialistas em Compliance. Artigos estruturados como playbooks de resposta a incidentes do Microsoft Sentinel, queries avançadas em KQL, validação de auditoria no Entra ID e conformidade (LGPD, ISO 27001, SOC 2).",
+    box2Chip: "📱 No Instagram (@identidadesoberana)",
+    box2Title: "Linguagem Leve & Acessível",
+    box2Desc: "Focado no público geral — pessoas que não trabalham com TI, mas precisam se proteger de golpes no WhatsApp, proteger o Pix, criar senhas fortes e entender seus direitos sobre seus próprios dados pessoais. Sempre em formato de carrossel, amigável e sem alarmismo.",
+    authorTitle: "Quem está por trás",
+    authorDesc: "A iniciativa Identidade Soberana é idealizada, mantida e escrita por Martyn Figueiredo, profissional dedicado à interseção entre operações de segurança em nuvem (SOC), governança de identidades e proteção de dados.",
+    contactTitle: "Contato e Contribuições",
+    btnBlog: "Ver os artigos técnicos →",
+  },
+  de: {
+    title: "Über uns",
+    description: "Die Mission von Identidade Soberana: Technische Sicherheit für Experten und einfache Leitfäden für Anwender.",
+    chip: "Über das Projekt",
+    h1Start: "Sicherheit, Identität und Souveränität in ",
+    h1Highlight: "zwei Welten",
+    lead: "Wir glauben, dass Informationssicherheit und Datenschutz nur dann wirksam sind, wenn sie Spezialisten und Bürger gleichermaßen erreichen.",
+    whyTitle: "Warum existiert Identidade Soberana?",
+    whyP1: "Täglich sehen sich Organisationen und Anwender mit Betrugsversuchen, Credential-Leaks und hochentwickelten Cyberbedrohungen konfrontiert. Sicherheitskommunikation scheitert jedoch oft an zwei Extremen: Entweder ist sie zu technisch für normale Nutzer oder zu oberflächlich für Analysten im SOC-Schichtbetrieb.",
+    whyP2: "Identidade Soberana schlägt die Brücke zwischen diesen Welten. Wir verfolgen eine einheitliche visuelle Identität und ein klares Bekenntnis zu digitaler Souveränität über zwei sich ergänzende Kanäle:",
+    box1Chip: "💻 Website & Blog",
+    box1Title: "Praxisorientierte Tiefentechnik",
+    box1Desc: "Speziell für SOC-Analysten, IAM-Engineers, DPOs und Compliance-Verantwortliche. Konkrete Incident-Response-Playbooks für Microsoft Sentinel, KQL-Queries, Entra ID-Audits und regulatorische Compliance (DSGVO, ISO 27001, SOC 2).",
+    box2Chip: "📱 Instagram (@identidadesoberana)",
+    box2Title: "Verständlich & Barrierefrei",
+    box2Desc: "Für alltägliche Internetnutzer: Schutz vor Phishing und WhatsApp-Betrug, sichere Kennwörter und Datenschutzrechte — visualisiert in klaren, nicht-alarmistischen Karussell-Guides.",
+    authorTitle: "Initiator & Autor",
+    authorDesc: "Die Initiative Identidade Soberana wird von Martyn Figueiredo geleitet und gepflegt — Spezialist an der Schnittstelle von Cloud-Sicherheitsoperationen (SOC), Identity Governance und Datenschutz.",
+    contactTitle: "Kontakt & Austausch",
+    btnBlog: "Technische Artikel lesen →",
+  },
+  zh: {
+    title: "关于",
+    description: "Identidade Soberana 的使命：面向运维人员的深度实战，面向普通大众的简单指南。",
+    chip: "关于项目",
+    h1Start: "贯穿不同场景的",
+    h1Highlight: "数字安全与主权",
+    lead: "我们坚信，信息安全与个人数据保护只有同时赋能安全专家与普通公众，才能构筑起真正的防御体系。",
+    whyTitle: "项目缘起",
+    whyP1: "在数字化时代，各类撞库攻击、凭据泄露与供应链威胁层出不穷。然而安全领域的沟通往往存在两个断层：要么过于晦涩让普通用户无所适从，要么过于浅显无法帮助正在值班的 SOC 分析师解决真实问题。",
+    whyP2: "Identidade Soberana 正是为打破这一壁垒而生。我们秉承统一的视觉标识与安全理念，通过两个相互补充的渠道传递知识：",
+    box1Chip: "💻 技术站点与博客",
+    box1Title: "面向实战的云安全工程",
+    box1Desc: "专为 SOC 分析师、IAM 工程师与合规人员打造。提供基于 Microsoft Sentinel 的应急响应指南、开箱即用的 KQL 深度查询、Entra ID 审计核实与合规落地标准（ISO 27001、SOC 2 等）。",
+    box2Chip: "📱 社交媒体 (@identidadesoberana)",
+    box2Title: "平实易懂的大众安全科普",
+    box2Desc: "面向非技术用户：防范钓鱼信息、保护即时通信安全、管理高强度密码以及了解个人数据权利。杜绝恐慌式营销，以直观实用的图文呈现。",
+    authorTitle: "主理人与发起人",
+    authorDesc: "Identidade Soberana 项目由 Martyn Figueiredo 创立并维护，专注于云安全运营（SOC）、身份权限治理与数据保护合规。",
+    contactTitle: "联系与合作",
+    btnBlog: "阅读实战技术文章 →",
+  },
+  en: {
+    title: "About",
+    description: "The Identidade Soberana mission: deep technical security for operators, plain-language protection for everyone.",
+    chip: "About us",
+    h1Start: "Security, identity, and sovereignty across ",
+    h1Highlight: "two worlds",
+    lead: "We believe information security and personal data protection succeed only when empowering both technical operators and everyday citizens.",
+    whyTitle: "Why We Exist",
+    whyP1: "Organizations face millions of credential attacks, session hijacks, and cloud intrusions daily. Yet security communication usually fails in one of two directions: it is either too academic for regular users or too superficial to assist an analyst working an active incident in the SOC.",
+    whyP2: "Identidade Soberana was founded to bridge this gap. We maintain a unified design system and an uncompromising commitment to privacy through two complementary channels:",
+    box1Chip: "💻 Website & Technical Blog",
+    box1Title: "Deep SecOps & Engineering",
+    box1Desc: "Built for SOC analysts, IAM engineers, DPOs, and compliance professionals. Production incident response playbooks for Microsoft Sentinel, battle-tested KQL queries, Entra ID audit validation, and frameworks like GDPR, ISO 27001, and SOC 2.",
+    box2Chip: "📱 Instagram (@identidadesoberana)",
+    box2Title: "Accessible & Jargon-Free",
+    box2Desc: "Built for everyday people: defending against social engineering, securing messaging apps, managing strong passkeys, and understanding privacy rights without fear-mongering.",
+    authorTitle: "Behind the Project",
+    authorDesc: "The Identidade Soberana initiative is designed, authored, and maintained by Martyn Figueiredo, a security practitioner working at the intersection of cloud SecOps, identity governance, and compliance.",
+    contactTitle: "Contact & Collaboration",
+    btnBlog: "Explore technical playbooks →",
+  },
+};
+
+const t = content[locale];
+const blogUrl = locale === "pt" ? "/blog/" : `/${locale}/blog/`;
+---
+<Base title={t.title} description={t.description} locale={locale}>
+  <section class="artigo-header">
+    <div class="estreito">
+      <span class="chip">{t.chip}</span>
+      <h1>{t.h1Start}<span class="hl">{t.h1Highlight}</span></h1>
+      <p>{t.lead}</p>
+    </div>
+  </section>
+
+  <div class="estreito prosa">
+    <h2>{t.whyTitle}</h2>
+    <p>{t.whyP1}</p>
+    <p>{t.whyP2}</p>
+
+    <div style="display:grid;gap:1.5rem;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));margin:2.5rem 0;">
+      <div style="background:var(--is-verde-claro);border:1px solid var(--is-borda);border-radius:var(--is-raio-md);padding:1.5rem;">
+        <span class="chip" style="background:var(--is-branco);margin-bottom:.75rem;">{t.box1Chip}</span>
+        <h3 style="margin:.5rem 0;color:var(--is-verde-escuro);">{t.box1Title}</h3>
+        <p style="font-size:.95rem;color:var(--is-tinta);margin:0;">{t.box1Desc}</p>
+      </div>
+
+      <div style="background:var(--is-verde-nevoa);border:1px solid var(--is-borda);border-radius:var(--is-raio-md);padding:1.5rem;">
+        <span class="chip" style="background:var(--is-branco);margin-bottom:.75rem;">{t.box2Chip}</span>
+        <h3 style="margin:.5rem 0;color:var(--is-verde-escuro);">{t.box2Title}</h3>
+        <p style="font-size:.95rem;color:var(--is-tinta);margin:0;">{t.box2Desc}</p>
+      </div>
+    </div>
+
+    <h2>{t.authorTitle}</h2>
+    <p>{t.authorDesc} (<a href="https://linkedin.com/in/martynfigueiredo" target="_blank" rel="noopener">LinkedIn</a>).</p>
+
+    <h2>{t.contactTitle}</h2>
+    <ul>
+      <li><strong>E-mail:</strong> <a href="mailto:administrador@identidadesoberana.com.br"><code>administrador@identidadesoberana.com.br</code></a></li>
+      <li><strong>LinkedIn:</strong> <a href="https://linkedin.com/in/martynfigueiredo" target="_blank" rel="noopener">linkedin.com/in/martynfigueiredo</a></li>
+      <li><strong>Instagram:</strong> <a href="https://instagram.com/identidadesoberana" target="_blank" rel="noopener">@identidadesoberana</a></li>
+    </ul>
+
+    <p style="display:flex;gap:.75rem;flex-wrap:wrap;margin-top:2rem;">
+      <a class="btn" href={blogUrl}>{t.btnBlog}</a>
+      <a class="btn sec" href="https://instagram.com/identidadesoberana" target="_blank" rel="noopener">Instagram @identidadesoberana</a>
+    </p>
+  </div>
+</Base>

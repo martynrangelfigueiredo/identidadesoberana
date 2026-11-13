@@ -1,0 +1,28 @@
+---
+import Base from "../layouts/Base.astro";
+import PostCard from "./PostCard.astro";
+import { getPosts } from "../lib/posts";
+import { UI, type Locale } from "../lib/i18n";
+
+interface Props {
+  categoriaSlug: string;
+  locale: Locale;
+}
+const { categoriaSlug, locale } = Astro.props;
+const ui = UI[locale];
+const cat = ui.categoriesDesc[categoriaSlug as keyof typeof ui.categoriesDesc];
+const allPosts = await getPosts(locale);
+const posts = allPosts.filter((p) => p.data.categoria.toLowerCase() === categoriaSlug.toLowerCase());
+---
+<Base title={cat?.nome || categoriaSlug} description={cat?.desc} locale={locale}>
+  <section class="artigo-header">
+    <div class="container">
+      <span class="chip">SOC · IAM · Compliance</span>
+      <h1><span class="hl">{cat?.nome || categoriaSlug}</span></h1>
+      <p>{cat?.desc}</p>
+    </div>
+  </section>
+  <div class="container" style="padding-bottom:3.5rem;">
+    {posts.length ? <div class="grid">{posts.map((post) => <PostCard post={post} locale={locale} />)}</div> : <p>Em breve.</p>}
+  </div>
+</Base>

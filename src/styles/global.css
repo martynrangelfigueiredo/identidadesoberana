@@ -83,7 +83,7 @@ h1, h2, h3, h4 {
   align-items: center;
 }
 .nav a {
-  text-decoration: none;
+  text-decoration: none !important;
   color: var(--is-cinza);
   font: 700 .92rem var(--is-fonte-titulo);
   padding: .45rem .85rem;
@@ -91,12 +91,14 @@ h1, h2, h3, h4 {
   min-height: 38px;
   display: inline-flex;
   align-items: center;
+  white-space: nowrap;
   transition: all .15s ease;
 }
 .nav a:hover,
 .nav a[aria-current="page"] {
   background: var(--is-verde-claro);
   color: var(--is-verde-escuro);
+  text-decoration: none !important;
 }
 
 /* Menu Hambúrguer (Mobile) */
@@ -122,7 +124,7 @@ h1, h2, h3, h4 {
   border-color: var(--is-verde);
 }
 
-@media (max-width: 900px) {
+@media (max-width: 980px) {
   .header-right {
     gap: .4rem;
   }
@@ -163,14 +165,7 @@ h1, h2, h3, h4 {
   .marca-nome { font-size: .92rem; }
 }
 
-/* ---------- Google Translate Cleanup ---------- */
-.goog-te-banner-frame { display: none !important; }
-body { top: 0px !important; }
-.skiptranslate:not(.lang-selector):not(.lang-selector *) { display: none !important; }
-#goog-gt-tt, .goog-te-balloon-frame { display: none !important; }
-.goog-text-highlight { background: transparent !important; box-shadow: none !important; }
-
-/* Proteção contra tradução de código */
+/* Proteção contra tradução automática de código */
 pre, code, .notranslate {
   translate: no;
 }

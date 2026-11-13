@@ -1,47 +1,41 @@
 ---
-// LanguageSelector.astro — Seletor compacto com código de país em destaque e idioma sutil
+// LanguageSelector.astro — Seletor de idioma nativo e estático (Zero dependências externas)
 // Ordem obrigatória: 1º Alemão (DE de), 2º Mandarim da China continental (CN zh), 3º Inglês (US en)
+import { getLocaleFromPath, getLocalizedPath, LOCALE_LABELS, SELECTOR_ORDER } from "../lib/i18n";
+
+const pathname = Astro.url.pathname;
+const currentLocale = getLocaleFromPath(pathname);
+const activeMeta = LOCALE_LABELS[currentLocale];
 ---
 <div class="lang-selector-custom" id="lang-selector">
-  <button type="button" class="lang-trigger" id="lang-trigger" aria-haspopup="listbox" aria-expanded="false" aria-label="Selecionar idioma de tradução">
+  <button type="button" class="lang-trigger" id="lang-trigger" aria-haspopup="listbox" aria-expanded="false" aria-label="Selecionar idioma de navegação">
     <svg class="lang-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
       <circle cx="12" cy="12" r="10"></circle>
       <line x1="2" y1="12" x2="22" y2="12"></line>
       <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
     </svg>
-    <span class="c-badge" id="lang-active-c">BR</span>
-    <span class="l-badge" id="lang-active-l">pt</span>
+    <strong class="c-badge">{activeMeta.country}</strong>
+    <span class="l-badge">{activeMeta.langCode}</span>
     <span class="lang-arrow" aria-hidden="true">▾</span>
   </button>
 
   <ul class="lang-menu" id="lang-menu" role="listbox" aria-label="Idiomas disponíveis">
-    <li role="option" data-lang="pt" data-c="BR" data-l="pt" class="active">
-      <span class="flag">🇧🇷</span>
-      <strong class="menu-c">BR</strong>
-      <span class="menu-l">pt</span>
-      <span class="menu-name">Português</span>
-    </li>
-    <li role="option" data-lang="de" data-c="DE" data-l="de">
-      <span class="flag">🇩🇪</span>
-      <strong class="menu-c">DE</strong>
-      <span class="menu-l">de</span>
-      <span class="menu-name">Deutsch</span>
-    </li>
-    <li role="option" data-lang="zh-CN" data-c="CN" data-l="zh">
-      <span class="flag">🇨🇳</span>
-      <strong class="menu-c">CN</strong>
-      <span class="menu-l">zh</span>
-      <span class="menu-name">简体中文</span>
-    </li>
-    <li role="option" data-lang="en" data-c="US" data-l="en">
-      <span class="flag">🇺🇸</span>
-      <strong class="menu-c">US</strong>
-      <span class="menu-l">en</span>
-      <span class="menu-name">English</span>
-    </li>
+    {SELECTOR_ORDER.map((loc) => {
+      const meta = LOCALE_LABELS[loc];
+      const targetUrl = getLocalizedPath(pathname, loc);
+      const isActive = loc === currentLocale;
+      return (
+        <li role="option" aria-selected={isActive ? "true" : "false"} class={isActive ? "active" : ""}>
+          <a href={targetUrl} class="lang-item-link">
+            <span class="flag">{meta.flag}</span>
+            <strong class="menu-c">{meta.country}</strong>
+            <span class="menu-l">{meta.langCode}</span>
+            <span class="menu-name">{meta.name}</span>
+          </a>
+        </li>
+      );
+    })}
   </ul>
-
-  <div id="google_translate_element" style="display:none;" aria-hidden="true"></div>
 </div>
 
 <style>
@@ -77,7 +71,7 @@
     margin-right: 2px;
   }
 
-  /* País GRANDE / Idioma pequeno */
+  /* Código do País GRANDE / Código do Idioma pequeno */
   .c-badge {
     font: 900 .85rem/1 var(--is-fonte-titulo);
     color: var(--is-verde-escuro);
@@ -89,36 +83,31 @@
     text-transform: lowercase;
   }
   .lang-arrow {
-    font-size: .75rem;
+    font-size: .65rem;
     color: var(--is-cinza);
     margin-left: 2px;
-    transition: transform .15s ease;
-  }
-  .lang-selector-custom.open .lang-arrow {
-    transform: rotate(180deg);
   }
 
-  /* Menu Dropdown */
   .lang-menu {
     position: absolute;
     top: calc(100% + 6px);
     right: 0;
     z-index: 1000;
-    list-style: none;
-    margin: 0;
-    padding: .35rem;
     background: var(--is-branco);
     border: 1px solid var(--is-borda);
     border-radius: var(--is-raio-md);
-    box-shadow: var(--is-sombra-3);
+    box-shadow: var(--is-sombra-2);
     min-width: 175px;
+    padding: .4rem;
+    margin: 0;
+    list-style: none;
     display: none;
     flex-direction: column;
     gap: 2px;
+    animation: fadeIn .15s ease-out;
   }
   .lang-selector-custom.open .lang-menu {
     display: flex;
-    animation: fadeIn .15s ease;
   }
 
   @keyframes fadeIn {
@@ -127,25 +116,34 @@
   }
 
   .lang-menu li {
+    margin: 0;
+    padding: 0;
+    border-radius: var(--is-raio-sm);
+  }
+  .lang-item-link {
     display: flex;
     align-items: center;
-    gap: .4rem;
-    padding: .45rem .65rem;
-    border-radius: var(--is-raio-sm);
-    cursor: pointer;
-    font-size: .84rem;
+    gap: .5rem;
+    padding: .5rem .65rem;
     color: var(--is-tinta);
+    text-decoration: none;
+    border-radius: var(--is-raio-sm);
     transition: background .12s ease;
   }
-  .lang-menu li:hover {
+  .lang-item-link:hover {
     background: var(--is-verde-claro);
     color: var(--is-verde-escuro);
   }
-  .lang-menu li.active {
+  .lang-menu li.active .lang-item-link {
     background: var(--is-verde-nevoa);
     color: var(--is-verde-escuro);
+    font-weight: 700;
   }
-  .flag { font-size: 1rem; line-height: 1; }
+
+  .flag {
+    font-size: 1rem;
+    line-height: 1;
+  }
   .menu-c {
     font: 900 .85rem var(--is-fonte-titulo);
     color: var(--is-verde-escuro);
@@ -171,132 +169,22 @@
 </style>
 
 <script is:inline>
-  let translateLoaded = false;
-  let translateLoading = false;
-
-  function loadGoogleTranslate(callback) {
-    if (translateLoaded) {
-      if (callback) callback();
-      return;
-    }
-    
-    window.googleTranslateElementInit = function () {
-      if (window.google && window.google.translate) {
-        new window.google.translate.TranslateElement({
-          pageLanguage: 'pt',
-          includedLanguages: 'de,zh-CN,en',
-          autoDisplay: false
-        }, 'google_translate_element');
-        translateLoaded = true;
-        translateLoading = false;
-        if (callback) callback();
-      }
-    };
-
-    if (!document.getElementById('google-translate-script')) {
-      translateLoading = true;
-      const s = document.createElement('script');
-      s.id = 'google-translate-script';
-      s.src = '//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
-      s.async = true;
-      document.head.appendChild(s);
-    }
-  }
-
-  function initLangDropdown() {
+  (() => {
     const container = document.getElementById('lang-selector');
     const trigger = document.getElementById('lang-trigger');
-    const menu = document.getElementById('lang-menu');
-    const activeC = document.getElementById('lang-active-c');
-    const activeL = document.getElementById('lang-active-l');
-    if (!container || !trigger || !menu) return;
+    if (!container || !trigger) return;
 
-    // Detecta idioma ativo pelo cookie
-    const match = document.cookie.match(/googtrans=\/pt\/([^;]+)/);
-    const activeLang = match ? match[1] : 'pt';
-
-    const currentItem = menu.querySelector(`li[data-lang="${activeLang}"]`);
-    if (currentItem) {
-      menu.querySelectorAll('li').forEach(li => li.classList.remove('active'));
-      currentItem.classList.add('active');
-      if (activeC) activeC.textContent = currentItem.getAttribute('data-c');
-      if (activeL) activeL.textContent = currentItem.getAttribute('data-l');
-    }
-
-    // Se usuario ja estiver traduzido, carrega o script imediatamente
-    if (activeLang !== 'pt') {
-      loadGoogleTranslate();
-    } else {
-      // Caso contrario, adia o carregamento para nao bloquear o caminho critico de renderizacao
-      const preload = () => {
-        loadGoogleTranslate();
-        ['pointerenter', 'touchstart', 'focus'].forEach(ev => container.removeEventListener(ev, preload));
-      };
-      ['pointerenter', 'touchstart', 'focus'].forEach(ev => container.addEventListener(ev, preload, { passive: true }));
-
-      // Fallback em ociosidade (apos First Contentful Paint e LCP)
-      if ('requestIdleCallback' in window) {
-        requestIdleCallback(() => loadGoogleTranslate(), { timeout: 4500 });
-      } else {
-        setTimeout(loadGoogleTranslate, 4500);
-      }
-    }
-
-    // Toggle menu
     trigger.addEventListener('click', (e) => {
       e.stopPropagation();
-      loadGoogleTranslate();
       const isOpen = container.classList.toggle('open');
       trigger.setAttribute('aria-expanded', String(isOpen));
     });
 
-    // Clique fora fecha o menu
     document.addEventListener('click', (e) => {
       if (!container.contains(e.target)) {
         container.classList.remove('open');
         trigger.setAttribute('aria-expanded', 'false');
       }
     });
-
-    // Seleção de idioma
-    menu.querySelectorAll('li').forEach(item => {
-      item.addEventListener('click', () => {
-        const targetLang = item.getAttribute('data-lang');
-        container.classList.remove('open');
-        trigger.setAttribute('aria-expanded', 'false');
-
-        if (targetLang === 'pt') {
-          document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-          document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=" + location.hostname;
-          location.reload();
-          return;
-        }
-
-        document.cookie = `googtrans=/pt/${targetLang}; path=/;`;
-        document.cookie = `googtrans=/pt/${targetLang}; path=/; domain=${location.hostname};`;
-
-        loadGoogleTranslate(() => {
-          let tries = 0;
-          const poll = setInterval(() => {
-            tries++;
-            const combo = document.querySelector('.goog-te-combo');
-            if (combo) {
-              clearInterval(poll);
-              combo.value = targetLang;
-              combo.dispatchEvent(new Event('change'));
-            } else if (tries > 25) {
-              clearInterval(poll);
-              location.reload();
-            }
-          }, 80);
-        });
-      });
-    });
-  }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initLangDropdown);
-  } else {
-    initLangDropdown();
-  }
+  })();
 </script>

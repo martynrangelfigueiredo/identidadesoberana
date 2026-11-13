@@ -10,7 +10,7 @@ const blog = defineCollection({
     date: z.coerce.date(),
     categoria: z.enum(["SOC", "IAM", "Compliance", "Privacidade"]),
     tags: z.array(z.string()).default([]),
-    nivel: z.enum(["Intermediário", "Avançado"]).default("Intermediário"),
+    nivel: z.string().default("Intermediário"),
     draft: z.boolean().default(false),
   }),
 });
