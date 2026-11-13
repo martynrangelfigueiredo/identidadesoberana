@@ -51,6 +51,16 @@ Tema comum: tecnologia, operações de segurança, conformidade e proteção de 
     5. *Onde investigar no portal?* (Caminho exato no Microsoft Entra admin center, ex: `Identity Governance > Privileged Identity Management > Microsoft Entra Roles > Resource Audit`).
     6. *Procedimento de resposta e contenção* (Revogação, revoke sessions, auditoria de pós-elevação).
 
+## AI Skills do Repositório (Validações Pré-Build Obrigatórias)
+Antes de qualquer build ou deploy, o pipeline de validação unificado DEVE ser executado e passar com 100% de sucesso (`npm run validate` ou `npm run build` que o invoca automaticamente via `prebuild`):
+1. **`criar-post`** ([`.agents/skills/criar-post/SKILL.md`](.agents/skills/criar-post/SKILL.md)): Procedimento operacional de redação técnica e matriz de terminologia.
+2. **`validar-seguranca`** ([`.agents/skills/validar-seguranca/SKILL.md`](.agents/skills/validar-seguranca/SKILL.md)): Bloqueio de secrets, tokens ou chaves privadas vazadas e links com `rel="noopener noreferrer"`.
+3. **`validar-fact-checking`** ([`.agents/skills/validar-fact-checking/SKILL.md`](.agents/skills/validar-fact-checking/SKILL.md)): Verificação de citações oficiais ao Microsoft Learn, tabelas reais do Sentinel e terminologia canônica.
+4. **`validar-performance`** ([`.agents/skills/validar-performance/SKILL.md`](.agents/skills/validar-performance/SKILL.md)): Bloqueio de scripts pesados de terceiros, fontes assíncronas e orçamento de ativos.
+5. **`validar-compliance`** ([`.agents/skills/validar-compliance/SKILL.md`](.agents/skills/validar-compliance/SKILL.md)): Bloqueio de dados pessoais reais (PII), conformidade LGPD e cookie-less.
+6. **`validar-kql`** ([`.agents/skills/validar-kql/SKILL.md`](.agents/skills/validar-kql/SKILL.md)): Compilação e validação das queries KQL no parser do Bryce Maxheimer Playground.
+7. **`validar-i18n`** ([`.agents/skills/validar-i18n/SKILL.md`](.agents/skills/validar-i18n/SKILL.md)): Paridade de artigos nos 4 idiomas (DE, ZH, EN, PT) e preservação estrita do nome da marca.
+
 ## Fluxos
 - **Novo carrossel:** criar `instagram/posts/<data>-<slug>/post.json` → `npm run carrossel -- <data>-<slug>` → revisar `carrossel.html` → `--png` para exportar.
 - **Novo artigo:** criar `src/content/blog/<data>-<slug>.md` com o frontmatter de `brand/CONTEUDO.md` → `npm run dev` para revisar.

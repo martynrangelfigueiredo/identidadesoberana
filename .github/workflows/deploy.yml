@@ -21,6 +21,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Run AI Skills validation pipeline
+        run: node scripts/validar-tudo.mjs
+
       - name: Install, build, and upload site
         uses: withastro/action@v3
         env:

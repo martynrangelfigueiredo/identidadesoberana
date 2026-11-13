@@ -3,6 +3,7 @@ import { render } from "astro:content";
 import Base from "../../../layouts/Base.astro";
 import { getPosts } from "../../../lib/posts";
 import { UI, type Locale } from "../../../lib/i18n";
+import ShareButtons from "../../../components/ShareButtons.astro";
 
 export async function getStaticPaths() {
   const locales: Locale[] = ["de", "zh", "en"];
@@ -85,6 +86,14 @@ const catUrl = `/${locale}/categoria/${post.data.categoria.toLowerCase()}/`;
       </div>
     </header>
     <div class="estreito prosa"><Content /></div>
+    <div class="estreito">
+      <ShareButtons
+        title={post.data.title}
+        description={post.data.description}
+        url={`https://identidadesoberana.com.br/${locale}/blog/${post.id.replace(/^[a-z]{2}\//, "")}/`}
+        locale={locale}
+      />
+    </div>
   </article>
 </Base>
 

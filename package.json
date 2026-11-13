@@ -6,6 +6,8 @@
   "description": "Identidade Soberana — blog (identidadesoberana.com.br) e carrosséis do Instagram (@identidadesoberana)",
   "scripts": {
     "dev": "astro dev",
+    "validate": "node scripts/validar-tudo.mjs",
+    "prebuild": "npm run validate",
     "build": "astro build",
     "preview": "astro preview",
     "carrossel": "node scripts/carrossel.mjs",

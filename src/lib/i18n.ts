@@ -87,6 +87,12 @@ export const UI = {
       privacidade: { nome: "Privacidade", desc: "Proteção de dados pessoais na prática, do titular ao DPO." },
     },
     readingTime: "min de leitura",
+    share: {
+      title: "Compartilhe este artigo",
+      copied: "Link copiado!",
+      copy: "Copiar link",
+      native: "Compartilhar",
+    },
   },
   de: {
     siteName: "Identidade Soberana",
@@ -132,6 +138,12 @@ export const UI = {
       privacidade: { nome: "Datenschutz", desc: "Praktischer Schutz personenbezogener Daten, vom Betroffenen bis zum DPO." },
     },
     readingTime: "Min. Lesezeit",
+    share: {
+      title: "Diesen Artikel teilen",
+      copied: "Link kopiert!",
+      copy: "Link kopieren",
+      native: "Teilen",
+    },
   },
   zh: {
     siteName: "Identidade Soberana",
@@ -177,6 +189,12 @@ export const UI = {
       privacidade: { nome: "隐私", desc: "个人信息与数据隐私保护实践，赋能个人与数据保护官。" },
     },
     readingTime: "分钟阅读",
+    share: {
+      title: "分享本文",
+      copied: "已复制链接!",
+      copy: "复制链接",
+      native: "分享",
+    },
   },
   en: {
     siteName: "Identidade Soberana",
@@ -222,6 +240,12 @@ export const UI = {
       privacidade: { nome: "Privacy", desc: "Practical privacy and personal data protection, from users to DPOs." },
     },
     readingTime: "min read",
+    share: {
+      title: "Share this article",
+      copied: "Link copied!",
+      copy: "Copy link",
+      native: "Share",
+    },
   },
 } as const;
 

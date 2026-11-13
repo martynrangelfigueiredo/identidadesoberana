@@ -1,0 +1,204 @@
+---
+import { UI, type Locale } from "../lib/i18n";
+
+interface Props {
+  title: string;
+  description?: string;
+  url: string;
+  locale?: Locale;
+}
+
+const { title, description = "", url, locale = "pt" } = Astro.props;
+const t = UI[locale].share;
+
+const encodedUrl = encodeURIComponent(url);
+const encodedText = encodeURIComponent(`${title} — Identidade Soberana`);
+
+const shareLinks = [
+  {
+    name: "LinkedIn",
+    href: `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`,
+    icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg>`,
+    color: "#0a66c2",
+  },
+  {
+    name: "X (Twitter)",
+    href: `https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedText}`,
+    icon: `<svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>`,
+    color: "#000000",
+  },
+  {
+    name: "WhatsApp",
+    href: `https://api.whatsapp.com/send?text=${encodedText}%20${encodedUrl}`,
+    icon: `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2m.01 1.67c2.2 0 4.26.86 5.82 2.41a8.188 8.188 0 0 1 2.41 5.83c0 4.54-3.7 8.24-8.24 8.24-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.19 8.19 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24m4.52 11.66c-.25-.13-1.47-.72-1.7-.81-.23-.08-.39-.13-.56.13-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.13-1.06-.39-2.03-1.25-.75-.67-1.26-1.5-1.41-1.75-.15-.25-.02-.39.11-.51.11-.11.25-.29.37-.44.13-.14.17-.25.25-.42.08-.17.04-.31-.02-.44-.06-.13-.56-1.34-.76-1.84-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.44.06-.67.31-.23.25-.88.86-.88 2.1 0 1.24.9 2.44 1.03 2.61.13.17 1.78 2.71 4.3 3.8.6.26 1.07.41 1.43.53.6.19 1.15.16 1.58.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.15-1.18-.07-.12-.23-.19-.48-.31z"/></svg>`,
+    color: "#25D366",
+  },
+];
+---
+
+<div class="share-box" data-url={url} data-title={title} data-desc={description}>
+  <div class="share-header">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <circle cx="18" cy="5" r="3"></circle>
+      <circle cx="6" cy="12" r="3"></circle>
+      <circle cx="18" cy="19" r="3"></circle>
+      <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+      <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+    </svg>
+    <span>{t.title}</span>
+  </div>
+
+  <div class="share-actions">
+    <button type="button" class="btn-share-native" aria-label={t.native} style="display:none;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
+        <polyline points="16 6 12 2 8 6"></polyline>
+        <line x1="12" y1="2" x2="12" y2="15"></line>
+      </svg>
+      <span>{t.native}</span>
+    </button>
+
+    {shareLinks.map((link) => (
+      <a
+        href={link.href}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="share-btn"
+        aria-label={`Compartilhar no ${link.name}`}
+        title={`Compartilhar no ${link.name}`}
+      >
+        <Fragment set:html={link.icon} />
+        <span>{link.name}</span>
+      </a>
+    ))}
+
+    <button type="button" class="share-btn copy-btn" aria-label={t.copy} data-copied={t.copied} data-default={t.copy}>
+      <svg class="icon-copy" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+      </svg>
+      <span class="copy-label">{t.copy}</span>
+    </button>
+  </div>
+</div>
+
+<style>
+  .share-box {
+    margin: 3rem 0 1.5rem;
+    padding: 1.25rem 1.5rem;
+    background: var(--is-verde-nevoa);
+    border: 1px solid var(--is-borda);
+    border-radius: var(--is-raio-md);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .share-header {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    font: 800 .95rem var(--is-fonte-titulo);
+    color: var(--is-verde-escuro);
+  }
+
+  .share-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .5rem;
+  }
+
+  .share-btn,
+  .btn-share-native {
+    display: inline-flex;
+    align-items: center;
+    gap: .45rem;
+    padding: .45rem .85rem;
+    background: var(--is-branco);
+    border: 1px solid var(--is-borda);
+    border-radius: var(--is-raio-pill);
+    color: var(--is-tinta);
+    font: 600 .85rem var(--is-fonte-texto);
+    text-decoration: none !important;
+    cursor: pointer;
+    box-shadow: var(--is-sombra-1);
+    transition: all .15s ease;
+  }
+
+  .share-btn:hover,
+  .btn-share-native:hover {
+    border-color: var(--is-verde);
+    background: var(--is-verde-claro);
+    color: var(--is-verde-escuro);
+    transform: translateY(-1px);
+  }
+
+  .btn-share-native {
+    background: var(--is-verde);
+    color: var(--is-branco);
+    border-color: var(--is-verde);
+  }
+  .btn-share-native:hover {
+    background: var(--is-verde-escuro);
+    color: var(--is-branco);
+  }
+
+  .copy-btn.copied {
+    background: var(--is-verde-claro);
+    border-color: var(--is-verde);
+    color: var(--is-verde-escuro);
+  }
+
+  @media (max-width: 600px) {
+    .share-box {
+      padding: 1rem;
+    }
+    .share-btn span {
+      font-size: .8rem;
+    }
+  }
+</style>
+
+<script is:inline>
+  document.querySelectorAll('.share-box').forEach((box) => {
+    const url = box.dataset.url || window.location.href;
+    const title = box.dataset.title || document.title;
+    const text = box.dataset.desc || '';
+
+    // 1. Web Share API para mobile e browsers modernos
+    const nativeBtn = box.querySelector('.btn-share-native');
+    if (nativeBtn && navigator.share) {
+      nativeBtn.style.display = 'inline-flex';
+      nativeBtn.addEventListener('click', async () => {
+        try {
+          await navigator.share({ title, text, url });
+        } catch (err) {
+          // Ignora se o usuário cancelou o compartilhamento nativo
+        }
+      });
+    }
+
+    // 2. Botão de copiar link para clipboard
+    const copyBtn = box.querySelector('.copy-btn');
+    if (copyBtn) {
+      const copyLabel = copyBtn.querySelector('.copy-label');
+      const copiedText = copyBtn.dataset.copied || 'Copiado!';
+      const defaultText = copyBtn.dataset.default || 'Copiar link';
+
+      copyBtn.addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(url);
+          copyBtn.classList.add('copied');
+          if (copyLabel) copyLabel.textContent = `✔ ${copiedText}`;
+          setTimeout(() => {
+            copyBtn.classList.remove('copied');
+            if (copyLabel) copyLabel.textContent = defaultText;
+          }, 2000);
+        } catch (err) {
+          console.error('Falha ao copiar link:', err);
+        }
+      });
+    }
+  });
+</script>

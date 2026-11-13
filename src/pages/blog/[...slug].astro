@@ -2,6 +2,7 @@
 import { render } from "astro:content";
 import Base from "../../layouts/Base.astro";
 import { getPosts } from "../../lib/posts";
+import ShareButtons from "../../components/ShareButtons.astro";
 
 export async function getStaticPaths() {
   const posts = await getPosts("pt");
@@ -90,6 +91,14 @@ const data = post.data.date.toLocaleDateString("pt-BR", { day: "2-digit", month:
       </div>
     </header>
     <div class="estreito prosa"><Content /></div>
+    <div class="estreito">
+      <ShareButtons
+        title={post.data.title}
+        description={post.data.description}
+        url={`https://identidadesoberana.com.br/blog/${post.id}/`}
+        locale="pt"
+      />
+    </div>
   </article>
 </Base>
 
