@@ -26,7 +26,7 @@ Microsoft Sentinel löst diesen Vorfall aus, wenn ein Administrator oder ein Die
 
 ---
 
-## 2. Dica de KQL: Anreicherung von AuditLogs und SigninLogs
+## 2. KQL-Tipp: Anreicherung von AuditLogs und SigninLogs
 
 Die folgende Abfrage projiziert zusätzliche Informationen zur Kontextualisierung des Ereignisses, indem sie PIM-Auditereignisse mit Anmeldedaten korreliert:
 

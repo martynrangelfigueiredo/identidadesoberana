@@ -54,15 +54,25 @@ Celular seguro · Compras online · LGPD explicada pro cidadão (seus direitos) 
 ### Regras de escrita
 - Comece com **TL;DR** (blockquote) quando o artigo for longo.
 - Termos técnicos em inglês são OK (SIEM, IGA, PAM, AitM), em *itálico* na primeira vez.
+- **Padrão de Terminologia Multilíngue (Microsoft Learn & Linux Foundation):**
+  - **Secrets:** Use SEMPRE **"secret / secrets"** ou **"client secrets"**. NUNCA use "segredo / segredos" em PT-BR nem "Geheimnis" em DE técnico.
+  - **Service Principal:** Mantenha **"Service Principal"** (pl: *Service Principals*). NUNCA use "entidade de serviço" isolado.
+  - **Tenant:** Use **"tenant"** (pl: *tenants*). NUNCA use "locatário".
+  - **Playbook:** Use **"playbook / playbooks"** (nunca "livro de jogadas").
+  - **Bypass:** Use **"bypass"** (ex: bypass de MFA; nunca "desvio").
+  - Matriz completa de termos disponível na skill `.agents/skills/criar-post/SKILL.md`.
 - **Padrão de Artigos de Azure / Sentinel (Obrigatório):**
   - Os posts relacionados a Azure devem ser estruturados a partir de **incidentes reais gerados pelo Microsoft Sentinel** (baseados nas *analytics rules* nativas do Azure Sentinel, sem precisar citar explicitamente a regra nativa).
   - **Título suave, autoral e SEMPRE em português:** **NUNCA** use o nome literal do incidente no título. Escreva um título convidativo, natural e profissional (ex.: *"Elevação de privilégios via PIM: guia prático de investigação para analistas de SOC"*).
   - **Referência no Microsoft Learn:** Todo artigo deve referenciar a documentação oficial da regra/catálogo no Microsoft Learn (ex.: catálogo de detecções padrão do Microsoft Sentinel).
   - **Tradução:** O site fornece tradução na ordem: **1. Alemão (Deutsch)**, **2. Mandarim da China continental (简体中文)**, **3. Inglês (English)**.
   - Devem ser artigos extensos, completos e práticos — verdadeiros playbooks de SOC.
-  - **Dica de KQL (Título e Tom):**
-    - Em vez de "KQL Avançado" ou "KQL Inovador", use títulos simples como: `## 2. Dica de KQL: [Foco da consulta]`.
-    - Tom humilde e objetivo: não enalteça a query com frases do tipo *"vai muito além..."*. Apenas diga que ela projeta informações a mais para ajudar a contextualizar o evento.
+  - **Seção de KQL (Título Humilde por Idioma e Tom):**
+    - 🇧🇷 Português: `## 2. Dica de KQL: [Foco da consulta]`
+    - 🇩🇪 Alemão: `## 2. KQL-Tipp: [Fokus der Abfrage]`
+    - 🇨🇳 Mandarim: `## 2. KQL 查询提示：[查询要点]`
+    - 🇺🇸 Inglês: `## 2. KQL Tip: [Query focus]`
+    - Tom humilde e objetivo: não enalteça a query com frases do tipo *"vai muito além..."* ou *"revolucionária"*. Apenas diga que ela projeta informações a mais para ajudar a contextualizar o evento.
     - **Sintaxe KQL Estritamente ASCII:** NUNCA use acentos ou cedilha (`ç`, `ã`, `õ`, `é`, `á`, etc.) em nomes de variáveis (`let`), aliases ou colunas projetadas. O compilador Kusto rejeita caracteres especiais.
     - **Testar queries:** Execute `npm run test:kql` para validar toda a sintaxe KQL antes de publicar.
   - **Roteiro estruturado de investigação:**

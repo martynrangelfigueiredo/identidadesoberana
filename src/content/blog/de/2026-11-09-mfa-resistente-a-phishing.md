@@ -30,7 +30,7 @@ Wenn eine MFA-Anomalie-Erkennungsregel in Microsoft Sentinel anschlägt, spiegel
 
 ---
 
-## 2. Dica de KQL: Korrelation von MFA-Fatigue mit nachfolgender Anmeldung
+## 2. KQL-Tipp: Korrelation von MFA-Fatigue mit nachfolgender Anmeldung
 
 Die folgende Abfrage korreliert abgelehnte Authentifizierungsversuche mit nachfolgenden erfolgreichen Anmeldungen innerhalb eines Zeitfensters und projiziert nützliche Kontextinformationen wie Authentifizierungsmethode, Standort, Betriebssystem und Sitzungsrisikostufe:
 

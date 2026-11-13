@@ -30,7 +30,7 @@ When an adversary compromises an account holding the **Application Administrator
 
 ---
 
-## 2. Dica de KQL: Tracking new secrets and operator context
+## 2. KQL Tip: Tracking new secrets and operator context
 
 The query below correlates application credential update events with the initiator's interactive sign-in logs to extract IP address, geo-location, MFA, and session risk levels:
 

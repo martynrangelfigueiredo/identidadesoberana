@@ -30,7 +30,7 @@ Erlangt ein Angreifer Kontrolle über ein Konto mit den Rollen **Application Adm
 
 ---
 
-## 2. Dica de KQL: Neue Secrets und Akteurskontext nachverfolgen
+## 2. KQL-Tipp: Neue Secrets und Akteurskontext nachverfolgen
 
 Die folgende Abfrage projiziert zusätzliche Informationen, um das Ereignis im Microsoft Sentinel zu analysieren:
 

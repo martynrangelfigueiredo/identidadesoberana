@@ -30,7 +30,7 @@ When an MFA anomaly detection rule triggers in Microsoft Sentinel, it typically 
 
 ---
 
-## 2. Dica de KQL: Correlating MFA fatigue with subsequent successful logon
+## 2. KQL Tip: Correlating MFA fatigue with subsequent successful logon
 
 The following query correlates denied authentication attempts with subsequent successful sign-ins within a given time frame, projecting valuable context such as authentication methods, location, operating system, and session risk levels:
 

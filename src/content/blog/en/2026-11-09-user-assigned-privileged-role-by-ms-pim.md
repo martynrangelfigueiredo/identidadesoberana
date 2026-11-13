@@ -26,7 +26,7 @@ Microsoft Sentinel raises this alert whenever an administrator or service princi
 
 ---
 
-## 2. Dica de KQL: Enriching PIM AuditLogs with Signin Context
+## 2. KQL Tip: Enriching PIM AuditLogs with Signin Context
 
 The following query correlates PIM role assignment events with the initiator's interactive sign-in logs to capture IP address, MFA requirements, and risk level:
 

@@ -20,6 +20,18 @@ Tema comum: tecnologia, operações de segurança, conformidade e proteção de 
 - Cores/fontes vêm de `brand/tokens.css`. Nunca invente cores nem escreva estilos dentro de `post.json` ou dos posts `.md`.
 - Tom leve e amigável, **nunca alarmista**. Sem mascote, sem rosto, sem "hacker de capuz".
 - Instagram: zero jargão, focado em dicas práticas do dia a dia.
+- **Padrão de Terminologia Técnica (Microsoft Learn & Linux Foundation):**
+  - **Secrets:** Use SEMPRE **"secret / secrets"** ou **"client secrets"**. NUNCA traduza para "segredo / segredos" em português ou "Geheimnis" em alemão.
+  - **Service Principal:** Mantenha **"Service Principal"** (pl: *Service Principals*). NUNCA use "entidade de serviço" isolado.
+  - **Tenant:** Use **"tenant"** (pl: *tenants*). NUNCA use "locatário".
+  - **Playbook:** Use **"playbook / playbooks"** (nunca "livro de jogadas").
+  - **Bypass:** Use **"bypass"** (ex: bypass de MFA; nunca "desvio").
+  - **Títulos KQL por Idioma:**
+    - 🇧🇷 Português: `## 2. Dica de KQL: [Foco da consulta]`
+    - 🇩🇪 Alemão: `## 2. KQL-Tipp: [Fokus der Abfrage]`
+    - 🇨🇳 Mandarim: `## 2. KQL 查询提示：[查询要点]`
+    - 🇺🇸 Inglês: `## 2. KQL Tip: [Query focus]`
+  - Consulte a matriz completa na skill `.agents/skills/criar-post/SKILL.md`.
 - **Site (Regra para Posts de Azure/Incidentes):**
   - Todo post relacionado a Azure no site deve ser modelado a partir de um **incidente real gerado pelo Microsoft Sentinel** (tendo como base uma *analytics rule* padrão/default do Azure Sentinel, sem precisar citar explicitamente o nome da regra padrão).
   - **Título SEMPRE suave, autoral e em português:** **NUNCA** coloque o nome literal do incidente ou regra no título. Crie um título autoral, claro e fluído em português (ex.: use *"Elevação de privilégios via PIM: guia prático de investigação para analistas de SOC"*, e nunca *"Incidente: User Assigned Privileged Role by MS-PIM"*).
