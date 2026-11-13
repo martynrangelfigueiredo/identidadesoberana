@@ -8,7 +8,6 @@ export const LOCALES = ["pt", "de", "zh", "en"] as const;
 export type Locale = (typeof LOCALES)[number];
 
 export const DEFAULT_LOCALE: Locale = "pt";
-export const NON_DEFAULT_LOCALES: Locale[] = ["de", "zh", "en"];
 
 export const LOCALE_LABELS: Record<Locale, { country: string; langCode: string; name: string; flag: string }> = {
   de: { country: "DE", langCode: "de", name: "Deutsch", flag: "🇩🇪" },
@@ -224,3 +223,4 @@ export const UI = {
     readingTime: "min read",
   },
 } as const;
+

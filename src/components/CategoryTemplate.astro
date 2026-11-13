@@ -26,3 +26,4 @@ const posts = allPosts.filter((p) => p.data.categoria.toLowerCase() === categori
     {posts.length ? <div class="grid">{posts.map((post) => <PostCard post={post} locale={locale} />)}</div> : <p>Em breve.</p>}
   </div>
 </Base>
+

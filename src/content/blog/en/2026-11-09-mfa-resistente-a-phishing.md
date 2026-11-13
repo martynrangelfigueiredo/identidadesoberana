@@ -167,3 +167,4 @@ AuditLogs
 1. **Enforce Number Matching:** Eliminate blind push approvals across all user populations.
 2. **Show Geographic Context:** Display application name and requester location in push notifications.
 3. **Transition to FIDO2 / Passkeys:** Hardware security keys (YubiKey, Windows Hello for Business) cryptographically tie challenges to legitimate origins, preventing AitM and push bombing completely.
+

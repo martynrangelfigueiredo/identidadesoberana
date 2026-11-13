@@ -173,3 +173,4 @@ AuditLogs
 1. **Number Matching erzwingen:** Stellen Sie sicher, dass der Nummernabgleich im Microsoft Authenticator ausnahmslos aktiviert ist.
 2. **Geografischer Kontext:** App-Name und Standortkarte in Push-Benachrichtigungen aktivieren.
 3. **Migration zu FIDO2 und Passkeys:** Phishing-resistente FIDO2-Sicherheitsschlüssel (z. B. Yubikey, Windows Hello) binden die Authentifizierung kryptografisch an die legitime Domäne.
+

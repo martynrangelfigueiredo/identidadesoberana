@@ -135,3 +135,4 @@ AADServicePrincipalSignInLogs
     IDCorrelacao = CorrelationId
 | order by DataHora asc
 ```
+
