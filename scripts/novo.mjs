@@ -64,11 +64,12 @@ let tempoAnalise = 24h;
 // Substitua pela tabela e filtros adequados
 AuditLogs
 | where TimeGenerated >= ago(tempoAnalise)
+| mv-expand Target = TargetResources
 | project
     DataHora = TimeGenerated,
     Acao = ActivityDisplayName,
     Ator = tostring(InitiatedBy.user.userPrincipalName),
-    Alvo = tostring(TargetResources[0].userPrincipalName),
+    Alvo = tostring(Target.userPrincipalName),
     IDCorrelacao = CorrelationId
 | order by DataHora desc
 \`\`\`
