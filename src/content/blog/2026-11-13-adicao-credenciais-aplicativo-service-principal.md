@@ -45,7 +45,6 @@ A query abaixo traz algumas informações adicionais para contextualizar o event
 ```kql
 // ====================================================================================
 // Deteccao & Enriquecimento: Nova credencial adicionada a aplicativo ou Service Principal
-// Autor: Identidade Soberana (identidadesoberana.com.br)
 // Objetivo: Mapear ator, aplicativo alvo, tipo de secret, IP e contexto de logon
 // ====================================================================================
 let tempoAnalise = 24h;

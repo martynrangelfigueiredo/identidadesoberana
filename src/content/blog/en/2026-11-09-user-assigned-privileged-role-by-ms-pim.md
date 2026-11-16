@@ -33,7 +33,6 @@ The following query correlates PIM role assignment events with the initiator's i
 ```kql
 // ====================================================================================
 // Deteccao & Enriquecimento: Privileged Role Assignment via PIM
-// Autor: Identidade Soberana (identidadesoberana.com.br)
 // Goal: Map actor, target account, role, justification, IP, MFA, and risk level
 // ====================================================================================
 let tempoAnalise = 24h;

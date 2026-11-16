@@ -16,6 +16,7 @@ O projeto cobre dois pilares complementares de engenharia:
 
 ### Regras de escrita
 - Comece com **TL;DR** (blockquote) quando o artigo for longo.
+- **Foco Técnico e Zero Auto-Promoção:** O objetivo de todo artigo é ajudar quem opera segurança na ponta. **Não fique dizendo 'soberano' ou 'soberana' a toda hora** em títulos e parágrafos. Use termos técnicos diretos (laboratório local, gestão de acessos, isolamento em loopback, etc.). Nunca insira comentários de auto-promoção (`// Autor: Identidade Soberana`) em blocos de código ou queries.
 - Termos técnicos em inglês são OK (SIEM, IGA, PAM, AitM), em *itálico* na primeira vez.
 - **Padrão de Terminologia Multilíngue (Microsoft Learn & Linux Foundation):**
   - **Secrets:** Use SEMPRE **"secret / secrets"** ou **"client secrets"**. NUNCA use "segredo / segredos" em PT-BR nem "Geheimnis" em DE técnico.

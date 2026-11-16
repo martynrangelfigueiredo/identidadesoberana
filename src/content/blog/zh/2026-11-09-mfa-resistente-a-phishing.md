@@ -37,7 +37,6 @@ nivel: 中级
 ```kql
 // ====================================================================================
 // Detecção & Enriquecimento: MFA Fatigue seguida de Logon Bem-Sucedido
-// Autor: Identidade Soberana (identidadesoberana.com.br)
 // 目标: 追踪连续被拒的 MFA 并在其后成功登录的异常 IP
 // ====================================================================================
 let janelaAnalise = 24h;

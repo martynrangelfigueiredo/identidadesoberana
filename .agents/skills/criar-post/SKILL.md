@@ -55,6 +55,8 @@ Todo post técnico relacionado a incidentes no Microsoft Azure deve ser modelado
    - 🇨🇳 Mandarim: `## 2. KQL 查询提示：[查询要点]`
    - 🇺🇸 Inglês: `## 2. KQL Tip: [Query focus]`
    - **Tom humilde e direto:** Diga apenas que a consulta projeta algumas colunas úteis para contextualizar o evento. NUNCA use palavras grandiosas como *"KQL Avançado"*, *"inovador"* ou *"revolucionário"*.
+   - **Zero Auto-Promoção em Códigos:** NUNCA insira comentários de autoria ou divulgação (ex.: `// Autor: Identidade Soberana`) em blocos de código ou queries KQL. Foque estritamente em explicar os comandos e parâmetros técnicos.
+   - **Sem repetição excessiva de "soberano":** O nome da marca institucional é "Identidade Soberana", mas NUNCA fique repetindo "soberano" ou "soberana" a todo momento no corpo dos textos ou títulos. Use termos técnicos objetivos ("local", "open-source", "isolamento local", etc.).
 4. **Matriz das 5 Perguntas Obrigatórias da Investigação:**
    - *O que foi feito?* (Ação, CorrelationId, permanente vs temporário).
    - *Quem fez?* (InitiatedBy, histórico da conta, IP, MFA, SigninLogs).

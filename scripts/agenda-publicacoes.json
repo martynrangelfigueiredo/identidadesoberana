@@ -19,9 +19,9 @@
       "data": "2026-11-16",
       "horario": "11:50",
       "status": "publicado",
-      "trilha": "soberana",
+      "trilha": "open-source",
       "slug": "2026-11-16-keycloak-docker-windows-enterprise-lab",
-      "titulo": "Laboratório de IAM soberano: subindo o Keycloak no Windows Enterprise com Docker e WSL 2",
+      "titulo": "Laboratório local de IAM: subindo o Keycloak no Windows Enterprise com Docker e WSL 2",
       "categoria": "IAM",
       "idiomas": ["pt", "de", "zh", "en"]
     },
@@ -39,9 +39,9 @@
       "data": "2026-11-17",
       "horario": "07:50",
       "status": "planejado",
-      "trilha": "soberana",
+      "trilha": "open-source",
       "slug": "2026-11-17-wazuh-siem-xdr-docker-lab",
-      "titulo": "SIEM e XDR soberano: implantando o Wazuh All-in-One no Windows Enterprise via Docker",
+      "titulo": "SIEM e XDR com Wazuh: implantação local no Windows Enterprise via Docker",
       "categoria": "SOC",
       "idiomas": ["pt", "de", "zh", "en"]
     },
@@ -59,9 +59,9 @@
       "data": "2026-11-18",
       "horario": "07:50",
       "status": "planejado",
-      "trilha": "soberana",
+      "trilha": "open-source",
       "slug": "2026-11-18-thehive-soar-docker-lab",
-      "titulo": "SOAR soberano: orquestrando resposta a incidentes com TheHive e Cortex no Docker",
+      "titulo": "SOAR com TheHive e Cortex: laboratório de resposta a incidentes no Docker",
       "categoria": "SOC",
       "idiomas": ["pt", "de", "zh", "en"]
     },
@@ -77,3 +77,4 @@
     }
   ]
 }
+

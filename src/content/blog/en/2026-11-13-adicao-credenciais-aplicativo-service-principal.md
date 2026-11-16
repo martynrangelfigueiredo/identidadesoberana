@@ -37,7 +37,6 @@ The query below correlates application credential update events with the initiat
 ```kql
 // ====================================================================================
 // Deteccao & Enriquecimento: Nova credencial adicionada a aplicativo ou Service Principal
-// Autor: Identidade Soberana (identidadesoberana.com.br)
 // Goal: Map actor, target application, secret type, IP, and sign-in context
 // ====================================================================================
 let tempoAnalise = 24h;

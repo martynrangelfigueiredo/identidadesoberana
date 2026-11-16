@@ -37,7 +37,6 @@ The following query correlates denied authentication attempts with subsequent su
 ```kql
 // ====================================================================================
 // Detecção & Enriquecimento: MFA Fatigue seguida de Logon Bem-Sucedido
-// Autor: Identidade Soberana (identidadesoberana.com.br)
 // Goal: Track repeated MFA denials culminating in successful sign-in from anomalous IP
 // ====================================================================================
 let janelaAnalise = 24h;

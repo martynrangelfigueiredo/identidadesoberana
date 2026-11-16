@@ -37,7 +37,6 @@ A query abaixo projeta algumas informações adicionais para contextualizar o ev
 ```kql
 // ====================================================================================
 // Deteccao & Enriquecimento: Privileged Role Assignment via PIM
-// Autor: Identidade Soberana (identidadesoberana.com.br)
 // Objetivo: Mapear ator, alvo, role, justificativa, IP, MFA e correlacao de risco
 // ====================================================================================
 let tempoAnalise = 24h;

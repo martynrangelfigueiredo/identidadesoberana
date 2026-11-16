@@ -37,7 +37,6 @@ Die folgende Abfrage korreliert abgelehnte Authentifizierungsversuche mit nachfo
 ```kql
 // ====================================================================================
 // Detektion & Anreicherung: MFA Fatigue gefolgt von erfolgreichem Logon
-// Autor: Identidade Soberana (identidadesoberana.com.br)
 // Ziel: Wiederholte MFA-Ablehnungen mit nachfolgendem Erfolg anomaler IPs korrelieren
 // ====================================================================================
 let janelaAnalise = 24h;

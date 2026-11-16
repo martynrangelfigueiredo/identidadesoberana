@@ -37,7 +37,6 @@ nivel: 高级
 ```kql
 // ====================================================================================
 // Deteccao & Enriquecimento: Nova credencial adicionada a aplicativo ou Service Principal
-// Autor: Identidade Soberana (identidadesoberana.com.br)
 // 目标: 映射发起人、目标应用、Secret 类型、IP 与登录上下文
 // ====================================================================================
 let tempoAnalise = 24h;

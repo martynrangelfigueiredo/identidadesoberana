@@ -1,6 +1,6 @@
 ---
-title: "Laboratório de IAM soberano: subindo o Keycloak no Windows Enterprise com Docker e WSL 2"
-description: "Guia prático para criar um laboratório local de IAM soberano no Windows Enterprise com Docker Desktop, WSL 2 e Keycloak 26 com PostgreSQL persistente."
+title: "Laboratório local de IAM: subindo o Keycloak no Windows Enterprise com Docker e WSL 2"
+description: "Guia prático para criar um laboratório local de IAM no Windows Enterprise com Docker Desktop, WSL 2 e Keycloak 26 com PostgreSQL persistente."
 date: 2026-11-16
 categoria: IAM
 tags: [keycloak, iam, docker, windows-enterprise, wsl2, lab, oidc, open-source]
@@ -9,7 +9,7 @@ nivel: Intermediário
 
 Para analistas de SOC, engenheiros de identidade e arquitetos de conformidade, dominar a teoria de Single Sign-On (SSO), federação OIDC e controle de acessos é indispensável. No entanto, testar fluxos de autenticação, políticas de MFA e federação diretamente em tenants de nuvem corporativa nem sempre é viável ou seguro.
 
-Montar um laboratório local de **Keycloak** — o provedor de identidade (IdP) e gerenciador de acessos de código aberto padrão da indústria — permite simular fluxos complexos de autenticação, testar integrações com aplicações locais e compreender a arquitetura de uma infraestrutura soberana sem gastar créditos de nuvem.
+Montar um laboratório local de **Keycloak** — o provedor de identidade (IdP) e gerenciador de acessos de código aberto padrão da indústria — permite simular fluxos complexos de autenticação, testar integrações com aplicações locais e compreender a arquitetura de federação de identidades sem gastar créditos de nuvem.
 
 > **TL;DR para o Laboratório:** Para rodar o Keycloak 26+ com PostgreSQL no Windows Enterprise sem sobrecarregar sua máquina corporativa, limite a memória do WSL 2 no arquivo `.wslconfig` (ex.: 4 GB a 6 GB), utilize a engine WSL 2 no Docker Desktop e execute o stack em modo de desenvolvimento local (`start-dev`) com volumes nomeados para persistência.
 
@@ -23,7 +23,7 @@ Montar um laboratório local de **Keycloak** — o provedor de identidade (IdP) 
 
 Em ambientes corporativos com Windows 10/11 Enterprise, a maioria dos profissionais de segurança possui estações de trabalho potentes com Hyper-V e WSL 2 disponíveis. A vantagem de utilizar containers nesse cenário inclui:
 
-1. **Soberania e Isolamento Total:** Nenhum dado de autenticação, hash de senha ou token transita fora da sua máquina local.
+1. **Isolamento Local Completo:** Nenhum dado de autenticação, hash de senha ou token transita fora da sua máquina local.
 2. **Custo Zero de Licenciamento:** O Keycloak é distribuído sob licença Apache 2.0, sendo a base tecnológica do Red Hat build of Keycloak (antigo RH-SSO).
 3. **Simetria com Padrões de Mercado:** Os mesmos protocolos implementados pelo Microsoft Entra ID (OpenID Connect, OAuth 2.0, SAML 2.0) são configuráveis no Keycloak, permitindo entender o que ocorre "debaixo do capô" dos tokens JWT e das requisições de autorização.
 
@@ -179,3 +179,4 @@ docker compose down -v
 ```
 
 Com essa base em execução no seu Windows Enterprise, você possui uma plataforma de estudos de IAM pronta para testar federações OIDC, SAML 2.0 e simulações de Zero Trust sem qualquer dependência externa.
+

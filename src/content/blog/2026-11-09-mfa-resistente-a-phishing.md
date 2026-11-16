@@ -37,7 +37,6 @@ A query abaixo correlaciona tentativas negadas com o logon subsequente bem-suced
 ```kql
 // ====================================================================================
 // Detecção & Enriquecimento: MFA Fatigue seguida de Logon Bem-Sucedido
-// Autor: Identidade Soberana (identidadesoberana.com.br)
 // Objetivo: Rastrear negações repetidas de MFA culminando em sucesso de IP anômalo
 // ====================================================================================
 let janelaAnalise = 24h;

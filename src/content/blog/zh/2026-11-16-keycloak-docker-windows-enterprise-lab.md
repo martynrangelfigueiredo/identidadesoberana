@@ -1,6 +1,6 @@
 ---
-title: "主权 IAM 实验环境：在 Windows 企业版上通过 Docker 与 WSL 2 搭建 Keycloak"
-description: "实战指南：在 Windows 企业版上使用 Docker Desktop、WSL 2 和持久化 PostgreSQL 快速搭建 Keycloak 26 本地主权 IAM 实验环境。"
+title: "本地 IAM 实验环境：在 Windows 企业版上通过 Docker 与 WSL 2 搭建 Keycloak"
+description: "实战指南：在 Windows 企业版上使用 Docker Desktop、WSL 2 和持久化 PostgreSQL 快速搭建 Keycloak 26 本地 IAM 实验环境。"
 date: 2026-11-16
 categoria: IAM
 tags: [keycloak, iam, docker, windows-enterprise, wsl2, lab, oidc, open-source]
@@ -9,7 +9,7 @@ nivel: 中级
 
 对于 SOC 分析师、身份安全工程师和合规专家而言，掌握单点登录（SSO）、OIDC 联合身份验证以及精细化访问控制至关重要。然而，直接在企业云端生产租户（tenant）中测试身份验证流程、MFA 策略与跨域联合往往存在合规风险与操作门槛。
 
-在本地搭建 **Keycloak** — 作为云原生计算基金会（CNCF）生态与工业界标准开源身份提供商（IdP）和访问管理中心，能够让安全团队在完全隔离的环境下模拟复杂的认证机制、验证前后端集成，并在无需消耗任何公有云额度的情况下掌握自主可控的数字主权架构。
+在本地搭建 **Keycloak** — 作为云原生计算基金会（CNCF）生态与工业界标准开源身份提供商（IdP）和访问管理中心，能够让安全团队在完全隔离的环境下模拟复杂的认证机制、验证前后端集成，并在无需消耗任何公有云额度的情况下验证底层鉴权流程。
 
 > **实验环境速览（TL;DR）：** 为了在 Windows 企业版上平稳运行 Keycloak 26 与 PostgreSQL 且不消耗过多工作站内存，请在 `.wslconfig` 中将 WSL 2 内存限制为 4 GB 至 6 GB，在 Docker Desktop 中启用 WSL 2 引擎，并使用开发模式（`start-dev`）配合命名数据卷（named volumes）实现数据持久化。
 
@@ -23,7 +23,7 @@ nivel: 中级
 
 在现代企业办公环境中，Windows 10/11 企业版（Enterprise）工作站普遍已内置 Hyper-V 与 WSL 2 虚拟化能力。通过容器运行该实验架构具有显著优势：
 
-1. **完全的数据主权与隔离：** 所有凭据、密码哈希、会话 token 和私有配置均留在本地工作站，零外流风险。
+1. **完全的本地隔离：** 所有凭据、密码哈希、会话 token 和私有配置均留在本地工作站，零外流风险。
 2. **零许可成本：** Keycloak 遵循 Apache 2.0 开源协议，也是 Red Hat build of Keycloak 的上游核心。
 3. **与现代云端架构无缝对称：** 无论是 Microsoft Entra ID 还是主流公有云使用的标准协议（OpenID Connect、OAuth 2.0、SAML 2.0），均可在 Keycloak 中逐项拆解与深度调试。
 
@@ -176,4 +176,5 @@ docker compose up -d
 docker compose down -v
 ```
 
-通过这一本地主权 IAM 环境，安全分析师可以随时针对 OIDC 授权码流程、SAML 断言劫持以及零信任条件访问策略展开深度实验，全面掌控底层鉴权机理。
+通过这一本地 IAM 环境，安全分析师可以随时针对 OIDC 授权码流程、SAML 断言劫持以及零信任条件访问策略展开深度实验，全面掌控底层鉴权机理。
+

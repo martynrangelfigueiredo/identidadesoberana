@@ -33,7 +33,6 @@ nivel: 高级
 ```kql
 // ====================================================================================
 // Deteccao & Enriquecimento: Privileged Role Assignment via PIM
-// Autor: Identidade Soberana (identidadesoberana.com.br)
 // 目标: 映射发起人、目标账户、角色、理由、IP、MFA 与风险评级
 // ====================================================================================
 let tempoAnalise = 24h;

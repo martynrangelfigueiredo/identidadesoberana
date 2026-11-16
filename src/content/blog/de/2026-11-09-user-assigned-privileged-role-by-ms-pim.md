@@ -33,7 +33,6 @@ Die folgende Abfrage projiziert zusätzliche Informationen zur Kontextualisierun
 ```kql
 // ====================================================================================
 // Deteccao & Enriquecimento: Privileged Role Assignment via PIM
-// Autor: Identidade Soberana (identidadesoberana.com.br)
 // Ziel: Akteur, Zielkonto, Rolle, Begründung, IP, MFA und Risikostufe abbilden
 // ====================================================================================
 let tempoAnalise = 24h;

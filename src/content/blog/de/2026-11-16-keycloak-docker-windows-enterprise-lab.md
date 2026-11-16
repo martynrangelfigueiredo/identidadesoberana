@@ -1,6 +1,6 @@
 ---
-title: "Souveränes IAM-Labor: Keycloak unter Windows Enterprise mit Docker und WSL 2 einrichten"
-description: "Praxisleitfaden zur Einrichtung eines lokalen souveränen IAM-Labors unter Windows Enterprise mit Docker Desktop, WSL 2, Keycloak 26 und persistentem PostgreSQL."
+title: "Lokales IAM-Labor: Keycloak unter Windows Enterprise mit Docker und WSL 2 einrichten"
+description: "Praxisleitfaden zur Einrichtung eines lokalen IAM-Labors unter Windows Enterprise mit Docker Desktop, WSL 2, Keycloak 26 und persistentem PostgreSQL."
 date: 2026-11-16
 categoria: IAM
 tags: [keycloak, iam, docker, windows-enterprise, wsl2, lab, oidc, open-source]
@@ -23,7 +23,7 @@ Der Aufbau eines lokalen Labors mit **Keycloak** — dem branchenweiten Open-Sou
 
 Auf modernen Unternehmens-Workstations mit Windows 10/11 Enterprise stehen Hyper-V und WSL 2 standardmäßig zur Verfügung. Die Vorteile einer containerisierten Laborumgebung liegen auf der Hand:
 
-1. **Vollständige Datensouveränität:** Keine Anmeldedaten, Kennwort-Hashes oder Token verlassen Ihre lokale Workstation.
+1. **Vollständige lokale Isolation:** Keine Anmeldedaten, Kennwort-Hashes oder Token verlassen Ihre lokale Workstation.
 2. **Keine Lizenzkosten:** Keycloak steht unter der Apache 2.0-Lizenz und bildet die technologische Basis des Red Hat build of Keycloak (ehemals RH-SSO).
 3. **Konformität zu Industriestandards:** Dieselben Protokolle, die auch in Microsoft Entra ID genutzt werden (OpenID Connect, OAuth 2.0, SAML 2.0), lassen sich im Keycloak im Detail analysieren.
 
@@ -175,3 +175,4 @@ docker compose up -d
 # Labor vollständig zurücksetzen (löscht alle Volumes):
 docker compose down -v
 ```
+

@@ -16,6 +16,7 @@ Público-alvo: Analistas de SOC (N1–N3), engenheiros de IAM, arquitetos de seg
 - Fontes: Nunito (títulos), Inter (texto), JetBrains Mono (código).
 - Cores/fontes vêm de `brand/tokens.css`. Nunca invente cores nem escreva estilos dentro dos posts `.md`.
 - Tom profissional, amigável e direto, **nunca alarmista**. Sem mascote, sem rosto, sem "hacker de capuz".
+- **Foco Técnico e Zero Auto-Promoção:** A missão dos artigos é ser 100% útil, didático e operacional para quem está na ponta defendendo ambientes. **NÃO fique dizendo "soberano" ou "soberana" a toda hora** em títulos, descrições ou no corpo do texto (prefira "local", "open-source", "isolamento local", etc.). Não use o texto para se auto-promover nem coloque comentários de autoria (`// Autor: Identidade Soberana`) dentro de blocos de código/queries. O nome "Identidade Soberana" deve constar apenas como a marca institucional do site.
 - **Padrão de Terminologia Técnica (Microsoft Learn & Linux Foundation):**
   - **Secrets:** Use SEMPRE **"secret / secrets"** ou **"client secrets"**. NUNCA traduza para "segredo / segredos" em português ou "Geheimnis" em alemão.
   - **Service Principal:** Mantenha **"Service Principal"** (pl: *Service Principals*). NUNCA use "entidade de serviço" isolado.

@@ -1,6 +1,6 @@
 ---
-title: "Sovereign IAM Lab: Setting Up Keycloak on Windows Enterprise with Docker and WSL 2"
-description: "A hands-on guide to building a local sovereign IAM lab on Windows Enterprise using Docker Desktop, WSL 2, Keycloak 26, and persistent PostgreSQL."
+title: "Local IAM Lab: Setting Up Keycloak on Windows Enterprise with Docker and WSL 2"
+description: "A hands-on guide to building a local IAM lab on Windows Enterprise using Docker Desktop, WSL 2, Keycloak 26, and persistent PostgreSQL."
 date: 2026-11-16
 categoria: IAM
 tags: [keycloak, iam, docker, windows-enterprise, wsl2, lab, oidc, open-source]
@@ -9,7 +9,7 @@ nivel: Intermediário
 
 For SOC analysts, identity security engineers, and compliance professionals, mastering the inner workings of Single Sign-On (SSO), OIDC federation, and fine-grained access control is critical. However, experimenting with complex authentication flows, MFA enforcement, and token issuance directly inside production enterprise cloud tenants is rarely practical or permissible.
 
-Spinning up a local laboratory powered by **Keycloak** — the industry-standard open-source identity and access management solution backed by CNCF standards — allows security teams to simulate identity architectures, test integrations, and dissect authentication mechanics with zero cloud hosting costs and absolute data custody.
+Spinning up a local laboratory powered by **Keycloak** — the industry-standard open-source identity and access management solution backed by CNCF standards — allows security teams to simulate identity architectures, test integrations, and dissect authentication mechanics with zero cloud hosting costs and full local control.
 
 > **Lab TL;DR:** To run Keycloak 26+ and PostgreSQL smoothly on Windows Enterprise without exhausting your workstation's RAM, cap WSL 2 memory usage inside `.wslconfig` (e.g. 4 GB to 6 GB), leverage Docker Desktop's WSL 2 engine, and execute the stack in local development mode (`start-dev`) backed by named volumes.
 
@@ -23,7 +23,7 @@ Spinning up a local laboratory powered by **Keycloak** — the industry-standard
 
 In enterprise environments, modern Windows 10/11 Enterprise workstations are typically equipped with robust hardware, Hyper-V, and WSL 2 capabilities. Running a containerized IAM lab locally delivers distinct advantages:
 
-1. **Total Data Sovereignty and Isolation:** No authentication requests, password hashes, or session tokens leave your workstation.
+1. **Complete Local Isolation:** No authentication requests, password hashes, or session tokens leave your workstation.
 2. **Zero Licensing Costs:** Keycloak is distributed under the Apache 2.0 license and serves as the open-source upstream core for Red Hat build of Keycloak (formerly RH-SSO).
 3. **Protocol Parity with Enterprise Hyperscalers:** The exact standard protocols used by Microsoft Entra ID (OpenID Connect, OAuth 2.0, SAML 2.0) are fully configurable in Keycloak, allowing you to inspect JWT tokens, claims, and authorization code flows down to the wire.
 
@@ -177,3 +177,4 @@ docker compose down -v
 ```
 
 With this foundation running on Windows Enterprise, you have an autonomous playground ready to test OIDC flows, SAML 2.0 assertions, and Zero Trust identity architectures.
+

@@ -37,7 +37,6 @@ Die folgende Abfrage projiziert zusätzliche Informationen, um das Ereignis im M
 ```kql
 // ====================================================================================
 // Deteccao & Enriquecimento: Nova credencial adicionada a aplicativo ou Service Principal
-// Autor: Identidade Soberana (identidadesoberana.com.br)
 // Ziel: Akteur, Ziel-App, Secret-Typ, IP und Anmeldekontext abbilden
 // ====================================================================================
 let tempoAnalise = 24h;
