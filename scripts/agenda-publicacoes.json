@@ -8,8 +8,8 @@
       "publico": "Engenheiros de Identidade, Arquitetos e Praticantes de SecOps Open Source"
     },
     {
-      "horario": "15:15",
-      "cron": "15 15 * * *",
+      "horario": "17:15",
+      "cron": "15 17 * * *",
       "trilha": "Defesa Cloud Enterprise & Microsoft Sentinel (SecOps/KQL/Entra ID)",
       "publico": "Analistas de SOC N1/N2/N3, Threat Hunters e Engenheiros de Detecção"
     }
@@ -27,7 +27,7 @@
     },
     {
       "data": "2026-11-16",
-      "horario": "15:15",
+      "horario": "17:15",
       "status": "agendado",
       "trilha": "enterprise",
       "slug": "2026-11-16-deteccao-roubo-tokens-primarios-prt-entra-id",
@@ -47,7 +47,7 @@
     },
     {
       "data": "2026-11-17",
-      "horario": "15:15",
+      "horario": "17:15",
       "status": "planejado",
       "trilha": "enterprise",
       "slug": "2026-11-17-consent-grants-aplicativos-oauth-maliciosos",
@@ -67,7 +67,7 @@
     },
     {
       "data": "2026-11-18",
-      "horario": "15:15",
+      "horario": "17:15",
       "status": "planejado",
       "trilha": "enterprise",
       "slug": "2026-11-18-anomalia-viagem-impossivel-identity-protection",
