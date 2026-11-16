@@ -7,9 +7,21 @@ interface Props {
   url: string;
   locale?: Locale;
   category?: string;
+  date?: string;
+  level?: string;
+  tags?: string[];
 }
 
-const { title, description = "", url, locale = "pt", category = "SOC" } = Astro.props;
+const {
+  title,
+  description = "",
+  url,
+  locale = "pt",
+  category = "SOC",
+  date = "",
+  level = "",
+  tags = []
+} = Astro.props;
 const t = UI[locale].share;
 
 const encodedUrl = encodeURIComponent(url);
@@ -37,7 +49,17 @@ const shareLinks = [
 ];
 ---
 
-<div class="share-box" data-url={url} data-title={title} data-desc={description} data-category={category}>
+<div
+  class="share-box"
+  data-url={url}
+  data-title={title}
+  data-desc={description}
+  data-category={category}
+  data-date={date}
+  data-level={level}
+  data-tags={JSON.stringify(tags)}
+  data-locale={locale}
+>
   <div class="share-header">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
       <circle cx="18" cy="5" r="3"></circle>
@@ -213,19 +235,13 @@ const shareLinks = [
     transform: translateY(-1px);
   }
 
-  .story-trigger-btn {
-    background: linear-gradient(135deg, #FFF5F7 0%, #F5F3FF 100%);
-    border-color: #E2D9F3;
-    color: #4A154B;
-    font-weight: 700;
+  .icon-story {
+    color: var(--is-cinza);
+    transition: color .15s ease;
   }
-  .story-trigger-btn:hover {
-    border-color: #9C27B0;
-    background: linear-gradient(135deg, #FCE7F3 0%, #EDE9FE 100%);
-    color: #833AB4;
-  }
-  .story-trigger-btn .icon-story {
-    color: #E1306C;
+
+  .share-btn:hover .icon-story {
+    color: var(--is-verde-escuro);
   }
 
   .btn-share-native {
@@ -470,6 +486,15 @@ const shareLinks = [
     const title = box.dataset.title || document.title;
     const text = box.dataset.desc || '';
     const category = box.dataset.category || 'IAM';
+    const date = box.dataset.date || '';
+    const level = box.dataset.level || '';
+    const locale = box.dataset.locale || 'pt';
+    let tags = [];
+    try {
+      tags = JSON.parse(box.dataset.tags || '[]');
+    } catch (e) {
+      tags = [];
+    }
 
     // 1. Web Share API nativa geral
     const nativeBtn = box.querySelector('.btn-share-native');
@@ -517,6 +542,7 @@ const shareLinks = [
 
     // Função de quebra de linhas para o Canvas
     function wrapText(ctx, text, x, y, maxWidth, lineHeight, maxLines) {
+      if (!text) return y;
       const words = text.split(' ');
       let line = '';
       let currentY = y;
@@ -532,14 +558,14 @@ const shareLinks = [
             ctx.fillText(line.trim() + '...', x, currentY);
             return currentY + lineHeight;
           }
-          ctx.fillText(line, x, currentY);
+          ctx.fillText(line.trim(), x, currentY);
           line = words[n] + ' ';
           currentY += lineHeight;
         } else {
           line = testLine;
         }
       }
-      ctx.fillText(line, x, currentY);
+      ctx.fillText(line.trim(), x, currentY);
       return currentY + lineHeight;
     }
 
@@ -550,91 +576,231 @@ const shareLinks = [
       const W = 1080;
       const H = 1920;
 
-      // 1. Fundo suave
+      const i18nLabels = {
+        pt: {
+          guide: 'GUIA TÉCNICO',
+          topics: 'TÓPICOS & TECNOLOGIAS:',
+          linkDrop: '🔗 Cole sua figurinha de Link aqui',
+          linkInstruction: '(Toque nas figurinhas do Instagram > figurinha LINK)',
+          footerSub: 'Conteúdo prático para analistas de SOC, IAM e Compliance',
+          since: 'Desde 2026 · Nuvem Aberta & Defesa Cloud',
+        },
+        de: {
+          guide: 'TECHNISCHER LEITFADEN',
+          topics: 'THEMEN & TECHNOLOGIEN:',
+          linkDrop: '🔗 Platziere deinen Link-Sticker hier',
+          linkInstruction: '(In Instagram Stories auf Sticker > LINK tippen)',
+          footerSub: 'Praxisnahe Leitfäden für SOC-, IAM- und Compliance-Teams',
+          since: 'Seit 2026 · Open Cloud & Cloud-Sicherheit',
+        },
+        zh: {
+          guide: '实战技术指南',
+          topics: '核心要点与技术栈：',
+          linkDrop: '🔗 在此处添加「链接」贴纸',
+          linkInstruction: '(在 Instagram 快拍点击贴纸图标 > 选择「链接」)',
+          footerSub: '面向 SOC 分析师、IAM 团队与合规人员的实战内容',
+          since: '始于 2026 · 开源云与云端防御',
+        },
+        en: {
+          guide: 'TECHNICAL GUIDE',
+          topics: 'TOPICS & TECHNOLOGIES:',
+          linkDrop: '🔗 Place your Link sticker here',
+          linkInstruction: '(Tap stickers icon in Instagram > select LINK)',
+          footerSub: 'Hands-on guides for SOC, IAM, and Compliance teams',
+          since: 'Since 2026 · Open Cloud & Cloud Defense',
+        },
+      };
+
+      const lbl = i18nLabels[locale] || i18nLabels.pt;
+
+      // 1. Fundo com gradiente suave e limpo
       const bgGrad = ctx.createLinearGradient(0, 0, 0, H);
       bgGrad.addColorStop(0, '#FFFFFF');
-      bgGrad.addColorStop(0.3, '#F3FAF5');
-      bgGrad.addColorStop(1, '#E6F5EC');
+      bgGrad.addColorStop(0.35, '#F7FAF8');
+      bgGrad.addColorStop(1, '#EBF6EF');
       ctx.fillStyle = bgGrad;
       ctx.fillRect(0, 0, W, H);
 
-      // 2. Barra de destaque no topo
+      // Faixa verde de destaque no topo
       ctx.fillStyle = '#009C3B';
-      ctx.fillRect(0, 0, W, 24);
+      ctx.fillRect(0, 0, W, 20);
 
-      // 3. Marca e Categoria no cabeçalho
+      // 2. Cabeçalho Superior: Marca à esquerda, Badges à direita
       ctx.fillStyle = '#00612A';
-      ctx.font = '900 42px Nunito, Inter, sans-serif';
-      ctx.fillText('identidade soberana', 90, 160);
+      ctx.font = '900 40px Nunito, Inter, sans-serif';
+      ctx.textAlign = 'left';
+      ctx.fillText('identidade soberana', 72, 115);
 
-      // Badge da Categoria
-      const catText = category.toUpperCase();
-      ctx.font = '800 28px Nunito, Inter, sans-serif';
-      const catWidth = ctx.measureText(catText).width + 48;
-      ctx.fillStyle = '#FFFFFF';
-      ctx.beginPath();
-      ctx.roundRect(W - 90 - catWidth, 120, catWidth, 54, 27);
-      ctx.fill();
-      ctx.lineWidth = 2.5;
-      ctx.strokeStyle = '#009C3B';
-      ctx.stroke();
+      ctx.fillStyle = '#5B6B62';
+      ctx.font = '600 22px Inter, sans-serif';
+      ctx.fillText('Engenharia de Segurança · IAM · SOC', 72, 150);
 
-      ctx.fillStyle = '#00612A';
-      ctx.fillText(catText, W - 90 - catWidth + 24, 158);
+      // Badges à direita: Categoria + Nível
+      let badgeRightX = W - 72;
+      const badgesToDraw = [];
+      if (level) {
+        badgesToDraw.push({ text: level.toUpperCase(), bg: '#E6F5EC', fg: '#00612A', border: '#B8DFCA' });
+      }
+      if (category) {
+        badgesToDraw.push({ text: category.toUpperCase(), bg: '#009C3B', fg: '#FFFFFF', border: '#009C3B' });
+      }
 
-      // 4. Card Central do Artigo
-      const cardX = 80;
-      const cardY = 240;
-      const cardW = W - 160;
-      const cardH = 1420;
+      ctx.font = '800 24px Nunito, Inter, sans-serif';
+      for (const badge of badgesToDraw) {
+        const textW = ctx.measureText(badge.text).width;
+        const pillW = textW + 36;
+        const pillH = 46;
+        const pillX = badgeRightX - pillW;
+        const pillY = 108;
 
-      // Sombra do card
+        ctx.fillStyle = badge.bg;
+        ctx.beginPath();
+        ctx.roundRect(pillX, pillY, pillW, pillH, 23);
+        ctx.fill();
+
+        if (badge.border && badge.border !== badge.bg) {
+          ctx.lineWidth = 2;
+          ctx.strokeStyle = badge.border;
+          ctx.stroke();
+        }
+
+        ctx.fillStyle = badge.fg;
+        ctx.fillText(badge.text, pillX + 18, pillY + 32);
+        badgeRightX = pillX - 12;
+      }
+
+      // 3. Card Central Branco com sombra suave
+      const cardX = 64;
+      const cardY = 180;
+      const cardW = W - 128; // 952px
+      const cardH = 1470;
+
       ctx.save();
-      ctx.shadowColor = 'rgba(0, 97, 42, 0.12)';
-      ctx.shadowBlur = 40;
-      ctx.shadowOffsetY = 16;
+      ctx.shadowColor = 'rgba(0, 97, 42, 0.08)';
+      ctx.shadowBlur = 36;
+      ctx.shadowOffsetY = 14;
       ctx.fillStyle = '#FFFFFF';
       ctx.beginPath();
-      ctx.roundRect(cardX, cardY, cardW, cardH, 44);
+      ctx.roundRect(cardX, cardY, cardW, cardH, 36);
       ctx.fill();
       ctx.restore();
 
-      // Borda sutil do card
-      ctx.lineWidth = 3;
+      ctx.lineWidth = 2.5;
       ctx.strokeStyle = '#DDE7E0';
       ctx.stroke();
 
-      // Conteúdo interno do card
-      // Selo de Leitura / Artigo Técnico
-      ctx.fillStyle = '#5B6B62';
-      ctx.font = '700 28px Inter, sans-serif';
-      ctx.fillText('ARTIGO TÉCNICO', cardX + 64, cardY + 90);
+      // Conteúdo Interno do Card
+      const innerX = cardX + 54;
+      const innerW = cardW - 108; // 844px
+      let cursorY = cardY + 70;
 
-      // Título do Artigo (Grande e chamativo)
+      // Meta: Data e Tipo de Conteúdo
+      ctx.textAlign = 'left';
+      ctx.fillStyle = '#5B6B62';
+      ctx.font = '700 24px Inter, sans-serif';
+      const metaString = date ? `📅 ${date}   ·   📖 ${lbl.guide}` : `📖 ${lbl.guide}`;
+      ctx.fillText(metaString, innerX, cursorY);
+      cursorY += 48;
+
+      // Título do Artigo (em até 4 linhas)
       ctx.fillStyle = '#1B2B22';
-      ctx.font = '900 62px Nunito, Inter, sans-serif';
-      const nextY = wrapText(ctx, title, cardX + 64, cardY + 180, cardW - 128, 80, 5);
+      ctx.font = '900 50px Nunito, Inter, sans-serif';
+      cursorY = wrapText(ctx, title, innerX, cursorY, innerW, 66, 4);
+      cursorY += 16;
 
-      // Linha divisória suave
-      ctx.fillStyle = '#E6F5EC';
-      ctx.fillRect(cardX + 64, nextY + 30, cardW - 128, 4);
+      // Barra divisória verde
+      ctx.fillStyle = '#009C3B';
+      ctx.fillRect(innerX, cursorY, 90, 5);
+      cursorY += 34;
 
-      // Descrição resumida
-      ctx.fillStyle = '#5B6B62';
-      ctx.font = '500 34px Inter, sans-serif';
-      wrapText(ctx, text, cardX + 64, nextY + 90, cardW - 128, 54, 4);
+      // Descrição Técnica Completa (em até 4-5 linhas)
+      ctx.fillStyle = '#3A4B42';
+      ctx.font = '500 29px Inter, sans-serif';
+      cursorY = wrapText(ctx, text, innerX, cursorY, innerW, 46, 5);
+      cursorY += 28;
 
-      // 5. Área demarcada para posicionar a figurinha real de Link do Instagram
-      const stickerW = cardW - 140;
-      const stickerH = 130;
-      const stickerX = cardX + 70;
-      const stickerY = cardY + cardH - 260;
+      // Box de Tópicos e Stack Técnica (se houver tags)
+      if (tags && tags.length > 0) {
+        const boxPad = 22;
+        const boxX = innerX;
+        const boxW = innerW;
+        const boxY = cursorY;
+        const maxTags = tags.slice(0, 7);
 
-      // Fundo suave com borda tracejada indicando o local exato da figurinha
+        ctx.font = '700 22px "JetBrains Mono", Consolas, monospace';
+        let currentTagX = boxX + boxPad;
+        let currentTagY = boxY + 68;
+        let linesCount = 1;
+        const tagLineH = 46;
+
+        for (const tag of maxTags) {
+          const tagLabel = '#' + tag;
+          const tagW = ctx.measureText(tagLabel).width + 28;
+          if (currentTagX + tagW > boxX + boxW - boxPad && currentTagX > boxX + boxPad) {
+            currentTagX = boxX + boxPad;
+            currentTagY += tagLineH;
+            linesCount++;
+          }
+          currentTagX += tagW + 12;
+        }
+
+        const boxH = 68 + linesCount * tagLineH + 6;
+
+        // Fundo do box de tópicos
+        ctx.fillStyle = '#F7FAF8';
+        ctx.beginPath();
+        ctx.roundRect(boxX, boxY, boxW, boxH, 20);
+        ctx.fill();
+        ctx.lineWidth = 1.5;
+        ctx.strokeStyle = '#E2EAE5';
+        ctx.stroke();
+
+        // Título do box
+        ctx.fillStyle = '#00612A';
+        ctx.font = '800 23px Nunito, Inter, sans-serif';
+        ctx.fillText(lbl.topics, boxX + boxPad, boxY + 38);
+
+        // Desenhar os badges de tags
+        ctx.font = '700 21px "JetBrains Mono", Consolas, monospace';
+        currentTagX = boxX + boxPad;
+        currentTagY = boxY + 58;
+
+        for (const tag of maxTags) {
+          const tagLabel = '#' + tag;
+          const tagW = ctx.measureText(tagLabel).width + 26;
+          const tagH = 36;
+
+          if (currentTagX + tagW > boxX + boxW - boxPad && currentTagX > boxX + boxPad) {
+            currentTagX = boxX + boxPad;
+            currentTagY += tagLineH;
+          }
+
+          // Badge Pill da Tag
+          ctx.fillStyle = '#FFFFFF';
+          ctx.beginPath();
+          ctx.roundRect(currentTagX, currentTagY, tagW, tagH, 10);
+          ctx.fill();
+          ctx.lineWidth = 1.5;
+          ctx.strokeStyle = '#D5E2D9';
+          ctx.stroke();
+
+          ctx.fillStyle = '#00612A';
+          ctx.fillText(tagLabel, currentTagX + 13, currentTagY + 25);
+
+          currentTagX += tagW + 12;
+        }
+      }
+
+      // Área Demarcada da Figurinha de Link do Instagram
+      const stickerW = cardW - 100;
+      const stickerH = 146;
+      const stickerX = cardX + 50;
+      const stickerY = cardY + cardH - 186;
+
       ctx.save();
       ctx.fillStyle = '#F3FAF5';
       ctx.beginPath();
-      ctx.roundRect(stickerX, stickerY, stickerW, stickerH, 30);
+      ctx.roundRect(stickerX, stickerY, stickerW, stickerH, 26);
       ctx.fill();
 
       ctx.lineWidth = 3.5;
@@ -643,22 +809,29 @@ const shareLinks = [
       ctx.stroke();
       ctx.restore();
 
-      // Instrução direta dentro da demarcação
-      ctx.fillStyle = '#00612A';
-      ctx.font = '900 34px Nunito, Inter, sans-serif';
+      // Texto de instrução dentro da demarcação
       ctx.textAlign = 'center';
-      ctx.fillText('🔗 Cole sua figurinha de Link aqui', cardX + cardW / 2, stickerY + 54);
+      ctx.fillStyle = '#00612A';
+      ctx.font = '900 33px Nunito, Inter, sans-serif';
+      ctx.fillText(lbl.linkDrop, cardX + cardW / 2, stickerY + 58);
 
       ctx.fillStyle = '#5B6B62';
-      ctx.font = '600 24px Inter, sans-serif';
-      ctx.fillText('(Toque no ícone de figurinhas no topo do Instagram > LINK)', cardX + cardW / 2, stickerY + 96);
-      ctx.textAlign = 'left';
+      ctx.font = '600 23px Inter, sans-serif';
+      ctx.fillText(lbl.linkInstruction, cardX + cardW / 2, stickerY + 104);
 
-      // 6. Rodapé com toques da marca
-      ctx.fillStyle = '#009C3B';
-      ctx.font = '800 28px Nunito, Inter, sans-serif';
+      // 4. Rodapé do Story (fora do card)
       ctx.textAlign = 'center';
-      ctx.fillText('identidadesoberana.com.br · Operações de Segurança e IAM', W / 2, H - 90);
+      ctx.fillStyle = '#009C3B';
+      ctx.font = '800 29px Nunito, Inter, sans-serif';
+      ctx.fillText('identidadesoberana.com.br', W / 2, H - 150);
+
+      ctx.fillStyle = '#5B6B62';
+      ctx.font = '600 21px Inter, sans-serif';
+      ctx.fillText(lbl.footerSub, W / 2, H - 114);
+
+      ctx.fillStyle = '#8FA196';
+      ctx.font = '500 18px Inter, sans-serif';
+      ctx.fillText(lbl.since, W / 2, H - 80);
       ctx.textAlign = 'left';
 
       // Cache do Blob

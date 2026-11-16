@@ -93,6 +93,9 @@ const catUrl = `/${locale}/categoria/${post.data.categoria.toLowerCase()}/`;
         url={`https://identidadesoberana.com.br/${locale}/blog/${post.id.replace(/^[a-z]{2}\//, "")}/`}
         locale={locale}
         category={post.data.categoria}
+        date={data}
+        level={post.data.nivel}
+        tags={post.data.tags}
       />
     </div>
   </article>

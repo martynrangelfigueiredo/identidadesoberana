@@ -98,6 +98,9 @@ const data = post.data.date.toLocaleDateString("pt-BR", { day: "2-digit", month:
         url={`https://identidadesoberana.com.br/blog/${post.id}/`}
         locale="pt"
         category={post.data.categoria}
+        date={data}
+        level={post.data.nivel}
+        tags={post.data.tags}
       />
     </div>
   </article>
