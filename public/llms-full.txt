@@ -6,15 +6,14 @@ Idioma principal: Português (pt-BR)
 Idiomas suportados: Alemão (Deutsch), Mandarim da China continental (简体中文), Inglês (English)
 Autor: Martyn Figueiredo (LinkedIn: https://linkedin.com/in/martynfigueiredo)
 Contato: administrador@identidadesoberana.com.br
-Instagram oficial: @identidadesoberana (https://instagram.com/identidadesoberana)
 Slogan: "Segurança digital sem complicação."
 
 ---
 
 ## 1. Escopo e Propósito
-A Identidade Soberana atua em duas frentes integradas:
-1. **Canal Técnico (Site e Blog):** Produção de playbooks de resposta a incidentes de SOC com foco no Microsoft Sentinel e Azure, queries enriquecidas em KQL (Kusto Query Language), engenharia de identidades (Entra ID, PIM, Zero Trust) e auditoria de conformidade (LGPD, ISO 27001, SOC 2).
-2. **Canal de Conscientização (Instagram @identidadesoberana):** Dicas simplificadas em formato de carrossel visual para o público geral proteger contas, dispositivos móveis, WhatsApp e informações pessoais contra fraudes cibernéticas.
+A Identidade Soberana é um projeto de engenharia de segurança, resposta a incidentes e governança de identidades focado em duas frentes complementares:
+1. **Operação Enterprise & Cloud SecOps:** Produção de playbooks operacionais de resposta a incidentes com foco em Microsoft Sentinel, Microsoft Entra ID, Defender XDR, queries enriquecidas em KQL (Kusto Query Language), PIM e contenção rápida.
+2. **Nuvem Soberana & Ecossistema Aberto:** Arquiteturas soberanas de autenticação e monitoramento com Keycloak, Wazuh, TheHive, federação OIDC, laboratórios locais em Docker/WSL2 e garantia de custódia e soberania de dados.
 
 ---
 

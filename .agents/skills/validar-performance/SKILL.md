@@ -20,3 +20,4 @@ Esta skill garante que o site mantenha tempos de carregamento instantâneos e po
 ```bash
 node scripts/validators/performance.mjs
 ```
+

@@ -1,0 +1,79 @@
+{
+  "fuso_horario": "America/Sao_Paulo",
+  "janelas_diarias": [
+    {
+      "horario": "07:50",
+      "cron": "50 7 * * *",
+      "trilha": "Soberania Digital & Open Source (IAM/SIEM/Lab Docker)",
+      "publico": "Engenheiros de Identidade, Arquitetos e Praticantes de SecOps Open Source"
+    },
+    {
+      "horario": "15:15",
+      "cron": "15 15 * * *",
+      "trilha": "Defesa Cloud Enterprise & Microsoft Sentinel (SecOps/KQL/Entra ID)",
+      "publico": "Analistas de SOC N1/N2/N3, Threat Hunters e Engenheiros de Detecção"
+    }
+  ],
+  "fila_publicacoes": [
+    {
+      "data": "2026-11-16",
+      "horario": "11:50",
+      "status": "publicado",
+      "trilha": "soberana",
+      "slug": "2026-11-16-keycloak-docker-windows-enterprise-lab",
+      "titulo": "Laboratório de IAM soberano: subindo o Keycloak no Windows Enterprise com Docker e WSL 2",
+      "categoria": "IAM",
+      "idiomas": ["pt", "de", "zh", "en"]
+    },
+    {
+      "data": "2026-11-16",
+      "horario": "15:15",
+      "status": "agendado",
+      "trilha": "enterprise",
+      "slug": "2026-11-16-deteccao-roubo-tokens-primarios-prt-entra-id",
+      "titulo": "Investigando roubo de Primary Refresh Token (PRT) e Pass-the-Token no Entra ID com Microsoft Sentinel",
+      "categoria": "SOC",
+      "idiomas": ["pt", "de", "zh", "en"]
+    },
+    {
+      "data": "2026-11-17",
+      "horario": "07:50",
+      "status": "planejado",
+      "trilha": "soberana",
+      "slug": "2026-11-17-wazuh-siem-xdr-docker-lab",
+      "titulo": "SIEM e XDR soberano: implantando o Wazuh All-in-One no Windows Enterprise via Docker",
+      "categoria": "SOC",
+      "idiomas": ["pt", "de", "zh", "en"]
+    },
+    {
+      "data": "2026-11-17",
+      "horario": "15:15",
+      "status": "planejado",
+      "trilha": "enterprise",
+      "slug": "2026-11-17-consent-grants-aplicativos-oauth-maliciosos",
+      "titulo": "Consent Grants abusivos no Entra ID: caça a ameaças e playbook de resposta no Microsoft Sentinel",
+      "categoria": "IAM",
+      "idiomas": ["pt", "de", "zh", "en"]
+    },
+    {
+      "data": "2026-11-18",
+      "horario": "07:50",
+      "status": "planejado",
+      "trilha": "soberana",
+      "slug": "2026-11-18-thehive-soar-docker-lab",
+      "titulo": "SOAR soberano: orquestrando resposta a incidentes com TheHive e Cortex no Docker",
+      "categoria": "SOC",
+      "idiomas": ["pt", "de", "zh", "en"]
+    },
+    {
+      "data": "2026-11-18",
+      "horario": "15:15",
+      "status": "planejado",
+      "trilha": "enterprise",
+      "slug": "2026-11-18-anomalia-viagem-impossivel-identity-protection",
+      "titulo": "Triagem de Viagem Impossível e IP Anônimo no Entra ID Protection com KQL enriquecido",
+      "categoria": "SOC",
+      "idiomas": ["pt", "de", "zh", "en"]
+    }
+  ]
+}

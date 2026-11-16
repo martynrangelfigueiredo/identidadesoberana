@@ -22,3 +22,4 @@ Esta skill valida todas as consultas KQL (Kusto) presentes nos artigos técnicos
 npm run test:kql
 ```
 O script compila todas as queries encontradas em `src/content/blog/**/*.md` e garante 100% de conformidade com o parser do Bryce Maxheimer Playground.
+

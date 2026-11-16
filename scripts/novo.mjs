@@ -1,37 +1,34 @@
 #!/usr/bin/env node
 /**
- * Scaffold de novos conteúdos para a Identidade Soberana.
+ * Scaffold de novos artigos técnicos para a Identidade Soberana.
  * Uso:
- *   node scripts/novo.mjs artigo <slug> "Título Suave e Autoral"
- *   node scripts/novo.mjs carrossel <slug> "Título da Capa"
+ *   npm run novo:artigo -- <slug> "Título Autoral"
  */
-import { writeFile, mkdir } from "node:fs/promises";
+import { writeFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const [tipo, rawSlug, ...tituloRest] = process.argv.slice(2);
+const [rawSlug, ...tituloRest] = process.argv.slice(2);
 const titulo = tituloRest.join(" ");
 
-if (!tipo || !rawSlug) {
+if (!rawSlug) {
   console.log(`Uso:
-  npm run novo:artigo -- <slug> "Título Autoral"
-  npm run novo:carrossel -- <slug> "Título da Capa"`);
+  npm run novo:artigo -- <slug> "Título Autoral"`);
   process.exit(1);
 }
 
 const hoje = new Date().toISOString().slice(0, 10);
 const slug = rawSlug.startsWith("20") ? rawSlug : `${hoje}-${rawSlug}`;
 
-if (tipo === "artigo") {
-  const file = path.join(ROOT, "src", "content", "blog", `${slug}.md`);
-  if (existsSync(file)) {
-    console.error(`Erro: o artigo "${slug}.md" já existe.`);
-    process.exit(1);
-  }
+const file = path.join(ROOT, "src", "content", "blog", `${slug}.md`);
+if (existsSync(file)) {
+  console.error(`Erro: o artigo "${slug}.md" já existe.`);
+  process.exit(1);
+}
 
-  const template = `---
+const template = `---
 title: "${titulo || "Título suave, autoral e em português"}"
 description: "Resumo executivo do incidente e escopo da investigação (até 160 caracteres)."
 date: ${hoje}
@@ -99,85 +96,21 @@ Caminho exato no portal:
 
 ## 5. Validação em Ferramentas de ITSM
 
-Confirmação de aprovações prévias e rastreabilidade independente de chamados (ServiceNow, Jira Service Management, Zendesk ou Freshservice).
+Cruze o evento com as solicitações formais registradas em ITSM (ServiceNow, Jira Service Management, Freshservice ou Zendesk):
+* Número da GMUD / Change Request ou Ticket de incidente;
+* Justificativa informada no campo \`ResultReason\`;
+* Usuário que aprovou o ticket no sistema corporativo.
 
 ---
 
-## 6. Procedimento de Resposta e Contenção
+## 6. Procedimento Técnico de Resposta & Contenção
 
-Passos imediatos caso a ação seja confirmada como não autorizada:
-1. Contenção imediata (revogação de sessão, bloqueio temporário ou reset de credenciais).
-2. KQL para auditoria pós-incidente.
+Se a atividade for confirmada como não autorizada ou maliciosa, execute o playbook imediato de contenção:
+1. Revogue as sessões ativas do usuário originador (\`Revoke sessions\` no Entra ID Protection);
+2. Force a redefinição de senha e alterne para métodos de autenticação resistentes a phishing (FIDO2 / Passkey);
+3. Reverta as permissões ou configurações alteradas;
+4. Bloqueie IPs anômalos no firewall perimetral ou Conditional Access.
 `;
 
-  await writeFile(file, template);
-  console.log(`✔ Novo artigo criado: src/content/blog/${slug}.md`);
-} else if (tipo === "carrossel") {
-  const dir = path.join(ROOT, "instagram", "posts", slug);
-  if (existsSync(dir)) {
-    console.error(`Erro: o carrossel "${slug}" já existe.`);
-    process.exit(1);
-  }
-  await mkdir(dir, { recursive: true });
-
-  const postJson = {
-    titulo: titulo || "Título da Capa",
-    categoria: "Segurança",
-    data: hoje,
-    slides: [
-      {
-        tipo: "capa",
-        titulo: titulo ? `*${titulo}*` : "Sua conta está *segura*?",
-        subtitulo: "Dicas simples para proteger seu dia a dia.",
-        ilustracao: "escudo"
-      },
-      {
-        tipo: "dica",
-        numero: 1,
-        titulo: "Primeira dica *importante*",
-        texto: "Explicação simples e sem jargão com foco na ação prática que o usuário comum deve tomar.",
-        sabia: "Curiosidade rápida sobre como os golpistas agem.",
-        ilustracao: "celular"
-      },
-      {
-        tipo: "dica",
-        numero: 2,
-        titulo: "Segunda dica *prática*",
-        texto: "Mais uma orientação direta e amigável.",
-        ilustracao: "cadeado"
-      },
-      {
-        tipo: "comparacao",
-        titulo: "O que fazer?",
-        faca: [
-          "Verificar conexões ativas",
-          "Ativar verificação em duas etapas"
-        ],
-        evite: [
-          "Clicar em links suspeitos",
-          "Passar códigos recebidos por SMS"
-        ],
-        ilustracao: "senha"
-      },
-      {
-        tipo: "resumo",
-        itens: [
-          "Ponto principal do post",
-          "Ação rápida para fazer hoje",
-          "Segurança sem complicação"
-        ]
-      },
-      {
-        tipo: "cta",
-        titulo: "Gostou? *Salva* esse post!",
-        texto: "E mande para amigos e familiares que precisam saber disso! 💚💛"
-      }
-    ],
-    legenda: `${titulo || "Dica de segurança importante!"} 🔐\n\nArrasta pro lado pra ver como se proteger no dia a dia. 👉\n\nSalva pra consultar depois e compartilha com quem precisa! 💚💛`,
-    hashtags: ["segurancadigital", "dicasdeseguranca", "privacidade", "identidadesoberana", "protecaodedados"]
-  };
-
-  await writeFile(path.join(dir, "post.json"), JSON.stringify(postJson, null, 2));
-  console.log(`✔ Novo carrossel criado: instagram/posts/${slug}/post.json`);
-}
-
+await writeFile(file, template, "utf8");
+console.log(`✔ Novo artigo criado: src/content/blog/${slug}.md`);

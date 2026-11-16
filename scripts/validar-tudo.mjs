@@ -68,3 +68,4 @@ main().catch((err) => {
   console.error("Erro inesperado no pipeline de validação:", err);
   process.exit(1);
 });
+

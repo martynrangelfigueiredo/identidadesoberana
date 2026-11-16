@@ -20,3 +20,4 @@ Esta skill zela pela conformidade legal, respeito à privacidade do titular e au
 ```bash
 node scripts/validators/compliance.mjs
 ```
+

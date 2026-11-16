@@ -64,7 +64,7 @@ async function validateI18n() {
     }
 
     const expectedHeader = KQL_HEADER_BY_LOCALE[expectedLocale];
-    if (content.includes("## 2.") && !content.includes(expectedHeader)) {
+    if (content.includes("```kql") && content.includes("## 2.") && !content.includes(expectedHeader)) {
       console.error(`❌ [i18n] Cabeçalho da seção KQL incorreto em [${expectedLocale}] ${relPath}. Esperado: "${expectedHeader}"`);
       errors++;
     }
@@ -100,3 +100,4 @@ validateI18n().catch((err) => {
   console.error("Erro fatal no validador de i18n:", err);
   process.exit(1);
 });
+

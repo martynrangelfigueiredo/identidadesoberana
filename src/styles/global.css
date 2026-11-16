@@ -83,7 +83,7 @@ h1, h2, h3, h4 {
   align-items: center;
 }
 .nav a {
-  text-decoration: none;
+  text-decoration: none !important;
   color: var(--is-cinza);
   font: 700 .92rem var(--is-fonte-titulo);
   padding: .45rem .85rem;
@@ -91,12 +91,14 @@ h1, h2, h3, h4 {
   min-height: 38px;
   display: inline-flex;
   align-items: center;
+  white-space: nowrap;
   transition: all .15s ease;
 }
 .nav a:hover,
 .nav a[aria-current="page"] {
   background: var(--is-verde-claro);
   color: var(--is-verde-escuro);
+  text-decoration: none !important;
 }
 
 /* Menu Hambúrguer (Mobile) */

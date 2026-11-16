@@ -1,7 +1,7 @@
 # Identidade Soberana — Manual da Marca
 
 > Este arquivo é a **fonte de verdade** da identidade visual. Qualquer IA ou pessoa que criar conteúdo
-> (site ou Instagram) DEVE seguir este manual. Valores de cor/fonte em código ficam em [`tokens.css`](tokens.css).
+> para o projeto DEVE seguir este manual. Valores de cor/fonte em código ficam em [`tokens.css`](tokens.css).
 
 ---
 
@@ -11,9 +11,8 @@
 |---|---|
 | **Nome** | Identidade Soberana (escrito em minúsculas no logo: `identidade soberana`) |
 | **Slogan** | **Segurança digital sem complicação.** |
-| **Instagram** | `@identidadesoberana` (público leigo, sempre carrossel) |
 | **Site / blog** | `identidadesoberana.com.br` (público técnico: SOC, IAM, Compliance) |
-| **Missão** | Tornar segurança, identidade e proteção de dados acessíveis: simples para quem é leigo, profunda para quem opera. |
+| **Missão** | Elevar a maturidade em segurança, identidade e soberania de dados através de engenharia prática. |
 | **Personalidade** | Leve, amigável, confiável, brasileira. Nunca alarmista, nunca "hacker sombrio". |
 | **Quem fala** | A marca (sem rosto, sem mascote). Voz de "amigo que entende do assunto". |
 
@@ -34,9 +33,8 @@ elemento decorativo solto.
 | Arquivo | Uso |
 |---|---|
 | [`logo/logo-icone.svg`](logo/logo-icone.svg) | Selo principal (fundos brancos/claros), favicon |
-| [`logo/logo-icone-branco.svg`](logo/logo-icone-branco.svg) | Sobre fundo verde (rodapé do site, fita dos carrosséis) |
+| [`logo/logo-icone-branco.svg`](logo/logo-icone-branco.svg) | Sobre fundo verde (rodapé do site) |
 | [`logo/logo-horizontal.svg`](logo/logo-horizontal.svg) | Selo + nome + slogan (cabeçalhos, banners, capa) |
-| [`logo/avatar-instagram.svg`](logo/avatar-instagram.svg) | Foto de perfil do Instagram (exportar 1080x1080 PNG) |
 
 **Regras:**
 - Área de respiro mínima ao redor do selo = 1/4 do diâmetro.
@@ -122,26 +120,11 @@ sombras feitas com tons mais escuros da mesma cor. Sempre sobre um **círculo Ve
 
 ---
 
-## 7. Instagram (carrossel)
+## 7. Site
 
-- Formato **4:5 — 1080 x 1350 px**, **6 a 8 slides**.
-- Estrutura padrão: **Capa → Dicas (1 por slide) → Faça/Evite (opcional) → Resumo → CTA**.
-- Gerado por código (consistência 100%): veja [`../instagram/README.md`](../instagram/README.md).
-- Foto de perfil: `avatar-instagram.svg`. Nome no perfil: **Identidade Soberana | Segurança digital**.
-- Bio sugerida:
-  ```
-  🔐 Segurança digital sem complicação
-  💚 Dicas simples pra proteger seus dados
-  💛 Golpes, senhas, privacidade e mais
-  👇 Conteúdo técnico no site
-  ```
-- Capas de Destaques: círculo Verde Claro + ícone/ilustração + rótulo curto (Senhas, Golpes, WhatsApp, Banco, Privacidade).
-
-## 8. Site
-
-- Mesma identidade, versão **sóbria**: mais tipografia, tabelas, código e diagramas; ilustrações raras.
-- Sem modo escuro (fundo branco é parte da marca).
+- Identidade **sóbria**: tipografia limpa, tabelas, blocos de código e diagramas.
+- Sem modo escuro (fundo branco é parte mandatória da marca).
 - Implementação: Astro em [`../src`](../src), estilos em [`../src/styles/global.css`](../src/styles/global.css).
 
-Tom de voz e regras de conteúdo dos dois canais: [`CONTEUDO.md`](CONTEUDO.md).
+Diretrizes de conteúdo e voz: [`CONTEUDO.md`](CONTEUDO.md).
 

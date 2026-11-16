@@ -18,3 +18,4 @@ Esta skill orienta o agente e os scripts de CI na auditoria estrita de seguranç
 node scripts/validators/seguranca.mjs
 ```
 Se qualquer padrão de chave ou credencial for detectado, o validador falha com exit code `1` e interrompe o build.
+

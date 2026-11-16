@@ -1,53 +1,16 @@
 # Identidade Soberana — Voz e Conteúdo
 
-Mesmo objetivo (tecnologia, operações de segurança, conformidade e proteção de dados pessoais),
-**dois públicos, duas linguagens**, **uma identidade visual**.
+Site técnico de operações de segurança, governança de identidades e soberania digital: **`identidadesoberana.com.br`**.
 
 ---
 
-## 📱 Instagram — `@identidadesoberana` (público leigo)
+## 💻 Linha Editorial e Pilares Técnicos
 
-**Para quem:** qualquer pessoa — sua mãe, seu tio, o vizinho. Nenhum conhecimento técnico.
+O projeto cobre dois pilares complementares de engenharia:
+1. **Operação Enterprise & Cloud SecOps:** Microsoft Sentinel, Microsoft Entra ID, Defender XDR, KQL e playbooks táticos de resposta a incidentes.
+2. **Nuvem Soberana & Ecossistema Aberto:** Gestão de identidades com Keycloak, SIEM aberto com Wazuh, automação com TheHive/Shuffle, federação OIDC e laboratórios locais em Docker/WSL2 para Windows Enterprise.
 
-**Voz:** amigo que entende do assunto. Simples, direto, um pouco de humor, carinhoso. Nunca dá bronca, nunca assusta.
-
-### Regras de escrita
-- Frases curtas (até ~20 palavras). Uma ideia por slide.
-- **Zero jargão.** Se precisar de um termo, explique: "verificação em duas etapas (aquele código que chega no celular)".
-- Fale com "você". Pode usar "pra", "tá", "né" com moderação.
-- Humor leve, nunca às custas da vítima de golpe.
-- Sempre termine com algo **prático** que a pessoa consegue fazer hoje.
-- Use `*palavra*` para o marca-texto amarelo (1–3 por slide, só no que importa).
-- Emojis: até 1 por slide no texto; na legenda, moderado (💚💛🔐👉).
-
-| Em vez de… | Escreva… |
-|---|---|
-| Autenticação multifator | Verificação em duas etapas |
-| Phishing | Golpe da mensagem falsa / link falso |
-| Malware | Programa espião / vírus |
-| Vazamento de credenciais | Sua senha foi parar na mão de outra pessoa |
-| Engenharia social | Golpista que te enrola na conversa |
-| "ALERTA! Você está em perigo!" | "Bora deixar isso mais seguro?" |
-
-### Estrutura do carrossel (6–8 slides)
-1. **Capa** — pergunta ou promessa curiosa + ilustração. Ex.: "Sua senha é *forte* mesmo?"
-2. **Dicas** — uma por slide, numeradas, com ilustração ou caixa "Você sabia?".
-3. **Faça / Evite** (opcional).
-4. **Resumo** — checklist com ✓.
-5. **CTA** — salvar, compartilhar, seguir.
-
-### Legenda
-Gancho na 1ª linha → 2–3 linhas de contexto → "Arrasta pro lado 👉" → CTA → 5–8 hashtags em português.
-
-### Pilares de pauta
-Senhas e gerenciadores · Golpes (WhatsApp, Pix, falso atendente, boleto) · Privacidade nas redes ·
-Celular seguro · Compras online · LGPD explicada pro cidadão (seus direitos) · Crianças e idosos na internet.
-
----
-
-## 💻 Site — `identidadesoberana.com.br` (público técnico)
-
-**Para quem:** SOC Analysts (N1–N3), times de Identity & Access Management, Compliance/GRC, DPOs.
+**Para quem:** SOC Analysts (N1–N3), times de Identity & Access Management, Engenheiros de Segurança em Nuvem, Compliance/GRC e DPOs.
 
 **Voz:** colega sênior generoso. Técnico, preciso, direto ao ponto, sem arrogância. Ainda leve — sem sensacionalismo.
 
@@ -105,14 +68,4 @@ draft: false
 - **IAM** — IGA, PAM, SSO, MFA, Zero Trust, ciclo de vida de identidades (JML).
 - **Compliance** — LGPD, ISO 27001, SOC 2, PCI DSS, auditoria, evidências.
 - **Privacidade** — proteção de dados pessoais na prática, direitos do titular, DPIA/RIPD.
-
----
-
-## 🔁 Mesmo tema, dois canais (exemplo)
-
-| Tema | Instagram | Site |
-|---|---|---|
-| MFA | "Ative a verificação em duas etapas no WhatsApp" | "MFA resistente a phishing: por que push já não basta" |
-| Vazamentos | "Como saber se seus dados vazaram" | "Monitorando credenciais vazadas: fontes, automação e resposta" |
-| LGPD | "A LGPD te dá esses 5 direitos" | "Atendendo requisições de titulares em escala" |
 

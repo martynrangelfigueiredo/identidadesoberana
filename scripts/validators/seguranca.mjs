@@ -76,3 +76,4 @@ validateSecurity().catch((err) => {
   console.error("Erro fatal no validador de segurança:", err);
   process.exit(1);
 });
+

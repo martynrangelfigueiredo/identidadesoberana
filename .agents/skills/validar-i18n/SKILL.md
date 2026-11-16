@@ -23,3 +23,4 @@ Esta skill assegura a consistência e paridade das traduções entre todos os 4 
 ```bash
 node scripts/validators/i18n.mjs
 ```
+

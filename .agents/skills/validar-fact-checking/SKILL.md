@@ -21,3 +21,4 @@ Esta skill assegura a precisão técnica, veracidade de fontes primárias e rigo
 ```bash
 node scripts/validators/fact-checking.mjs
 ```
+

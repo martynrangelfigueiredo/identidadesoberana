@@ -1,11 +1,11 @@
 ---
 name: criar-post
-description: Procedimento operacional e padrão de qualidade para criação e tradução de artigos técnicos (SOC, IAM, Compliance) e carrosséis no Identidade Soberana, com glossário multilíngue obrigatório (Microsoft Learn, Linux Foundation), playbooks de resposta a incidentes do Microsoft Sentinel e testes automatizados de KQL.
+description: Procedimento operacional e padrão de qualidade para criação e tradução de artigos técnicos (SOC, IAM, Compliance e Nuvem Soberana) no Identidade Soberana, com glossário multilíngue obrigatório (Microsoft Learn, Linux Foundation), playbooks de resposta a incidentes do Microsoft Sentinel e testes automatizados de KQL.
 ---
 
 # Skill: Criação de Conteúdo Técnico — Identidade Soberana
 
-Este guia define o padrão operacional obrigatório para criar artigos no site (`src/content/blog/`) e carrosséis do Instagram (`instagram/posts/`), garantindo consistência terminológica multilíngue baseada em padrões do **Microsoft Learn**, **Linux Foundation** (CNCF, OpenSSF), **NIST SP 800-63** e **MITRE ATT&CK**.
+Este guia define o padrão operacional obrigatório para criar artigos técnicos no site (`src/content/blog/`), cobrindo tanto a frente de nuvem corporativa (Sentinel/Entra) quanto a frente de nuvem soberana (Keycloak/Wazuh), garantindo consistência terminológica multilíngue baseada em padrões do **Microsoft Learn**, **Linux Foundation** (CNCF, OpenSSF), **NIST SP 800-63** e **MITRE ATT&CK**.
 
 ---
 

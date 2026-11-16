@@ -73,3 +73,4 @@ validatePerformance().catch((err) => {
   console.error("Erro fatal no validador de Performance:", err);
   process.exit(1);
 });
+

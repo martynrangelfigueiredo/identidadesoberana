@@ -53,9 +53,11 @@ async function validateFactChecking() {
     const relPath = path.relative(ROOT, file);
     const content = await readFile(file, "utf-8");
 
-    // 1. Verificação de link do Microsoft Learn
-    if (!content.includes("learn.microsoft.com")) {
-      console.error(`❌ [Fact Checking] Artigo sem referência oficial ao Microsoft Learn: ${relPath}`);
+    // 1. Verificação de documentação primária oficial (Microsoft Learn ou Docs Oficiais Open Source)
+    const hasLearnDoc = content.includes("learn.microsoft.com");
+    const hasOpenSourceDoc = content.includes("keycloak.org") || content.includes("wazuh.com") || content.includes("linuxfoundation.org");
+    if (!hasLearnDoc && !hasOpenSourceDoc) {
+      console.error(`❌ [Fact Checking] Artigo sem referência primária oficial (Microsoft Learn ou docs oficiais): ${relPath}`);
       errors++;
     }
 
