@@ -136,6 +136,9 @@ const shareLinks = [
 
           <div class="story-instructions-card">
             <h4>{t.storyHowTo}</h4>
+            <div class="story-notice-badge">
+              <span>{t.storyNotice}</span>
+            </div>
             <ol>
               <li>
                 <span class="step-num">1</span>
@@ -150,7 +153,7 @@ const shareLinks = [
                 <span>{t.storyStep3}</span>
               </li>
             </ol>
-            <p class="story-tip">💡 No Instagram, quem visualizar seu Story poderá tocar na figurinha e acessar o artigo diretamente.</p>
+            <p class="story-tip">💡 No Instagram, qualquer pessoa que ver seu Story poderá tocar na figurinha e abrir o artigo direto!</p>
           </div>
         </div>
       </div>
@@ -389,6 +392,17 @@ const shareLinks = [
     font-size: .95rem;
     color: var(--is-verde-escuro);
   }
+  .story-notice-badge {
+    background: var(--is-amarelo-claro);
+    border: 1px solid #FFE57F;
+    border-radius: var(--is-raio-sm);
+    padding: .5rem .75rem;
+    font-size: .84rem;
+    color: #5C4300;
+    font-weight: 600;
+    margin-bottom: .75rem;
+    line-height: 1.35;
+  }
   .story-instructions-card ol {
     margin: 0;
     padding: 0;
@@ -610,40 +624,34 @@ const shareLinks = [
       ctx.font = '500 34px Inter, sans-serif';
       wrapText(ctx, text, cardX + 64, nextY + 90, cardW - 128, 54, 4);
 
-      // 5. Figurinha de Link Interativa (Simulação visual fiel aos Stories)
-      const stickerW = cardW - 160;
-      const stickerH = 110;
-      const stickerX = cardX + 80;
-      const stickerY = cardY + cardH - 240;
+      // 5. Área demarcada para posicionar a figurinha real de Link do Instagram
+      const stickerW = cardW - 140;
+      const stickerH = 130;
+      const stickerX = cardX + 70;
+      const stickerY = cardY + cardH - 260;
 
-      // Fundo branco com sombra de sticker
+      // Fundo suave com borda tracejada indicando o local exato da figurinha
       ctx.save();
-      ctx.shadowColor = 'rgba(0, 0, 0, 0.14)';
-      ctx.shadowBlur = 24;
-      ctx.shadowOffsetY = 8;
-      ctx.fillStyle = '#FFFFFF';
+      ctx.fillStyle = '#F3FAF5';
       ctx.beginPath();
-      ctx.roundRect(stickerX, stickerY, stickerW, stickerH, 55);
+      ctx.roundRect(stickerX, stickerY, stickerW, stickerH, 30);
       ctx.fill();
-      ctx.restore();
 
-      // Borda verde suave do sticker
-      ctx.lineWidth = 3;
+      ctx.lineWidth = 3.5;
+      ctx.setLineDash([16, 12]);
       ctx.strokeStyle = '#009C3B';
       ctx.stroke();
+      ctx.restore();
 
-      // Ícone e link no sticker
+      // Instrução direta dentro da demarcação
       ctx.fillStyle = '#00612A';
-      ctx.font = '900 36px Nunito, Inter, sans-serif';
+      ctx.font = '900 34px Nunito, Inter, sans-serif';
       ctx.textAlign = 'center';
-      ctx.fillText('🔗 identidadesoberana.com.br', cardX + cardW / 2, stickerY + 68);
-      ctx.textAlign = 'left';
+      ctx.fillText('🔗 Cole sua figurinha de Link aqui', cardX + cardW / 2, stickerY + 54);
 
-      // Instrução amigável sob a figurinha
       ctx.fillStyle = '#5B6B62';
-      ctx.font = '700 28px Inter, sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillText('👆 Toque na figurinha de Link para ler', cardX + cardW / 2, stickerY + 160);
+      ctx.font = '600 24px Inter, sans-serif';
+      ctx.fillText('(Toque no ícone de figurinhas no topo do Instagram > LINK)', cardX + cardW / 2, stickerY + 96);
       ctx.textAlign = 'left';
 
       // 6. Rodapé com toques da marca
