@@ -48,7 +48,7 @@
     {
       "data": "2026-11-17",
       "horario": "17:15",
-      "status": "planejado",
+      "status": "publicado",
       "trilha": "enterprise",
       "slug": "2026-11-17-consent-grants-aplicativos-oauth-maliciosos",
       "titulo": "Consent Grants abusivos no Microsoft Security: caça a ameaças e playbook de resposta no Microsoft Sentinel",
