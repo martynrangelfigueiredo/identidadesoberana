@@ -28,10 +28,10 @@
     {
       "data": "2026-11-16",
       "horario": "17:15",
-      "status": "agendado",
+      "status": "publicado",
       "trilha": "enterprise",
-      "slug": "2026-11-16-deteccao-roubo-tokens-primarios-prt-entra-id",
-      "titulo": "Investigando roubo de Primary Refresh Token (PRT) e Pass-the-Token no Entra ID com Microsoft Sentinel",
+      "slug": "2026-11-16-alerta-fraude-mfa-investigacao-soc",
+      "titulo": "Alerta de fraude no MFA: playbook de triagem e resposta a incidentes para analistas de SOC",
       "categoria": "SOC",
       "idiomas": ["pt", "de", "zh", "en"]
     },
