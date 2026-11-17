@@ -1,9 +1,9 @@
 ---
-title: "MFA-Fatigue und Phishing-Bypasses untersuchen: Playbook für das SOC"
-description: "Vollständiges Playbook zur Triage und Eindämmung von MFA-Fatigue- und AitM-Vorfällen in Microsoft Sentinel: Angereichertes KQL, SigninLogs- und AuditLogs-Korrelation."
+title: "MFA-Fatigue und Bypass im Microsoft Security-Ökosystem: Playbook für das SOC"
+description: "Vollständiges Playbook im Microsoft Security-Ökosystem zur Triage und Eindämmung von MFA-Fatigue- und AitM-Vorfällen in Microsoft Sentinel mit KQL und Entra ID."
 date: 2026-11-09
 categoria: SOC
-tags: [sentinel, mfa, entra-id, kql, aitm, incident-response, soc, iam]
+tags: [microsoft-security, sentinel, mfa, entra-id, kql, aitm, incident-response, soc, iam]
 nivel: Mittelstufe
 ---
 

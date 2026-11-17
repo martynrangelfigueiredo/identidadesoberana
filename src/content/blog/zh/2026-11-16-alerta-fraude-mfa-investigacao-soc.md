@@ -1,9 +1,9 @@
 ---
-title: "MFA 欺诈告警：面向 SOC 分析师的排查研判与应急响应剧本"
-description: "实战排查指南：在 Microsoft Sentinel 中分析用户上报欺诈与 MFA 拒绝告警，深入解读 SigninLogs、AuditLogs 并完成 Entra ID 处置。"
+title: "Microsoft Security 恶意认证拦截：MFA 欺诈告警的 SOC 排查与应急响应剧本"
+description: "基于 Microsoft Security 生态的实战指南：在 Microsoft Sentinel 中深入排查用户上报欺诈与 MFA 拒绝告警，全面掌握 SigninLogs 与应急处置。"
 date: 2026-11-16
 categoria: SOC
-tags: [sentinel, soc, entra-id, mfa, kql, incident-response, playbooks, investigacao]
+tags: [microsoft-security, sentinel, soc, entra-id, mfa, kql, incident-response, playbooks, investigacao]
 nivel: Intermediário
 ---
 

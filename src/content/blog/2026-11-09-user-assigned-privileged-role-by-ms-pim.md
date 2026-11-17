@@ -1,9 +1,9 @@
 ---
-title: "Elevação de privilégios via PIM: guia prático de investigação para o SOC"
-description: "Guia técnico de investigação para alertas de atribuição de privilégios no Microsoft Entra via PIM: KQL enriquecido, cruzamento de AuditLogs e SigninLogs, validação em ITSM e trilha de auditoria no portal."
+title: "Elevação de privilégios no Microsoft Security: guia prático de investigação com PIM e Sentinel para o SOC"
+description: "Guia técnico de investigação no ecossistema Microsoft Security para atribuição de privilégios no Entra ID via PIM: KQL enriquecido, cruzamento de AuditLogs e SigninLogs, validação em ITSM e auditoria no Sentinel."
 date: 2026-11-09
 categoria: SOC
-tags: [sentinel, pim, entra-id, kql, incident-response, iam, soc]
+tags: [microsoft-security, sentinel, pim, entra-id, kql, incident-response, iam, soc]
 nivel: Intermediário
 ---
 

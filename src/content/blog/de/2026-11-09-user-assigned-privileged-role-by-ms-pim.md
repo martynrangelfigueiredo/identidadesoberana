@@ -1,9 +1,9 @@
 ---
-title: "Rechteausweitung via PIM: Praktischer Untersuchungsleitfaden für SOC-Analysten"
-description: "Vollständiger Leitfaden zur Untersuchung von Rollenzuweisungen und PIM-Aktivierungen im Microsoft Sentinel: KQL-Anreicherung, AuditLogs- und SigninLogs-Abgleich."
+title: "Privilegienerweiterung in Microsoft Security: Praxisleitfaden zur Untersuchung mit PIM und Sentinel für das SOC"
+description: "Technischer Leitfaden im Microsoft Security-Ökosystem für Privilegienerweiterungen in Microsoft Entra via PIM und Microsoft Sentinel mit KQL."
 date: 2026-11-09
 categoria: IAM
-tags: [sentinel, azure, entra-id, pim, iam, soc, rbac, kql]
+tags: [microsoft-security, sentinel, azure, entra-id, pim, iam, soc, rbac, kql]
 nivel: Fortgeschritten
 ---
 

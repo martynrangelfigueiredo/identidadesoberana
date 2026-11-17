@@ -1,9 +1,9 @@
 ---
-title: "Privilege Escalation via PIM: Operational Investigation Guide for SOC Analysts"
-description: "Comprehensive guide to investigating Microsoft Entra privileged role assignments and PIM activations in Microsoft Sentinel: Enriched KQL and ITSM ticket validation."
+title: "Privilege Escalation in Microsoft Security: Practical Investigation Guide with PIM and Sentinel for the SOC"
+description: "Technical Microsoft Security investigation guide for privileged role assignments in Entra ID via PIM: enriched KQL, AuditLogs and SigninLogs cross-correlation, and ITSM verification."
 date: 2026-11-09
 categoria: IAM
-tags: [sentinel, azure, entra-id, pim, iam, soc, rbac, kql]
+tags: [microsoft-security, sentinel, azure, entra-id, pim, iam, soc, rbac, kql]
 nivel: Advanced
 ---
 

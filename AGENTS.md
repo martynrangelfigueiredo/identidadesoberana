@@ -31,7 +31,9 @@ Público-alvo: Analistas de SOC (N1–N3), engenheiros de IAM, arquitetos de seg
   - Consulte a matriz completa na skill `.agents/skills/criar-post/SKILL.md`.
 - **Site (Regra para Posts de Azure/Incidentes):**
   - Todo post relacionado a Azure no site deve ser modelado a partir de um **incidente real gerado pelo Microsoft Sentinel** (tendo como base uma *analytics rule* padrão/default do Azure Sentinel, sem precisar citar explicitamente o nome da regra padrão).
-  - **Título SEMPRE suave, autoral e em português:** **NUNCA** coloque o nome literal do incidente ou regra no título. Crie um título autoral, claro e fluído em português (ex.: use *"Elevação de privilégios via PIM: guia prático de investigação para analistas de SOC"*, e nunca *"Incidente: User Assigned Privileged Role by MS-PIM"*).
+  - **Identificação Explícita do Ecossistema Microsoft Security:**
+    Todo post que abordar tecnologias de nuvem e defesa da Microsoft (Microsoft Sentinel, Microsoft Entra ID, Defender XDR, PIM, KQL, etc.) DEVE explicitar claramente no título, na descrição e nas tags (`microsoft-security`) que se trata do ecossistema **Microsoft Security** (ex.: use *"Elevação de privilégios no Microsoft Security: guia prático de investigação com PIM e Sentinel para analistas de SOC"*).
+  - **Título SEMPRE suave, autoral e em português:** **NUNCA** coloque o nome literal do incidente ou regra no título. Crie um título autoral, claro e fluído em português, contextualizando com o ecossistema Microsoft Security.
   - **Referência no Microsoft Learn:** Sempre referencie a página oficial da analytics rule ou catálogo no Microsoft Learn (ex.: catálogo de detecções padrão do Microsoft Sentinel no Learn).
   - **Tradução multilíngue:** O site possui seletor de tradução obrigatório na ordem exata: **1º Alemão (Deutsch)**, **2º Mandarim da China continental (简体中文)**, **3º Inglês (English)**.
   - Posts devem ser **completos, profundos e sem cortes**, servindo como playbooks operacionais de SOC/DFIR.

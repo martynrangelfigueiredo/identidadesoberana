@@ -173,3 +173,4 @@ With Wazuh running smoothly on Docker Desktop, your local SIEM/XDR foundation is
 - Ingest logs from other containerized services (such as the Keycloak lab built previously).
 - Test automated SOAR playbooks with **Shuffle** and **TheHive**.
 - Simulate control bypass techniques and refine custom detection engineering safely.
+

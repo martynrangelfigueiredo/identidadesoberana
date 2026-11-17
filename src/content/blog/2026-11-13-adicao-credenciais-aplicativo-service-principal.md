@@ -1,9 +1,9 @@
 ---
-title: "Adição de secrets e credenciais em aplicativos do Entra ID: guia prático de investigação para analistas de SOC"
-description: "Playbook completo de triagem e contenção no SOC para o alerta de novas credenciais ou certificados gerados em Service Principals e App Registrations no Entra ID."
+title: "Adição de secrets e credenciais no Microsoft Security: guia prático de investigação em Service Principals para analistas de SOC"
+description: "Playbook completo de triagem e contenção no ecossistema Microsoft Security para o alerta de novas credenciais ou certificados gerados em Service Principals no Entra ID e Microsoft Sentinel."
 date: 2026-11-13
 categoria: IAM
-tags: [sentinel, azure, entra-id, service-principal, oauth, soc, iam, dfir, kql]
+tags: [microsoft-security, sentinel, azure, entra-id, service-principal, oauth, soc, iam, dfir, kql]
 nivel: Avançado
 ---
 

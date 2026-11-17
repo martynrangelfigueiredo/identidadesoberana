@@ -1,9 +1,9 @@
 ---
-title: "MFA Fraud Alert: Triage and Incident Response Playbook for SOC Analysts"
-description: "Hands-on guide to investigating user-reported MFA fraud and explicit deny alerts in Microsoft Sentinel, analyzing SigninLogs, AuditLogs, and Entra ID containment."
+title: "MFA Fraud Alert in Microsoft Security: Triage and Incident Response Playbook for SOC Analysts"
+description: "Hands-on Microsoft Security guide to investigating user-reported MFA fraud and explicit deny alerts in Microsoft Sentinel, analyzing SigninLogs, AuditLogs, and Entra ID containment."
 date: 2026-11-16
 categoria: SOC
-tags: [sentinel, soc, entra-id, mfa, kql, incident-response, playbooks, investigacao]
+tags: [microsoft-security, sentinel, soc, entra-id, mfa, kql, incident-response, playbooks, investigacao]
 nivel: Intermediário
 ---
 

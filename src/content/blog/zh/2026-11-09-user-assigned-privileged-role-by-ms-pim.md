@@ -1,9 +1,9 @@
 ---
-title: "通过 PIM 进行权限提升的应急响应指南：SOC 分析师实战手册"
-description: "排查 Microsoft Entra ID 特权角色分配与 PIM 激活异常：利用 KQL 关联 AuditLogs 与 SigninLogs，快速验证审批工单并实施即时遏制。"
+title: "Microsoft Security 权限提升排查：基于 PIM 与 Sentinel 的 SOC 实战调查指南"
+description: "Microsoft Security 生态深度排查指南：在 Microsoft Sentinel 中调查 Entra ID PIM 提权告警，交叉比对审计日志与登录风险。"
 date: 2026-11-09
 categoria: IAM
-tags: [sentinel, azure, entra-id, pim, iam, soc, rbac, kql]
+tags: [microsoft-security, sentinel, azure, entra-id, pim, iam, soc, rbac, kql]
 nivel: 高级
 ---
 

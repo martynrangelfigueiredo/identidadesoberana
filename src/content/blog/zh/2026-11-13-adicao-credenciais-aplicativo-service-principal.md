@@ -1,9 +1,9 @@
 ---
-title: "在 Entra ID 应用程序中新增 Secrets 与凭据排查指南：SOC 分析师实战手册"
-description: "排查 Microsoft Entra ID 服务主体（Service Principal）与应用程序注册中非预期新增 Secrets 或证书：SOC 处置与关联取证手册。"
+title: "Microsoft Security 凭据注入调查：针对 Entra ID 服务主体添加 Secret 的 SOC 实战指南"
+description: "Microsoft Security 生态实战指南：在 Microsoft Sentinel 中排查针对服务主体（Service Principal）添加恶意 Secret 与证书的持久化威胁。"
 date: 2026-11-13
 categoria: IAM
-tags: [sentinel, azure, entra-id, service-principal, oauth, soc, iam, dfir, kql]
+tags: [microsoft-security, sentinel, azure, entra-id, service-principal, oauth, soc, iam, dfir, kql]
 nivel: 高级
 ---
 

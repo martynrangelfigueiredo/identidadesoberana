@@ -31,7 +31,7 @@
       "status": "publicado",
       "trilha": "enterprise",
       "slug": "2026-11-16-alerta-fraude-mfa-investigacao-soc",
-      "titulo": "Alerta de fraude no MFA: playbook de triagem e resposta a incidentes para analistas de SOC",
+      "titulo": "Alerta de fraude no MFA no Microsoft Security: playbook de triagem e resposta a incidentes para analistas de SOC",
       "categoria": "SOC",
       "idiomas": ["pt", "de", "zh", "en"]
     },
@@ -51,7 +51,7 @@
       "status": "planejado",
       "trilha": "enterprise",
       "slug": "2026-11-17-consent-grants-aplicativos-oauth-maliciosos",
-      "titulo": "Consent Grants abusivos no Entra ID: caça a ameaças e playbook de resposta no Microsoft Sentinel",
+      "titulo": "Consent Grants abusivos no Microsoft Security: caça a ameaças e playbook de resposta no Microsoft Sentinel",
       "categoria": "IAM",
       "idiomas": ["pt", "de", "zh", "en"]
     },
@@ -71,7 +71,7 @@
       "status": "planejado",
       "trilha": "enterprise",
       "slug": "2026-11-18-anomalia-viagem-impossivel-identity-protection",
-      "titulo": "Triagem de Viagem Impossível e IP Anônimo no Entra ID Protection com KQL enriquecido",
+      "titulo": "Triagem de Viagem Impossível e IP Anônimo no Microsoft Security com Entra ID Protection e KQL",
       "categoria": "SOC",
       "idiomas": ["pt", "de", "zh", "en"]
     }

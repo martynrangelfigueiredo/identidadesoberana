@@ -1,9 +1,9 @@
 ---
-title: "Hinzufügen von Secrets und Anmeldedaten zu Entra ID-Apps: Untersuchungsleitfaden für das SOC"
-description: "Vollständiges SOC-Playbook zur Untersuchung neuer Client Secrets und Zertifikate in Service Principals und App Registrations im Microsoft Entra ID."
+title: "Hinzufügen von Secrets und Anmeldedaten in Microsoft Security: Praxisleitfaden für Service Principals im SOC"
+description: "Umfassendes Playbook im Microsoft Security-Ökosystem zur Triage und Eindämmung neuer Secrets und Zertifikate in Service Principals via Entra ID und Microsoft Sentinel."
 date: 2026-11-13
 categoria: IAM
-tags: [sentinel, azure, entra-id, service-principal, oauth, soc, iam, dfir, kql]
+tags: [microsoft-security, sentinel, azure, entra-id, service-principal, oauth, soc, iam, dfir, kql]
 nivel: Fortgeschritten
 ---
 

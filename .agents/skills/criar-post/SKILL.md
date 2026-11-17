@@ -44,10 +44,12 @@ Em artigos técnicos de SOC, Engenharia de Identidades (IAM) e Compliance, termo
 
 Todo post técnico relacionado a incidentes no Microsoft Azure deve ser modelado a partir de um incidente real do **Microsoft Sentinel** (baseado em regras analíticas padrão):
 
-1. **Título Suave, Autoral e Profissional em Português:**
+1. **Identificação Explícita do Ecossistema Microsoft Security:**
+   - Todo artigo sobre tecnologias da Microsoft (Sentinel, Entra ID, Defender, PIM, KQL) DEVE explicitar claramente no título, na descrição e nas tags (`microsoft-security`) que pertence à suíte **Microsoft Security**.
+2. **Título Suave, Autoral e Profissional em Português:**
    - **NUNCA** use o nome cru da regra ou alerta do Sentinel (ex: NUNCA *"Incidente: User Assigned Privileged Role by MS-PIM"*).
-   - Use títulos convidativos e práticos (ex: *"Elevação de privilégios via PIM: guia prático de investigação para o SOC"*).
-2. **Referência ao Microsoft Learn:**
+   - Use títulos convidativos, práticos e contextualizados (ex: *"Elevação de privilégios no Microsoft Security: guia prático de investigação com PIM e Sentinel para o SOC"*).
+3. **Referência ao Microsoft Learn:**
    - Link explícito para a documentação oficial ou catálogo de regras do Sentinel.
 3. **Seção de KQL — Título Humilde por Idioma:**
    - 🇧🇷 Português: `## 2. Dica de KQL: [Foco da consulta]`

@@ -1,9 +1,9 @@
 ---
-title: "Addition of Secrets and Credentials to Entra ID Applications: SOC Investigation Guide"
-description: "SOC operational playbook for triaging and containing suspicious client secrets and certificates added to Microsoft Entra ID Service Principals and App Registrations."
+title: "Adding Secrets and Credentials in Microsoft Security: Hands-On Service Principal Investigation Guide for SOC Analysts"
+description: "Comprehensive Microsoft Security playbook for triaging new client secrets and certificates generated on Service Principals in Entra ID using Microsoft Sentinel."
 date: 2026-11-13
 categoria: IAM
-tags: [sentinel, azure, entra-id, service-principal, oauth, soc, iam, dfir, kql]
+tags: [microsoft-security, sentinel, azure, entra-id, service-principal, oauth, soc, iam, dfir, kql]
 nivel: Advanced
 ---
 

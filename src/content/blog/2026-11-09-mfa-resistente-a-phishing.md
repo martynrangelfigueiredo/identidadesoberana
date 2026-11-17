@@ -1,9 +1,9 @@
 ---
-title: "Investigando fadiga de MFA e bypass de segundo fator: playbook para o SOC"
-description: "Playbook completo para triagem e contenção de incidentes de MFA Fatigue e AitM no Microsoft Sentinel: KQL enriquecido, correlação de SigninLogs e AuditLogs, análise de sessões e resposta imediata."
+title: "Investigando fadiga de MFA e bypass de segundo fator no Microsoft Security: playbook para o SOC"
+description: "Playbook completo do ecossistema Microsoft Security para triagem e contenção de incidentes de MFA Fatigue e AitM no Microsoft Sentinel: KQL enriquecido, correlação de SigninLogs e AuditLogs e resposta imediata."
 date: 2026-11-09
 categoria: SOC
-tags: [sentinel, mfa, entra-id, kql, aitm, incident-response, soc, iam]
+tags: [microsoft-security, sentinel, mfa, entra-id, kql, aitm, incident-response, soc, iam]
 nivel: Intermediário
 ---
 

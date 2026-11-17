@@ -1,9 +1,9 @@
 ---
-title: "MFA-Betrugswarnung: Playbook zur Triage und Incident Response für SOC-Analysten"
-description: "Praxisnaher Leitfaden zur Untersuchung von MFA Deny- und Betrugswarnungen in Microsoft Sentinel unter Analyse von SigninLogs, AuditLogs und Entra ID-Eindämmung."
+title: "MFA-Betrugswarnung in Microsoft Security: Playbook zur Triage und Incident Response für SOC-Analysten"
+description: "Praxisnaher Leitfaden im Microsoft Security-Ökosystem zur Untersuchung von MFA Deny- und Betrugswarnungen in Microsoft Sentinel unter Analyse von SigninLogs und AuditLogs."
 date: 2026-11-16
 categoria: SOC
-tags: [sentinel, soc, entra-id, mfa, kql, incident-response, playbooks, investigacao]
+tags: [microsoft-security, sentinel, soc, entra-id, mfa, kql, incident-response, playbooks, investigacao]
 nivel: Intermediário
 ---
 

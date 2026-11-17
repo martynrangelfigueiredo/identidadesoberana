@@ -1,9 +1,9 @@
 ---
-title: "排查 MFA 疲劳轰炸与双因子绕过：SOC 分析师实战演练手册"
-description: "Microsoft Sentinel 中 MFA 疲劳攻击（MFA Fatigue）与中间人代理（AitM）事件的排查与处置全流程手册：KQL 日志关联与即时应急响应。"
+title: "Microsoft Security 多因子认证防御：MFA 疲劳攻击与认证绕过的 SOC 应急响应剧本"
+description: "Microsoft Security 生态实战剧本：在 Microsoft Sentinel 中排查与处置 MFA 疲劳轰炸和 AitM 中间人攻击，深度联动 SigninLogs 与 AuditLogs。"
 date: 2026-11-09
 categoria: SOC
-tags: [sentinel, mfa, entra-id, kql, aitm, incident-response, soc, iam]
+tags: [microsoft-security, sentinel, mfa, entra-id, kql, aitm, incident-response, soc, iam]
 nivel: 中级
 ---
 

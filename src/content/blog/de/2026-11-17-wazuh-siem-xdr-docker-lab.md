@@ -173,3 +173,4 @@ Mit Wazuh auf Docker Desktop verfügen Sie über ein vollständiges SIEM- und XD
 - Die Anbindung von Logs weiterer Container (wie dem zuvor erstellten Keycloak-Labor).
 - Das Testen automatisierter SOAR-Playbooks mit **Shuffle** oder **TheHive**.
 - Das Simulieren von Bypass-Techniken und Verfeinern Ihrer Detection Engineering-Fähigkeiten ohne Risiko für Unternehmensnetzwerke.
+

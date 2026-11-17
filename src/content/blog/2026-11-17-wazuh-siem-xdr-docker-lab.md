@@ -173,3 +173,4 @@ Com o Wazuh em operação estável no Docker Desktop, você dispõe de uma infra
 - Conectar logs de outros containers (como o laboratório de Keycloak criado anteriormente).
 - Testar integrações de automação com ferramentas de SOAR como o **Shuffle** e **TheHive**.
 - Simular técnicas de bypass de controles e aprimorar a engenharia de detecção sem riscos a ambientes produtivos.
+
