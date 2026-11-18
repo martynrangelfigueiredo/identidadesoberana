@@ -169,3 +169,4 @@ AADServicePrincipalSignInLogs
 | Unverified app, unknown publisher, excessive mail permissions (`Mail.ReadWrite`) | **True Positive (Critical)** | Isolate and delete application, revoke user sessions, audit mailbox access logs, and initiate data loss containment. |
 | Approved enterprise integration (e.g., official Jira or Power BI plugin) | **False Positive (FP)** | Cross-reference ITSM ticket, confirm publisher verification status, and document exception in Sentinel rule. |
 | Tenant-wide Admin Consent granted to suspect external app via compromised admin | **Major Security Incident (P1)** | Escalate immediately to DFIR, isolate application, audit all administrative identities, and conduct full tenant security review. |
+

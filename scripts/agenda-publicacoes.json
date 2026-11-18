@@ -58,7 +58,7 @@
     {
       "data": "2026-11-18",
       "horario": "07:50",
-      "status": "planejado",
+      "status": "publicado",
       "trilha": "open-source",
       "slug": "2026-11-18-thehive-soar-docker-lab",
       "titulo": "SOAR com TheHive e Cortex: laboratório de resposta a incidentes no Docker",

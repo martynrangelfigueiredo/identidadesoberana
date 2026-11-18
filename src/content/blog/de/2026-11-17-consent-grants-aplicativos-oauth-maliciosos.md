@@ -168,3 +168,4 @@ AADServicePrincipalSignInLogs
 | Unbekannte App, nicht verifizierter Herausgeber, E-Mail-Leserechte (`Mail.ReadWrite`) | **True Positive (Kritisch)** | App sofort sperren und löschen, Benutzersitzungen widerrufen, Mailbox-Logs analysieren und Datenabfluss ermitteln. |
 | Autorisierte Unternehmens-App (z. B. offizielle Jira- oder Power BI-Integration) | **False Positive (FP)** | Ticketnummer im ITSM gegenprüfen, verifizierten Herausgeber bestätigen und Ausnahme in Sentinel dokumentieren. |
 | Tenant-weite Zustimmung durch Administrator für verdächtige Drittanbieter-App | **Schwerer Vorfall (P1)** | Sofortige Eskalation an DFIR, App isolieren, alle Administrator-Aktivitäten auditieren und Tenant-Sicherheit überprüfen. |
+

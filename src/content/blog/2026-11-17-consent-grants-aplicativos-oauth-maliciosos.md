@@ -172,3 +172,4 @@ AADServicePrincipalSignInLogs
 | Aplicativo desconhecido, editor não verificado, permissões de leitura de e-mails (`Mail.ReadWrite`) | **Verdadeiro Positivo (Crítico)** | Isolar e excluir o app, revogar sessões dos usuários, analisar logs de e-mail e iniciar contenção de exfiltração de dados. |
 | Ferramenta corporativa homologada (ex.: integração oficial do Jira ou Power BI) adicionada por engenheiro | **Falso Positivo (FP)** | Confirmar número do ticket no ITSM, validar o editor verificado e documentar a exceção na regra analítica do Sentinel. |
 | Consentimento concedido por administrador em nível de tenant para aplicativo externo suspeito | **Incidente Grave (P1)** | Escalar imediatamente para DFIR, isolar o aplicativo, auditar todas as contas de administrador e revisar integridade do tenant. |
+

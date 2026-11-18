@@ -28,8 +28,8 @@ async function getFiles(dir, exts) {
   return results;
 }
 
-// Domínios fictícios seguros para exemplos de documentação técnica (RFC 2606 / Microsoft standard)
-const SAFE_EMAIL_DOMAINS = ["contoso.com", "example.com", "onmicrosoft.com", "identidadesoberana.com.br", "fabrikam.com", "seudominio.com.br"];
+// Domínios fictícios seguros para exemplos de documentação técnica (RFC 2606 / Microsoft standard / Local lab)
+const SAFE_EMAIL_DOMAINS = ["contoso.com", "example.com", "onmicrosoft.com", "identidadesoberana.com.br", "fabrikam.com", "seudominio.com.br", "thehive.local", "local"];
 
 async function validateCompliance() {
   console.log("🛡️ [Skill: Validar Compliance & LGPD] Verificando conformidade, PII e privacidade...");
