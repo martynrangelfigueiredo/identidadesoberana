@@ -68,7 +68,7 @@
     {
       "data": "2026-11-18",
       "horario": "17:15",
-      "status": "planejado",
+      "status": "publicado",
       "trilha": "enterprise",
       "slug": "2026-11-18-anomalia-viagem-impossivel-identity-protection",
       "titulo": "Triagem de Viagem Impossível e IP Anônimo no Microsoft Security com Entra ID Protection e KQL",

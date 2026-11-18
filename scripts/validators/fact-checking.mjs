@@ -19,6 +19,8 @@ const VALID_KQL_TABLES = new Set([
   "SigninLogs",
   "AADServicePrincipalSignInLogs",
   "AADNonInteractiveUserSignInLogs",
+  "AADUserRiskEvents",
+  "AADRiskyUsers",
   "IdentityInfo",
   "SecurityIncident",
   "SecurityAlert",
