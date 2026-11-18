@@ -38,10 +38,10 @@ export const UTIL_TOOLS: UtilTool[] = [
       en: "IP, IPv6, CIDR & Threat Lookup",
     },
     description: {
-      pt: "Detecta IPv4/IPv6, geolocalização, ASN, ISP, faixa Cloud (Azure/AWS), expansor de IPv6, calculadora CIDR, consulta opcional no VirusTotal (BYOK) e filtros prontos para KQL.",
-      de: "Erkennt IPv4/IPv6, Geolokalisierung, ASN, ISP, Cloud-Ranges, IPv6-Expander, CIDR-Rechner, optionale VirusTotal-Abfrage (BYOK) und fertige KQL-Filter.",
-      zh: "检测 IPv4/IPv6、地理位置、ASN、ISP、云网段、IPv6 展开压缩、CIDR 子网计算、可选 VirusTotal (BYOK) 查询及 KQL 过滤语句生成。",
-      en: "Detects IPv4/IPv6, geolocation, ASN, ISP, cloud ranges, IPv6 expander, CIDR calculator, optional VirusTotal lookup (BYOK), and ready-to-use KQL filters.",
+      pt: "Detecta IPv4/IPv6, geolocalização completa, rDNS (PTR), ASN, bloco RDAP, contato de abuso, faixa Cloud (Azure/AWS), expansor de IPv6, calculadora CIDR e filtros KQL/Wazuh.",
+      de: "Erkennt IPv4/IPv6, vollständige Geolokalisierung, rDNS (PTR), ASN, RDAP-Block, Abuse-Kontakt, Cloud-Ranges, IPv6-Expander, CIDR-Rechner und KQL/Wazuh-Filter.",
+      zh: "检测 IPv4/IPv6、完整地理位置、rDNS (PTR)、ASN、RDAP 网段与滥用邮箱、云网段识别、IPv6 展开、CIDR 计算及 KQL/Wazuh 语句导出。",
+      en: "Detects IPv4/IPv6, full geolocation, rDNS (PTR), ASN, RDAP netblock, abuse contact, cloud ranges, IPv6 expander, CIDR calculator, and ready-to-use KQL/Wazuh filters.",
     },
     highlights: {
       pt: ["IPv4 / IPv6 + CIDR", "Mapa OpenStreetMap", "Exportação KQL & Pivot"],
@@ -276,3 +276,4 @@ export const UTIL_TOOLS: UtilTool[] = [
     },
   },
 ];
+
