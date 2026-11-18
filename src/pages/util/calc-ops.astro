@@ -1,0 +1,138 @@
+---
+import ToolShell from "../../components/ToolShell.astro";
+---
+
+<ToolShell
+  title="Calculadoras de SLA, Bytes/Bits & RAID"
+  description="Calcule janelas de indisponibilidade (SLA Uptime), converta unidades de armazenamento/rede (Bits, Bytes, GiB, Mbps) e dimensione arranjos RAID."
+  badge="Infra & Ops"
+  icon="📊"
+>
+  <!-- 1. SLA Uptime -->
+  <div class="tool-card">
+    <h2>1. Calculadora de SLA Uptime (Downtime Permitido)</h2>
+    <div class="tool-form-row" style="margin-bottom:.85rem;">
+      <input id="sla-pct" type="number" step="0.001" min="0" max="100" value="99.95" class="tool-input" aria-label="Percentual de SLA" />
+      <button id="btn-sla" type="button" class="tool-btn">Calcular Downtime</button>
+    </div>
+    <div id="sla-grid" class="tool-grid"></div>
+  </div>
+
+  <!-- 2. Bytes & Bits -->
+  <div class="tool-card">
+    <h2>2. Conversor de Bytes, Bits & Banda</h2>
+    <div class="tool-form-row" style="margin-bottom:.85rem;">
+      <input id="bb-val" type="number" step="any" value="100" class="tool-input" aria-label="Valor" />
+      <select id="bb-unit" class="tool-select" style="max-width:160px;" aria-label="Unidade">
+        <option value="MB">Megabytes (MB)</option>
+        <option value="GB" selected>Gigabytes (GB)</option>
+        <option value="TB">Terabytes (TB)</option>
+        <option value="Mbps">Megabits/s (Mbps)</option>
+      </select>
+      <button id="btn-bb" type="button" class="tool-btn">Converter</button>
+    </div>
+    <div id="bb-grid" class="tool-grid"></div>
+  </div>
+
+  <!-- 3. RAID Calculator -->
+  <div class="tool-card">
+    <h2>3. Calculadora de Capacidade RAID</h2>
+    <div class="tool-form-row" style="margin-bottom:.85rem;">
+      <select id="raid-level" class="tool-select" style="max-width:160px;" aria-label="Nível RAID">
+        <option value="0">RAID 0 (Stripe)</option>
+        <option value="1">RAID 1 (Mirror)</option>
+        <option value="5" selected>RAID 5 (Paridade Simples)</option>
+        <option value="6">RAID 6 (Paridade Dupla)</option>
+        <option value="10">RAID 10 (Mirror + Stripe)</option>
+      </select>
+      <input id="raid-disks" type="number" min="2" max="64" value="4" class="tool-input" placeholder="Nº de discos" aria-label="Número de discos" />
+      <input id="raid-size" type="number" min="1" value="4" class="tool-input" placeholder="TB por disco" aria-label="Capacidade por disco em TB" />
+      <button id="btn-raid" type="button" class="tool-btn">Calcular RAID</button>
+    </div>
+    <div id="raid-grid" class="tool-grid"></div>
+  </div>
+</ToolShell>
+
+<script is:inline>
+  (() => {
+    function addKv(container, label, value) {
+      const box = document.createElement('div');
+      box.className = 'kv-box';
+      box.innerHTML = `<div class="kv-label">${label}</div><div class="kv-value">${value}</div>`;
+      container.appendChild(box);
+    }
+
+    function fmtSec(sec) {
+      if (sec < 60) return `${sec.toFixed(1)} seg`;
+      const m = Math.floor(sec / 60);
+      const s = Math.round(sec % 60);
+      if (m < 60) return `${m}m ${s}s`;
+      const h = Math.floor(m / 60);
+      const rm = m % 60;
+      return `${h}h ${rm}m`;
+    }
+
+    // 1. SLA
+    const slaPct = document.getElementById('sla-pct');
+    const slaGrid = document.getElementById('sla-grid');
+    function calcSla() {
+      const pct = Math.min(100, Math.max(0, parseFloat(slaPct.value) || 0));
+      const down = (100 - pct) / 100;
+      slaGrid.innerHTML = '';
+      addKv(slaGrid, 'Diário', fmtSec(86400 * down));
+      addKv(slaGrid, 'Mensal (30d)', fmtSec(2592000 * down));
+      addKv(slaGrid, 'Anual (365d)', fmtSec(31536000 * down));
+    }
+    document.getElementById('btn-sla')?.addEventListener('click', calcSla);
+    calcSla();
+
+    // 2. Bytes/Bits
+    const bbVal = document.getElementById('bb-val');
+    const bbUnit = document.getElementById('bb-unit');
+    const bbGrid = document.getElementById('bb-grid');
+    function calcBb() {
+      const v = parseFloat(bbVal.value) || 0;
+      const u = bbUnit.value;
+      let bytes = 0;
+      if (u === 'MB') bytes = v * 1e6;
+      else if (u === 'GB') bytes = v * 1e9;
+      else if (u === 'TB') bytes = v * 1e12;
+      else if (u === 'Mbps') bytes = (v * 1e6) / 8;
+
+      bbGrid.innerHTML = '';
+      addKv(bbGrid, 'Megabytes (MB)', (bytes / 1e6).toFixed(2));
+      addKv(bbGrid, 'Gigabytes (GB)', (bytes / 1e9).toFixed(4));
+      addKv(bbGrid, 'Gibibytes (GiB)', (bytes / Math.pow(1024, 3)).toFixed(4));
+      addKv(bbGrid, 'Megabits (Mb)', ((bytes * 8) / 1e6).toFixed(2));
+    }
+    document.getElementById('btn-bb')?.addEventListener('click', calcBb);
+    bbUnit?.addEventListener('change', calcBb);
+    calcBb();
+
+    // 3. RAID
+    const raidLevel = document.getElementById('raid-level');
+    const raidDisks = document.getElementById('raid-disks');
+    const raidSize = document.getElementById('raid-size');
+    const raidGrid = document.getElementById('raid-grid');
+    function calcRaid() {
+      const lvl = raidLevel.value;
+      const n = Math.max(2, parseInt(raidDisks.value, 10) || 2);
+      const sz = Math.max(1, parseFloat(raidSize.value) || 1);
+      let usable = 0;
+      let fault = '';
+      if (lvl === '0') { usable = n * sz; fault = '0 discos (Sem redundância)'; }
+      else if (lvl === '1') { usable = sz; fault = `${n - 1} disco(s)`; }
+      else if (lvl === '5') { usable = Math.max(0, (n - 1) * sz); fault = '1 disco'; }
+      else if (lvl === '6') { usable = Math.max(0, (n - 2) * sz); fault = '2 discos'; }
+      else if (lvl === '10') { usable = Math.floor(n / 2) * sz; fault = 'Até 1 disco por espelho'; }
+
+      raidGrid.innerHTML = '';
+      addKv(raidGrid, 'Capacidade Útil', `${usable.toFixed(1)} TB`);
+      addKv(raidGrid, 'Espaço Bruto Total', `${(n * sz).toFixed(1)} TB`);
+      addKv(raidGrid, 'Tolerância a Falhas', fault);
+    }
+    document.getElementById('btn-raid')?.addEventListener('click', calcRaid);
+    raidLevel?.addEventListener('change', calcRaid);
+    calcRaid();
+  })();
+</script>

@@ -1,0 +1,83 @@
+---
+import ToolShell from "../../components/ToolShell.astro";
+---
+
+<ToolShell
+  title="Analisador & Gerador de MAC Address"
+  description="Converta MAC Addresses entre formatos (dois-pontos, hífen, Cisco), verifique bits Unicast/Multicast e UAA/LAA, calcule EUI-64 IPv6 e gere MACs aleatórios."
+  badge="Rede & Sec"
+  icon="🔌"
+>
+  <div class="tool-card">
+    <h2>Analisar ou Gerar MAC Address</h2>
+    <div class="tool-form-row">
+      <input id="mac-in" type="text" class="tool-input" value="00:1A:2B:3C:4D:5E" placeholder="Ex: 00:1A:2B:3C:4D:5E ou 001a.2b3c.4d5e" aria-label="Endereço MAC" />
+      <button id="btn-mac" type="button" class="tool-btn">Analisar MAC</button>
+      <button id="btn-mac-gen" type="button" class="tool-btn secondary">Gerar MAC Aleatório</button>
+    </div>
+    <p id="mac-status" class="status-msg"></p>
+  </div>
+
+  <div class="tool-card">
+    <h2>Formatos & Propriedades</h2>
+    <div id="mac-grid" class="tool-grid"></div>
+  </div>
+</ToolShell>
+
+<script is:inline>
+  (() => {
+    const input = document.getElementById('mac-in');
+    const grid = document.getElementById('mac-grid');
+    const statusEl = document.getElementById('mac-status');
+
+    function addKv(label, value) {
+      const box = document.createElement('div');
+      box.className = 'kv-box';
+      box.innerHTML = `<div class="kv-label">${label}</div><div class="kv-value">${value}</div>`;
+      grid.appendChild(box);
+    }
+
+    function analyze() {
+      const clean = input.value.replace(/[^0-9a-fA-F]/g, '').toUpperCase();
+      grid.innerHTML = '';
+      if (clean.length !== 12) {
+        statusEl.textContent = 'MAC Address inválido. Informe 12 dígitos hexadecimais.';
+        statusEl.className = 'status-msg error';
+        return;
+      }
+
+      const bytes = clean.match(/.{2}/g);
+      const b0 = parseInt(bytes[0], 16);
+      const isMulticast = (b0 & 1) === 1;
+      const isLocal = (b0 & 2) === 2;
+      const oui = `${bytes[0]}:${bytes[1]}:${bytes[2]}`;
+
+      // EUI-64
+      const euiB0 = (b0 ^ 2).toString(16).padStart(2, '0').toLowerCase();
+      const eui64 = `fe80::${euiB0}${bytes[1].toLowerCase()}:${bytes[2].toLowerCase()}ff:fe${bytes[3].toLowerCase()}:${bytes[4].toLowerCase()}${bytes[5].toLowerCase()}`;
+
+      addKv('Formato Padrão (:)', bytes.join(':'));
+      addKv('Formato Windows (-)', bytes.join('-'));
+      addKv('Formato Cisco (.)', `${bytes[0]}${bytes[1]}.${bytes[2]}${bytes[3]}.${bytes[4]}${bytes[5]}`.toLowerCase());
+      addKv('OUI (Prefixo Fabricante)', oui);
+      addKv('Transmissão', isMulticast ? 'Multicast (Bit 0 = 1)' : 'Unicast (Bit 0 = 0)');
+      addKv('Administração', isLocal ? 'LAA — Localmente Administrado / Randomizado' : 'UAA — Universal (Fábrica)');
+      addKv('IPv6 Link-Local (EUI-64)', eui64);
+
+      statusEl.textContent = 'MAC Address analisado com sucesso.';
+      statusEl.className = 'status-msg ok';
+    }
+
+    document.getElementById('btn-mac')?.addEventListener('click', analyze);
+    document.getElementById('btn-mac-gen')?.addEventListener('click', () => {
+      const b = new Uint8Array(6);
+      crypto.getRandomValues(b);
+      // Set locally administered (bit 1) and unicast (bit 0 = 0)
+      b[0] = (b[0] | 0x02) & 0xfe;
+      input.value = Array.from(b, (x) => x.toString(16).padStart(2, '0').toUpperCase()).join(':');
+      analyze();
+    });
+
+    analyze();
+  })();
+</script>

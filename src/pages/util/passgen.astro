@@ -1,0 +1,101 @@
+---
+import ToolShell from "../../components/ToolShell.astro";
+---
+
+<ToolShell
+  title="Gerador de Senhas & Passphrases Seguras"
+  description="Gere senhas criptograficamente aleatórias (Web Crypto API) no seu navegador, com cálculo de entropia em bits e opção de passphrase."
+  badge="100% Local"
+  icon="🔐"
+>
+  <div class="tool-card">
+    <h2>Configuração da Senha</h2>
+    <div class="tool-grid" style="margin-bottom:1rem;">
+      <div>
+        <div class="kv-label">Comprimento (<span id="len-val">20</span> caracteres)</div>
+        <input id="pwd-len" type="range" min="8" max="64" value="20" style="width:100%;" aria-label="Comprimento da senha" />
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;">
+        <label><input id="opt-upper" type="checkbox" checked /> Maiúsculas (A-Z)</label>
+        <label><input id="opt-lower" type="checkbox" checked /> Minúsculas (a-z)</label>
+        <label><input id="opt-num" type="checkbox" checked /> Números (0-9)</label>
+        <label><input id="opt-sym" type="checkbox" checked /> Símbolos (!@#$...)</label>
+      </div>
+    </div>
+    <div style="display:flex;gap:.5rem;flex-wrap:wrap;">
+      <button id="btn-gen-pwd" type="button" class="tool-btn">Gerar Senha</button>
+      <button id="btn-gen-phrase" type="button" class="tool-btn secondary">Gerar Passphrase (5 palavras)</button>
+    </div>
+  </div>
+
+  <div class="tool-card">
+    <h2>Resultado</h2>
+    <div id="pwd-grid" class="tool-grid"></div>
+  </div>
+</ToolShell>
+
+<script is:inline>
+  (() => {
+    const lenEl = document.getElementById('pwd-len');
+    const lenVal = document.getElementById('len-val');
+    const grid = document.getElementById('pwd-grid');
+
+    const WORDS = [
+      'escudo', 'nuvem', 'chave', 'rede', 'auditoria', 'token', 'identidade', 'prisma',
+      'farol', 'cofre', 'satelite', 'fibra', 'linux', 'sentinel', 'trilha', 'alerta',
+      'barreira', 'criterio', 'ponte', 'vetor', 'orbita', 'código', 'porta', 'porto',
+      'bussola', 'ancora', 'rocha', 'vento', 'atlas', 'quantum', 'modulo', 'registro'
+    ];
+
+    function randInt(max) {
+      const arr = new Uint32Array(1);
+      crypto.getRandomValues(arr);
+      return arr[0] % max;
+    }
+
+    function renderResult(secret, entropyBits, label) {
+      grid.innerHTML = '';
+      const box1 = document.createElement('div');
+      box1.className = 'kv-box';
+      box1.innerHTML = `<div class="kv-label">${label}</div><div class="kv-value">${secret}</div>`;
+      const box2 = document.createElement('div');
+      box2.className = 'kv-box';
+      const strength = entropyBits >= 80 ? 'Excelente (Alta Resistência)' : entropyBits >= 60 ? 'Forte' : 'Moderada';
+      box2.innerHTML = `<div class="kv-label">Entropia Estimada</div><div class="kv-value">${entropyBits.toFixed(1)} bits · ${strength}</div>`;
+      grid.appendChild(box1);
+      grid.appendChild(box2);
+    }
+
+    function genPassword() {
+      const len = Number(lenEl.value);
+      let pool = '';
+      if (document.getElementById('opt-upper').checked) pool += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      if (document.getElementById('opt-lower').checked) pool += 'abcdefghijklmnopqrstuvwxyz';
+      if (document.getElementById('opt-num').checked) pool += '0123456789';
+      if (document.getElementById('opt-sym').checked) pool += '!@#$%^&*()-_=+[]{}';
+      if (!pool) pool = 'abcdefghijklmnopqrstuvwxyz0123456789';
+
+      let out = '';
+      for (let i = 0; i < len; i++) out += pool[randInt(pool.length)];
+      const entropy = len * Math.log2(pool.length);
+      renderResult(out, entropy, 'Senha Gerada');
+    }
+
+    function genPhrase() {
+      const chosen = [];
+      for (let i = 0; i < 5; i++) chosen.push(WORDS[randInt(WORDS.length)]);
+      const out = `${chosen.join('-')}-${randInt(90) + 10}`;
+      const entropy = 5 * Math.log2(WORDS.length) + Math.log2(90);
+      renderResult(out, entropy, 'Passphrase Gerada');
+    }
+
+    lenEl?.addEventListener('input', () => {
+      lenVal.textContent = lenEl.value;
+      genPassword();
+    });
+    document.getElementById('btn-gen-pwd')?.addEventListener('click', genPassword);
+    document.getElementById('btn-gen-phrase')?.addEventListener('click', genPhrase);
+
+    genPassword();
+  })();
+</script>

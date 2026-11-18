@@ -12,79 +12,104 @@ const { locale } = Astro.props;
 const COPY = {
   pt: {
     pageTitle: "Ferramentas Úteis de Segurança",
-    pageDesc: "Utilitários gratuitos e privativos para analistas de SOC, engenheiros de IAM e resposta a incidentes: IP/IPv6 Lookup, JWT Inspector, DNS/DMARC, RDAP, Epoch, Defang e mais.",
+    pageDesc: "Utilitários gratuitos e privativos para analistas de SOC, engenheiros de IAM e resposta a incidentes: IP/IPv6 Lookup, Subnet CIDR, E-mail Headers, JWT, DNS/DMARC, RDAP, Epoch e mais.",
     chip: "util.identidadesoberana.com.br",
     h1Start: "Ferramentas úteis para ",
     h1Highlight: "SOC, IAM e DFIR",
-    subtitle: "Utilitários rápidos, sem rastreadores e com foco em código aberto para apoiar investigações, triagem de alertas e auditorias técnicas no dia a dia.",
-    searchPlaceholder: "Buscar ferramenta (ex: ip, ipv6, jwt, spf, epoch, kql...)",
+    subtitle: "Catálogo completo de utilitários rápidos, sem rastreadores e com foco em código aberto. Leia a descrição de cada ferramenta para escolher o recurso ideal para sua investigação ou auditoria.",
+    searchPlaceholder: "Buscar ferramenta por nome ou função (ex: ip, ipv6, cidr, jwt, email, spf, mac, raid...)",
     cats: {
-      all: "Todas",
+      all: "Todas (19)",
       network: "Rede, IP & DNS",
-      identity: "Identidade & JWT",
-      dfir: "DFIR & Logs",
-      osint: "OSINT & Portais",
+      identity: "Identidade & Senhas",
+      dfir: "DFIR, E-mail & Logs",
+      osint: "OSINT, Infra & Web",
+    },
+    sectionTitles: {
+      network: "🌐 Rede, IP, IPv6 & DNS",
+      identity: "🔑 Identidade, Tokens & Senhas",
+      dfir: "🛡️ DFIR, Análise de E-mail & Logs",
+      osint: "🧭 OSINT, Infraestrutura & Web",
     },
     openBtn: "Abrir ferramenta →",
-    privacyNote: "Privacidade por padrão: decodificações (JWT, Base64, Defang, Hash, FILETIME) rodam 100% no seu navegador sem enviar dados a terceiros.",
+    privacyNote: "Privacidade por padrão: decodificações (JWT, E-mail Headers, Base64, Defang, Hash, Senhas, FILETIME) rodam 100% no seu navegador sem enviar dados a terceiros.",
   },
   de: {
     pageTitle: "Nützliche Security-Tools",
-    pageDesc: "Kostenlose und datenschutzfreundliche Tools für SOC-Analysten, IAM-Ingenieure und Incident Response: IP/IPv6 Lookup, JWT, DNS/DMARC, RDAP, Epoch und mehr.",
+    pageDesc: "Kostenlose Tools für SOC-Analysten, IAM-Ingenieure und Incident Response: IP/IPv6, Subnetz, E-Mail-Header, JWT, DNS/DMARC, RDAP, Epoch und mehr.",
     chip: "util.identidadesoberana.com.br",
     h1Start: "Nützliche Tools für ",
     h1Highlight: "SOC, IAM und DFIR",
-    subtitle: "Schnelle Hilfsmittel ohne Tracker und mit Open-Source-Fokus für tägliche Ermittlungen, Triage und technische Audits.",
-    searchPlaceholder: "Tool suchen (z. B. ip, ipv6, jwt, spf, epoch...)",
+    subtitle: "Vollständiger Katalog schneller Hilfsmittel ohne Tracker mit Open-Source-Fokus für tägliche Ermittlungen, Triage und Audits.",
+    searchPlaceholder: "Tool suchen (z. B. ip, ipv6, cidr, jwt, email, spf, mac...)",
     cats: {
-      all: "Alle",
+      all: "Alle (19)",
       network: "Netzwerk, IP & DNS",
-      identity: "Identität & JWT",
-      dfir: "DFIR & Logs",
-      osint: "OSINT & Portale",
+      identity: "Identität & Passwörter",
+      dfir: "DFIR, E-Mail & Logs",
+      osint: "OSINT, Infra & Web",
+    },
+    sectionTitles: {
+      network: "🌐 Netzwerk, IP, IPv6 & DNS",
+      identity: "🔑 Identität, Tokens & Passwörter",
+      dfir: "🛡️ DFIR, E-Mail-Analyse & Logs",
+      osint: "🧭 OSINT, Infrastruktur & Web",
     },
     openBtn: "Tool öffnen →",
-    privacyNote: "Datenschutz by Design: Dekodierungen (JWT, Base64, Defang, Hash, FILETIME) laufen zu 100% lokal in Ihrem Browser.",
+    privacyNote: "Datenschutz by Design: Dekodierungen (JWT, E-Mail-Header, Base64, Defang, Hash, FILETIME) laufen zu 100% lokal im Browser.",
   },
   zh: {
     pageTitle: "实用安全工具集",
-    pageDesc: "面向 SOC 分析师、IAM 工程师和应急响应团队的免费隐私工具集：IP/IPv6 查询、JWT 解析、DNS/DMARC、RDAP、时间戳转换等。",
+    pageDesc: "面向 SOC 分析师、IAM 工程师和应急响应团队的免费隐私工具集：IP/IPv6、子网计算、邮件头分析、JWT、DNS/DMARC、RDAP 等。",
     chip: "util.identidadesoberana.com.br",
     h1Start: "实用的 ",
     h1Highlight: "SOC、IAM 与 DFIR 工具",
-    subtitle: "无追踪、高响应的开源实用工具集，全面赋能日常安全研判、事件分流与技术审计。",
-    searchPlaceholder: "搜索工具（例如：ip, ipv6, jwt, spf, epoch...）",
+    subtitle: "完整收录无追踪、高响应的开源实用工具。浏览下方详细功能说明，快速定位日常研判与审计所需的在线工具。",
+    searchPlaceholder: "搜索工具名称或功能（例如：ip, ipv6, cidr, jwt, email, spf, mac...）",
     cats: {
-      all: "全部",
+      all: "全部 (19)",
       network: "网络、IP 与 DNS",
-      identity: "身份与 JWT",
-      dfir: "DFIR 与日志",
-      osint: "OSINT 与导航",
+      identity: "身份与密码",
+      dfir: "DFIR、邮件与日志",
+      osint: "OSINT、运维与 Web",
+    },
+    sectionTitles: {
+      network: "🌐 网络、IP、IPv6 与 DNS",
+      identity: "🔑 身份认证、令牌与密码",
+      dfir: "🛡️ DFIR、邮件研判与日志",
+      osint: "🧭 OSINT、基础设施与 Web",
     },
     openBtn: "打开工具 →",
-    privacyNote: "默认隐私保护：JWT、Base64、IoC 脱敏、哈希与时间戳转换均 100% 在本地浏览器运行，绝不上传数据。",
+    privacyNote: "默认隐私保护：JWT、邮件头、Base64、脱敏、哈希与时间戳转换均 100% 在本地浏览器运行。",
   },
   en: {
     pageTitle: "Useful Security Tools",
-    pageDesc: "Free, privacy-first utilities for SOC analysts, IAM engineers, and incident responders: IP/IPv6 Lookup, JWT Inspector, DNS/DMARC, RDAP, Epoch, Defang, and more.",
+    pageDesc: "Free, privacy-first utilities for SOC analysts, IAM engineers, and incident responders: IP/IPv6 Lookup, Subnet CIDR, Email Headers, JWT, DNS/DMARC, RDAP, Epoch, and more.",
     chip: "util.identidadesoberana.com.br",
     h1Start: "Useful tools for ",
     h1Highlight: "SOC, IAM & DFIR",
-    subtitle: "Fast, tracker-free utilities built on open standards to support daily investigations, alert triage, and technical security audits.",
-    searchPlaceholder: "Search tools (e.g., ip, ipv6, jwt, spf, epoch, kql...)",
+    subtitle: "Complete catalog of fast, tracker-free utilities built on open standards. Read each tool summary below to pick the right utility for your investigation or audit.",
+    searchPlaceholder: "Search tools by name or feature (e.g., ip, ipv6, cidr, jwt, email, spf, mac...)",
     cats: {
-      all: "All",
+      all: "All (19)",
       network: "Network, IP & DNS",
-      identity: "Identity & JWT",
-      dfir: "DFIR & Logs",
-      osint: "OSINT & Portals",
+      identity: "Identity & Passwords",
+      dfir: "DFIR, Email & Logs",
+      osint: "OSINT, Ops & Web",
+    },
+    sectionTitles: {
+      network: "🌐 Network, IP, IPv6 & DNS",
+      identity: "🔑 Identity, Tokens & Passwords",
+      dfir: "🛡️ DFIR, Email Analysis & Logs",
+      osint: "🧭 OSINT, Infrastructure & Web",
     },
     openBtn: "Open tool →",
-    privacyNote: "Privacy by design: decoding tools (JWT, Base64, Defang, Hash, FILETIME) run 100% locally in your browser with zero data transmission.",
+    privacyNote: "Privacy by design: decoding tools (JWT, Email Headers, Base64, Defang, Hash, Passwords, FILETIME) run 100% locally in your browser.",
   },
 } as const;
 
 const t = COPY[locale];
+const CATEGORIES = ["network", "identity", "dfir", "osint"] as const;
 ---
 
 <Base title={t.pageTitle} description={t.pageDesc}>
@@ -112,30 +137,42 @@ const t = COPY[locale];
     </div>
   </section>
 
-  <section class="container util-grid-wrap">
-    <div id="tools-grid" class="util-grid">
-      {UTIL_TOOLS.map((tool) => (
-        <a
-          href={tool.slug}
-          class="util-card"
-          data-cat={tool.category}
-          data-search={`${tool.id} ${tool.title[locale]} ${tool.description[locale]} ${tool.highlights[locale].join(" ")}`.toLowerCase()}
-        >
-          <div class="util-card-top">
-            <span class="util-icon" aria-hidden="true">{tool.icon}</span>
-            <span class="util-badge">{tool.badge}</span>
-          </div>
-          <h2>{tool.title[locale]}</h2>
-          <p>{tool.description[locale]}</p>
-          <ul class="util-highlights">
-            {tool.highlights[locale].map((item) => (
-              <li>✓ {item}</li>
+  <section class="container util-sections">
+    {CATEGORIES.map((catKey) => {
+      const catTools = UTIL_TOOLS.filter((tool) => tool.category === catKey);
+      return (
+        <div class="util-section-group" data-group-cat={catKey}>
+          <h2 class="util-section-heading">{t.sectionTitles[catKey]}</h2>
+          <div class="util-reading-grid">
+            {catTools.map((tool) => (
+              <a
+                href={tool.slug}
+                class="util-reading-card"
+                data-cat={tool.category}
+                data-search={`${tool.id} ${tool.title[locale]} ${tool.description[locale]} ${tool.highlights[locale].join(" ")}`.toLowerCase()}
+              >
+                <div class="util-card-header">
+                  <div class="util-title-wrap">
+                    <span class="util-icon" aria-hidden="true">{tool.icon}</span>
+                    <h3>{tool.title[locale]}</h3>
+                  </div>
+                  <span class="util-badge">{tool.badge}</span>
+                </div>
+                <p class="util-card-desc">{tool.description[locale]}</p>
+                <div class="util-card-footer">
+                  <ul class="util-highlights">
+                    {tool.highlights[locale].map((item) => (
+                      <li>✓ {item}</li>
+                    ))}
+                  </ul>
+                  <span class="util-cta">{t.openBtn}</span>
+                </div>
+              </a>
             ))}
-          </ul>
-          <span class="util-cta">{t.openBtn}</span>
-        </a>
-      ))}
-    </div>
+          </div>
+        </div>
+      );
+    })}
   </section>
 </Base>
 
@@ -143,17 +180,28 @@ const t = COPY[locale];
   (() => {
     const searchInput = document.getElementById('tool-search');
     const filterBtns = document.querySelectorAll('.filter-pill');
-    const cards = document.querySelectorAll('.util-card');
+    const groups = document.querySelectorAll('.util-section-group');
     let activeCat = 'all';
 
     function applyFilters() {
       const q = (searchInput?.value || '').trim().toLowerCase();
-      cards.forEach((card) => {
-        const cat = card.getAttribute('data-cat');
-        const text = card.getAttribute('data-search') || '';
-        const matchCat = activeCat === 'all' || cat === activeCat;
-        const matchSearch = !q || text.includes(q);
-        card.style.display = matchCat && matchSearch ? '' : 'none';
+      groups.forEach((group) => {
+        const groupCat = group.getAttribute('data-group-cat');
+        const cards = group.querySelectorAll('.util-reading-card');
+        let visibleCount = 0;
+
+        cards.forEach((card) => {
+          const cat = card.getAttribute('data-cat');
+          const text = card.getAttribute('data-search') || '';
+          const matchCat = activeCat === 'all' || cat === activeCat;
+          const matchSearch = !q || text.includes(q);
+          const show = matchCat && matchSearch;
+          card.style.display = show ? '' : 'none';
+          if (show) visibleCount++;
+        });
+
+        const showGroup = (activeCat === 'all' || groupCat === activeCat) && visibleCount > 0;
+        group.style.display = showGroup ? '' : 'none';
       });
     }
 
@@ -171,7 +219,7 @@ const t = COPY[locale];
 
 <style>
   .util-hero {
-    padding-block: 2.5rem 1.5rem;
+    padding-block: 2.5rem 1.75rem;
   }
   .chip {
     display: inline-block;
@@ -189,15 +237,16 @@ const t = COPY[locale];
   .util-sub {
     color: var(--is-cinza);
     font-size: 1.1rem;
-    max-width: 68ch;
-    margin: 0 0 .75rem;
+    line-height: 1.65;
+    max-width: 72ch;
+    margin: 0 0 .85rem;
   }
   .util-privacy {
-    font-size: .92rem;
+    font-size: .94rem;
     color: var(--is-verde-escuro);
     background: #f0fdf4;
     border: 1px solid #bbf7d0;
-    padding: .55rem .95rem;
+    padding: .6rem 1rem;
     border-radius: 10px;
     display: inline-block;
     margin: 0 0 1.5rem;
@@ -209,9 +258,9 @@ const t = COPY[locale];
   }
   .util-search {
     width: 100%;
-    max-width: 520px;
-    padding: .75rem 1rem;
-    font: 500 .98rem var(--is-fonte-texto);
+    max-width: 600px;
+    padding: .8rem 1.05rem;
+    font: 500 1rem var(--is-fonte-texto);
     border: 1.5px solid var(--is-borda);
     border-radius: 12px;
     background: #fafafa;
@@ -227,8 +276,8 @@ const t = COPY[locale];
     gap: .45rem;
   }
   .filter-pill {
-    font: 700 .86rem var(--is-fonte-titulo);
-    padding: .42rem .9rem;
+    font: 700 .88rem var(--is-fonte-titulo);
+    padding: .45rem .95rem;
     border-radius: var(--is-raio-pill);
     border: 1px solid var(--is-borda);
     background: #fff;
@@ -245,66 +294,103 @@ const t = COPY[locale];
     border-color: var(--is-verde);
     color: #fff;
   }
-  .util-grid-wrap {
+
+  .util-sections {
     padding-bottom: 4rem;
   }
-  .util-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(305px, 1fr));
-    gap: 1.25rem;
+  .util-section-group {
+    margin-bottom: 2.75rem;
   }
-  .util-card {
+  .util-section-heading {
+    font-size: 1.45rem;
+    margin: 0 0 1.15rem;
+    padding-bottom: .5rem;
+    border-bottom: 2px solid var(--is-verde-claro);
+    color: var(--is-tinta);
+  }
+
+  /* Layout otimizado para leitura: cards espaçosos em 2 colunas (1 coluna no mobile) */
+  .util-reading-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(430px, 1fr));
+    gap: 1.15rem;
+  }
+  @media (max-width: 520px) {
+    .util-reading-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  .util-reading-card {
     display: flex;
     flex-direction: column;
     background: #fff;
     border: 1.5px solid var(--is-borda);
-    border-radius: 16px;
-    padding: 1.35rem;
+    border-left: 5px solid var(--is-verde);
+    border-radius: 14px;
+    padding: 1.35rem 1.45rem;
     text-decoration: none;
     color: inherit;
-    transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease;
+    transition: transform .14s ease, border-color .14s ease, box-shadow .14s ease;
   }
-  .util-card:hover {
+  .util-reading-card:hover {
     transform: translateY(-2px);
     border-color: var(--is-verde);
     box-shadow: 0 10px 26px rgba(0, 156, 59, .08);
   }
-  .util-card-top {
+  .util-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: .75rem;
+    margin-bottom: .6rem;
+  }
+  .util-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: .55rem;
+  }
+  .util-icon {
+    font-size: 1.45rem;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+  .util-reading-card h3 {
+    font-size: 1.18rem;
+    margin: 0;
+    color: var(--is-tinta);
+    line-height: 1.25;
+  }
+  .util-badge {
+    font: 800 .72rem var(--is-fonte-mono);
+    background: var(--is-amarelo);
+    color: var(--is-tinta);
+    padding: .2rem .6rem;
+    border-radius: var(--is-raio-pill);
+    white-space: nowrap;
+  }
+  .util-card-desc {
+    font-size: 1rem;
+    color: var(--is-cinza);
+    margin: 0 0 1rem;
+    line-height: 1.6;
+    flex: 1;
+  }
+  .util-card-footer {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: .75rem;
-  }
-  .util-icon {
-    font-size: 1.65rem;
-    line-height: 1;
-  }
-  .util-badge {
-    font: 800 .74rem var(--is-fonte-mono);
-    background: var(--is-amarelo);
-    color: var(--is-tinta);
-    padding: .2rem .65rem;
-    border-radius: var(--is-raio-pill);
-  }
-  .util-card h2 {
-    font-size: 1.2rem;
-    margin: 0 0 .5rem;
-    color: var(--is-tinta);
-  }
-  .util-card p {
-    font-size: .94rem;
-    color: var(--is-cinza);
-    margin: 0 0 1rem;
-    line-height: 1.5;
-    flex: 1;
+    flex-wrap: wrap;
+    gap: .65rem;
+    padding-top: .75rem;
+    border-top: 1px solid #f1f5f9;
   }
   .util-highlights {
     list-style: none;
     padding: 0;
-    margin: 0 0 1rem;
+    margin: 0;
     display: flex;
     flex-wrap: wrap;
-    gap: .4rem;
+    gap: .35rem;
   }
   .util-highlights li {
     font: 600 .78rem var(--is-fonte-texto);
@@ -316,5 +402,6 @@ const t = COPY[locale];
   .util-cta {
     font: 800 .9rem var(--is-fonte-titulo);
     color: var(--is-verde-escuro);
+    white-space: nowrap;
   }
 </style>

@@ -1,0 +1,104 @@
+---
+import ToolShell from "../../components/ToolShell.astro";
+---
+
+<ToolShell
+  title="Analisador de Cabeçalhos de E-mail (Phishing Triage)"
+  description="Cole cabeçalhos brutos de e-mail para extrair saltos (Received), validar SPF/DKIM/DMARC, detectar discrepâncias entre From e Return-Path e listar IPs de origem."
+  badge="E-mail & SOC"
+  icon="✉️"
+>
+  <div class="tool-card">
+    <h2>Cole os Cabeçalhos Brutos do E-mail</h2>
+    <textarea
+      id="hdr-input"
+      class="tool-textarea"
+      rows="6"
+      placeholder="Cole aqui o cabeçalho completo (From:, Return-Path:, Authentication-Results:, Received:, Message-ID:)..."
+      aria-label="Cabeçalhos brutos de e-mail"
+    ></textarea>
+    <div style="margin-top:.75rem;">
+      <button id="btn-hdr" type="button" class="tool-btn">Analisar Cabeçalhos</button>
+    </div>
+  </div>
+
+  <div id="hdr-summary-card" class="tool-card" style="display:none;">
+    <h2>Resumo de Autenticação & Spoofing</h2>
+    <div id="hdr-grid" class="tool-grid"></div>
+  </div>
+
+  <div id="hdr-hops-card" class="tool-card" style="display:none;">
+    <h2>Rota de Entrega (Saltos Received) & IPs Encontrados</h2>
+    <pre id="hdr-hops" class="code-out"></pre>
+  </div>
+</ToolShell>
+
+<script is:inline>
+  (() => {
+    const input = document.getElementById('hdr-input');
+    const summaryCard = document.getElementById('hdr-summary-card');
+    const grid = document.getElementById('hdr-grid');
+    const hopsCard = document.getElementById('hdr-hops-card');
+    const hopsOut = document.getElementById('hdr-hops');
+
+    function addKv(label, value) {
+      const box = document.createElement('div');
+      box.className = 'kv-box';
+      box.innerHTML = `<div class="kv-label">${label}</div><div class="kv-value">${value || '—'}</div>`;
+      grid.appendChild(box);
+    }
+
+    function unfoldHeaders(raw) {
+      return raw.replace(/\r?\n[ \t]+/g, ' ');
+    }
+
+    function getHeader(unfolded, name) {
+      const rx = new RegExp(`^${name}:\\s*(.+)$`, 'im');
+      const m = unfolded.match(rx);
+      return m ? m[1].trim() : '';
+    }
+
+    function analyze() {
+      const raw = input.value.trim();
+      if (!raw) return;
+
+      const unfolded = unfoldHeaders(raw);
+      const from = getHeader(unfolded, 'From');
+      const returnPath = getHeader(unfolded, 'Return-Path');
+      const replyTo = getHeader(unfolded, 'Reply-To');
+      const subject = getHeader(unfolded, 'Subject');
+      const authRes = getHeader(unfolded, 'Authentication-Results');
+      const origIp = getHeader(unfolded, 'X-Originating-IP') || getHeader(unfolded, 'X-Sender-IP');
+
+      const spfMatch = authRes.match(/spf=(\w+)/i);
+      const dkimMatch = authRes.match(/dkim=(\w+)/i);
+      const dmarcMatch = authRes.match(/dmarc=(\w+)/i);
+
+      const receivedLines = unfolded
+        .split(/\r?\n/)
+        .filter((l) => /^Received:/i.test(l))
+        .reverse();
+
+      const ips = [...new Set(unfolded.match(/\b(?:(?:25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(?:25[0-5]|2[0-4]\d|[01]?\d\d?)\b/g) || [])];
+
+      grid.innerHTML = '';
+      addKv('Assunto (Subject)', subject || '—');
+      addKv('Remetente (From)', from || '—');
+      addKv('Return-Path (Envelope)', returnPath || '—');
+      addKv('Reply-To', replyTo || 'Mesmo que From');
+      addKv('SPF', spfMatch ? spfMatch[1].toUpperCase() : 'Não encontrado');
+      addKv('DKIM', dkimMatch ? dkimMatch[1].toUpperCase() : 'Não encontrado');
+      addKv('DMARC', dmarcMatch ? dmarcMatch[1].toUpperCase() : 'Não encontrado');
+      addKv('IP de Origem (Header)', origIp || (ips[0] || '—'));
+
+      summaryCard.style.display = '';
+      hopsCard.style.display = '';
+      hopsOut.textContent =
+        `Total de saltos (Received): ${receivedLines.length}\n` +
+        `IPs IPv4 extraídos: ${ips.join(', ') || 'Nenhum'}\n\n` +
+        receivedLines.map((line, i) => `[Salto ${i + 1}] ${line}`).join('\n\n');
+    }
+
+    document.getElementById('btn-hdr')?.addEventListener('click', analyze);
+  })();
+</script>

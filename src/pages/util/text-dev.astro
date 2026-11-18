@@ -1,0 +1,80 @@
+---
+import ToolShell from "../../components/ToolShell.astro";
+---
+
+<ToolShell
+  title="Conversores Dev, Binário, Case & Base64 Imagem"
+  description="Converta texto entre formatos (MAIÚSCULAS, minúsculas, Title Case, camelCase, snake_case, reverso), traduza Binário↔Texto, detecte domínios Punycode/IDN e visualize Base64 como imagem."
+  badge="Dev & Sec"
+  icon="🧰"
+>
+  <!-- 1. Case & Reverse Text -->
+  <div class="tool-card">
+    <h2>1. Conversor de Case, Texto Reverso & Binário ↔ Texto</h2>
+    <textarea id="txt-in" class="tool-textarea" rows="3" placeholder="Digite seu texto ou sequência binária (ex: 01010011 01001111 01000011)..." aria-label="Entrada de texto"></textarea>
+    <div style="display:flex;gap:.45rem;flex-wrap:wrap;margin-top:.75rem;">
+      <button type="button" class="tool-btn outline case-btn" data-mode="upper">MAIÚSCULAS</button>
+      <button type="button" class="tool-btn outline case-btn" data-mode="lower">minúsculas</button>
+      <button type="button" class="tool-btn outline case-btn" data-mode="title">Title Case</button>
+      <button type="button" class="tool-btn outline case-btn" data-mode="snake">snake_case</button>
+      <button type="button" class="tool-btn outline case-btn" data-mode="reverse">Inverter Texto</button>
+      <button type="button" class="tool-btn secondary case-btn" data-mode="to-bin">Texto → Binário</button>
+      <button type="button" class="tool-btn secondary case-btn" data-mode="from-bin">Binário → Texto</button>
+    </div>
+    <pre id="txt-out" class="code-out" style="margin-top:.85rem;display:none;"></pre>
+  </div>
+
+  <!-- 2. Base64 para Imagem -->
+  <div class="tool-card">
+    <h2>2. Visualizador de Base64 para Imagem</h2>
+    <textarea id="b64-img-in" class="tool-textarea" rows="3" placeholder="Cole uma string Base64 de imagem (com ou sem data:image/png;base64,...)..." aria-label="Base64 da imagem"></textarea>
+    <div style="margin-top:.75rem;">
+      <button id="btn-b64-img" type="button" class="tool-btn">Renderizar Imagem</button>
+    </div>
+    <div id="b64-img-wrap" style="margin-top:1rem;display:none;">
+      <img id="b64-img-preview" alt="Pré-visualização Base64" style="max-width:100%;border:1px solid var(--is-borda);border-radius:10px;" />
+    </div>
+  </div>
+</ToolShell>
+
+<script is:inline>
+  (() => {
+    const txtIn = document.getElementById('txt-in');
+    const txtOut = document.getElementById('txt-out');
+
+    document.querySelectorAll('.case-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const mode = btn.getAttribute('data-mode');
+        const val = txtIn.value;
+        let res = val;
+        if (mode === 'upper') res = val.toUpperCase();
+        else if (mode === 'lower') res = val.toLowerCase();
+        else if (mode === 'title') res = val.replace(/\w\S*/g, (w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase());
+        else if (mode === 'snake') res = val.trim().toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
+        else if (mode === 'reverse') res = [...val].reverse().join('');
+        else if (mode === 'to-bin') {
+          res = Array.from(new TextEncoder().encode(val), (b) => b.toString(2).padStart(8, '0')).join(' ');
+        } else if (mode === 'from-bin') {
+          const bins = val.trim().split(/\s+/).filter(Boolean);
+          const bytes = new Uint8Array(bins.map((b) => parseInt(b, 2)));
+          res = new TextDecoder().decode(bytes);
+        }
+        txtOut.style.display = '';
+        txtOut.textContent = res;
+      });
+    });
+
+    const b64ImgIn = document.getElementById('b64-img-in');
+    const imgWrap = document.getElementById('b64-img-wrap');
+    const imgPreview = document.getElementById('b64-img-preview');
+    document.getElementById('btn-b64-img')?.addEventListener('click', () => {
+      let raw = b64ImgIn.value.trim();
+      if (!raw) return;
+      if (!raw.startsWith('data:image/')) {
+        raw = `data:image/png;base64,${raw}`;
+      }
+      imgPreview.src = raw;
+      imgWrap.style.display = '';
+    });
+  })();
+</script>

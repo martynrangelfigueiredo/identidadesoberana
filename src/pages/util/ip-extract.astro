@@ -1,0 +1,119 @@
+---
+import ToolShell from "../../components/ToolShell.astro";
+---
+
+<ToolShell
+  title="Extrator de IPs, Bulk Lookup & Gerador Aleatório"
+  description="Extraia todos os IPs únicos de logs brutos ou e-mails, consulte geolocalização/ASN em lote ou gere IPs aleatórios para testes de firewall e SIEM."
+  badge="Rede & IP"
+  icon="📦"
+>
+  <div class="tool-card">
+    <h2>1. Extrair IPs de Logs / Texto Bruto & Bulk Lookup</h2>
+    <textarea
+      id="bulk-input"
+      class="tool-textarea"
+      rows="5"
+      placeholder="Cole um trecho de log, cabeçalho de e-mail ou lista de IPs..."
+      aria-label="Texto para extração de IPs"
+    ></textarea>
+    <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.75rem;">
+      <button id="btn-extract" type="button" class="tool-btn">Extrair IPs Únicos</button>
+      <button id="btn-bulk-geo" type="button" class="tool-btn secondary">Consultar Geo/ASN em Lote (até 10)</button>
+      <button id="btn-gen-ip" type="button" class="tool-btn outline">Gerar 5 IPs Aleatórios</button>
+    </div>
+    <p id="bulk-status" class="status-msg"></p>
+  </div>
+
+  <div id="extracted-card" class="tool-card" style="display:none;">
+    <h2>IPs Extraídos (<span id="ip-count">0</span> únicos)</h2>
+    <pre id="extracted-out" class="code-out"></pre>
+  </div>
+
+  <div id="bulk-results-card" class="tool-card" style="display:none;overflow-x:auto;">
+    <h2>Resultado da Consulta em Lote</h2>
+    <table style="width:100%;border-collapse:collapse;font-size:.9rem;">
+      <thead>
+        <tr style="border-bottom:2px solid var(--is-borda);text-align:left;">
+          <th style="padding:.55rem;">IP</th>
+          <th style="padding:.55rem;">País / Cidade</th>
+          <th style="padding:.55rem;">ASN / Organização</th>
+        </tr>
+      </thead>
+      <tbody id="bulk-tbody"></tbody>
+    </table>
+  </div>
+</ToolShell>
+
+<script is:inline>
+  (() => {
+    const input = document.getElementById('bulk-input');
+    const statusEl = document.getElementById('bulk-status');
+    const extractedCard = document.getElementById('extracted-card');
+    const extractedOut = document.getElementById('extracted-out');
+    const ipCount = document.getElementById('ip-count');
+    const bulkCard = document.getElementById('bulk-results-card');
+    const bulkTbody = document.getElementById('bulk-tbody');
+
+    function extractIps(text) {
+      const ipv4Regex = /\b(?:(?:25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(?:25[0-5]|2[0-4]\d|[01]?\d\d?)\b/g;
+      const matches = text.match(ipv4Regex) || [];
+      return [...new Set(matches)];
+    }
+
+    document.getElementById('btn-extract')?.addEventListener('click', () => {
+      const ips = extractIps(input.value);
+      ipCount.textContent = String(ips.length);
+      extractedCard.style.display = '';
+      extractedOut.textContent = ips.length ? ips.join('\n') : 'Nenhum endereço IPv4 válido encontrado.';
+      statusEl.textContent = `${ips.length} endereço(s) único(s) extraído(s).`;
+      statusEl.className = 'status-msg ok';
+    });
+
+    document.getElementById('btn-gen-ip')?.addEventListener('click', () => {
+      const list = [];
+      for (let i = 0; i < 5; i++) {
+        const b = new Uint8Array(4);
+        crypto.getRandomValues(b);
+        const first = (b[0] % 200) + 11;
+        list.push(`${first}.${b[1]}.${b[2]}.${(b[3] % 253) + 1}`);
+      }
+      input.value = list.join('\n');
+      document.getElementById('btn-extract')?.click();
+    });
+
+    document.getElementById('btn-bulk-geo')?.addEventListener('click', async () => {
+      const ips = extractIps(input.value).slice(0, 10);
+      if (!ips.length) {
+        statusEl.textContent = 'Nenhum IP encontrado para consultar.';
+        statusEl.className = 'status-msg error';
+        return;
+      }
+      statusEl.textContent = `Consultando ${ips.length} IPs...`;
+      statusEl.className = 'status-msg';
+      bulkTbody.innerHTML = '';
+      bulkCard.style.display = '';
+
+      for (const ip of ips) {
+        try {
+          const res = await fetch(`https://ipwho.is/${encodeURIComponent(ip)}`);
+          const d = await res.json();
+          const tr = document.createElement('tr');
+          tr.style.borderBottom = '1px solid var(--is-borda)';
+          tr.innerHTML = `
+            <td style="padding:.55rem;font-family:var(--is-fonte-mono);font-weight:700;">${ip}</td>
+            <td style="padding:.55rem;">${d.success ? `${d.country || '—'} · ${d.city || '—'}` : (d.message || 'Privado/Reservado')}</td>
+            <td style="padding:.55rem;">${d.success ? `AS${d.connection?.asn || '?'} · ${d.connection?.isp || d.connection?.org || '—'}` : '—'}</td>
+          `;
+          bulkTbody.appendChild(tr);
+        } catch {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `<td style="padding:.55rem;font-family:var(--is-fonte-mono);">${ip}</td><td colspan="2" style="padding:.55rem;">Erro na consulta</td>`;
+          bulkTbody.appendChild(tr);
+        }
+      }
+      statusEl.textContent = `Consulta em lote concluída (${ips.length} IPs).`;
+      statusEl.className = 'status-msg ok';
+    });
+  })();
+</script>

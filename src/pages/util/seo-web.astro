@@ -1,0 +1,76 @@
+---
+import ToolShell from "../../components/ToolShell.astro";
+---
+
+<ToolShell
+  title="Gerador de Robots.txt, Open Graph & Schema JSON-LD"
+  description="Gere arquivos robots.txt, meta tags Open Graph (LinkedIn/X/WhatsApp) e blocos Schema.org JSON-LD estruturados prontos para colar no seu site."
+  badge="Web & SEO"
+  icon="🔎"
+>
+  <div class="tool-card">
+    <h2>1. Gerador de Meta Tags Open Graph & Schema JSON-LD</h2>
+    <div class="tool-grid" style="margin-bottom:1rem;">
+      <input id="seo-title" type="text" class="tool-input" value="Identidade Soberana — SecOps e IAM" placeholder="Título da Página" aria-label="Título" />
+      <input id="seo-url" type="url" class="tool-input" value="https://identidadesoberana.com.br/" placeholder="URL Canônica" aria-label="URL" />
+      <input id="seo-desc" type="text" class="tool-input" value="Guias práticos de SOC, Microsoft Sentinel, Entra ID e segurança aberta." placeholder="Descrição curta" aria-label="Descrição" />
+    </div>
+    <button id="btn-seo" type="button" class="tool-btn">Gerar Meta Tags & JSON-LD</button>
+    <pre id="seo-out" class="code-out" style="margin-top:.85rem;"></pre>
+  </div>
+
+  <div class="tool-card">
+    <h2>2. Gerador de Robots.txt</h2>
+    <div class="tool-form-row" style="margin-bottom:.85rem;">
+      <input id="rob-sitemap" type="url" class="tool-input" value="https://identidadesoberana.com.br/sitemap.xml" placeholder="URL do Sitemap" aria-label="URL do Sitemap" />
+      <select id="rob-policy" class="tool-select" style="max-width:220px;" aria-label="Política de rastreamento">
+        <option value="allow" selected>Permitir tudo (Allow /)</option>
+        <option value="disallow">Bloquear tudo (Disallow /)</option>
+      </select>
+      <button id="btn-rob" type="button" class="tool-btn">Gerar robots.txt</button>
+    </div>
+    <pre id="rob-out" class="code-out"></pre>
+  </div>
+</ToolShell>
+
+<script is:inline>
+  (() => {
+    const titleEl = document.getElementById('seo-title');
+    const urlEl = document.getElementById('seo-url');
+    const descEl = document.getElementById('seo-desc');
+    const seoOut = document.getElementById('seo-out');
+
+    function genSeo() {
+      const t = titleEl.value.trim();
+      const u = urlEl.value.trim();
+      const d = descEl.value.trim();
+      const ld = JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'WebPage',
+        name: t,
+        url: u,
+        description: d,
+      }, null, 2);
+
+      seoOut.textContent =
+        `<meta property="og:type" content="website" />\n` +
+        `<meta property="og:title" content="${t}" />\n` +
+        `<meta property="og:description" content="${d}" />\n` +
+        `<meta property="og:url" content="${u}" />\n\n` +
+        `<script type="application/ld+json">\n${ld}\n<\/script>`;
+    }
+
+    const robSitemap = document.getElementById('rob-sitemap');
+    const robPolicy = document.getElementById('rob-policy');
+    const robOut = document.getElementById('rob-out');
+    function genRobots() {
+      const rule = robPolicy.value === 'allow' ? 'Allow: /' : 'Disallow: /';
+      robOut.textContent = `User-agent: *\n${rule}\n\nSitemap: ${robSitemap.value.trim()}`;
+    }
+
+    document.getElementById('btn-seo')?.addEventListener('click', genSeo);
+    document.getElementById('btn-rob')?.addEventListener('click', genRobots);
+    genSeo();
+    genRobots();
+  })();
+</script>

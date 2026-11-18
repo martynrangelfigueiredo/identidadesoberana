@@ -1,0 +1,155 @@
+---
+import ToolShell from "../../components/ToolShell.astro";
+---
+
+<ToolShell
+  title="Conversor IPv4 ↔ IPv6, Decimal & Gerador ULA"
+  description="Converta IPv4 para IPv6 (IPv4-mapped e 6to4), expanda e comprima endereços IPv6, converta IPs para Decimal/Hex/Binário e gere endereços IPv6 locais (ULA)."
+  badge="Rede & IP"
+  icon="🔄"
+>
+  <div class="tool-card">
+    <h2>1. Conversor IPv4 ↔ Decimal / Binário / IPv6</h2>
+    <div class="tool-form-row">
+      <input id="v4-in" type="text" class="tool-input" value="192.0.2.10" placeholder="Ex: 192.0.2.10 ou 3221225994" aria-label="IPv4 ou Decimal" />
+      <button id="btn-v4" type="button" class="tool-btn">Converter</button>
+    </div>
+    <p id="v4-status" class="status-msg"></p>
+    <div id="v4-grid" class="tool-grid" style="margin-top:.85rem;"></div>
+  </div>
+
+  <div class="tool-card">
+    <h2>2. Expansor, Compressor & Gerador Local IPv6 (ULA)</h2>
+    <div class="tool-form-row">
+      <input id="v6-in" type="text" class="tool-input" value="2001:db8::1" placeholder="Ex: 2001:db8::1" aria-label="Endereço IPv6" />
+      <button id="btn-v6" type="button" class="tool-btn">Analisar IPv6</button>
+      <button id="btn-v6-gen" type="button" class="tool-btn secondary">Gerar IPv6 Local (ULA fd00::/8)</button>
+    </div>
+    <p id="v6-status" class="status-msg"></p>
+    <div id="v6-grid" class="tool-grid" style="margin-top:.85rem;"></div>
+  </div>
+</ToolShell>
+
+<script is:inline>
+  (() => {
+    const v4In = document.getElementById('v4-in');
+    const v4Grid = document.getElementById('v4-grid');
+    const v4Status = document.getElementById('v4-status');
+
+    const v6In = document.getElementById('v6-in');
+    const v6Grid = document.getElementById('v6-grid');
+    const v6Status = document.getElementById('v6-status');
+
+    function addKv(container, label, value) {
+      const box = document.createElement('div');
+      box.className = 'kv-box';
+      box.innerHTML = `<div class="kv-label">${label}</div><div class="kv-value">${value}</div>`;
+      container.appendChild(box);
+    }
+
+    function convertV4() {
+      const raw = v4In.value.trim();
+      v4Grid.innerHTML = '';
+      let parts = null;
+
+      if (/^\d+$/.test(raw)) {
+        const n = Number(raw);
+        if (n >= 0 && n <= 4294967295) {
+          parts = [(n >>> 24) & 255, (n >>> 16) & 255, (n >>> 8) & 255, n & 255];
+        }
+      } else if (/^(\d{1,3}\.){3}\d{1,3}$/.test(raw)) {
+        const p = raw.split('.').map(Number);
+        if (p.every((x) => x >= 0 && x <= 255)) parts = p;
+      }
+
+      if (!parts) {
+        v4Status.textContent = 'Informe um IPv4 válido (ex: 192.0.2.10) ou inteiro decimal de 32 bits.';
+        v4Status.className = 'status-msg error';
+        return;
+      }
+
+      const ipStr = parts.join('.');
+      const dec = ((parts[0] << 24) | (parts[1] << 16) | (parts[2] << 8) | parts[3]) >>> 0;
+      const hexPairs = parts.map((x) => x.toString(16).padStart(2, '0'));
+      const binOctets = parts.map((x) => x.toString(2).padStart(8, '0')).join('.');
+      const mapped = `::ffff:${ipStr}`;
+      const mappedHex = `::ffff:${hexPairs[0]}${hexPairs[1]}:${hexPairs[2]}${hexPairs[3]}`;
+      const sixToFour = `2002:${hexPairs[0]}${hexPairs[1]}:${hexPairs[2]}${hexPairs[3]}::`;
+
+      addKv(v4Grid, 'IPv4 Padrão', ipStr);
+      addKv(v4Grid, 'Decimal (32-bit)', String(dec));
+      addKv(v4Grid, 'Hexadecimal', `0x${dec.toString(16).padStart(8, '0')}`);
+      addKv(v4Grid, 'Binário', binOctets);
+      addKv(v4Grid, 'IPv4-mapped IPv6', mapped);
+      addKv(v4Grid, 'IPv4-mapped (Hex)', mappedHex);
+      addKv(v4Grid, '6to4 IPv6', sixToFour);
+
+      v4Status.textContent = 'Conversão IPv4 concluída.';
+      v4Status.className = 'status-msg ok';
+    }
+
+    function expandIPv6(ip) {
+      const halves = ip.split('::');
+      if (halves.length > 2) return null;
+      const left = halves[0] ? halves[0].split(':') : [];
+      const right = halves[1] ? halves[1].split(':') : [];
+      const missing = 8 - (left.length + right.length);
+      if (missing < 0) return null;
+      const full = [...left, ...Array(missing).fill('0'), ...right];
+      if (full.length !== 8 || !full.every((h) => /^[0-9a-fA-F]{1,4}$/.test(h))) return null;
+      return full.map((h) => h.padStart(4, '0').toLowerCase()).join(':');
+    }
+
+    function compressIPv6(expanded) {
+      const groups = expanded.split(':').map((g) => g.replace(/^0+/, '') || '0');
+      let bestStart = -1, bestLen = 0, curStart = -1, curLen = 0;
+      groups.forEach((g, i) => {
+        if (g === '0') {
+          if (curStart === -1) curStart = i;
+          curLen++;
+          if (curLen > bestLen) { bestStart = curStart; bestLen = curLen; }
+        } else {
+          curStart = -1; curLen = 0;
+        }
+      });
+      if (bestLen > 1) {
+        groups.splice(bestStart, bestLen, '');
+        if (bestStart === 0) groups.unshift('');
+        if (bestStart + bestLen === 8) groups.push('');
+      }
+      return groups.join(':').replace(/:{3,}/g, '::');
+    }
+
+    function analyzeV6() {
+      const raw = v6In.value.trim().split('/')[0];
+      v6Grid.innerHTML = '';
+      const exp = expandIPv6(raw);
+      if (!exp) {
+        v6Status.textContent = 'Endereço IPv6 inválido.';
+        v6Status.className = 'status-msg error';
+        return;
+      }
+      const comp = compressIPv6(exp);
+      const ptr = exp.replace(/:/g, '').split('').reverse().join('.') + '.ip6.arpa';
+      addKv(v6Grid, 'Forma Expandida (128-bit)', exp);
+      addKv(v6Grid, 'Forma Comprimida (RFC 5952)', comp);
+      addKv(v6Grid, 'DNS Reverso (PTR)', ptr);
+      v6Status.textContent = 'Análise IPv6 concluída.';
+      v6Status.className = 'status-msg ok';
+    }
+
+    document.getElementById('btn-v4')?.addEventListener('click', convertV4);
+    document.getElementById('btn-v6')?.addEventListener('click', analyzeV6);
+    document.getElementById('btn-v6-gen')?.addEventListener('click', () => {
+      const bytes = new Uint8Array(15);
+      crypto.getRandomValues(bytes);
+      const hex = (i) => bytes[i].toString(16).padStart(2, '0');
+      const ula = `fd${hex(0)}:${hex(1)}${hex(2)}:${hex(3)}${hex(4)}:${hex(5)}${hex(6)}:${hex(7)}${hex(8)}:${hex(9)}${hex(10)}:${hex(11)}${hex(12)}:${hex(13)}${hex(14)}`;
+      v6In.value = ula;
+      analyzeV6();
+    });
+
+    convertV4();
+    analyzeV6();
+  })();
+</script>
