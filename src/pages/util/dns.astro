@@ -1,0 +1,173 @@
+---
+import ToolShell from "../../components/ToolShell.astro";
+---
+
+<ToolShell
+  title="DNS, MX, SPF & DMARC Inspector"
+  description="Consulte registros DNS (A, AAAA, MX, NS, TXT) via DNS-over-HTTPS (DoH) aberto e audite políticas SPF e DMARC contra phishing e spoofing."
+  badge="DoH Aberto"
+  icon="📡"
+>
+  <div class="tool-card">
+    <h2>Consultar Domínio</h2>
+    <div class="tool-form-row">
+      <input
+        id="dns-input"
+        type="text"
+        class="tool-input"
+        placeholder="Ex: microsoft.com ou contoso.com"
+        aria-label="Domínio para consulta DNS"
+      />
+      <button id="btn-dns" type="button" class="tool-btn">Inspecionar DNS</button>
+    </div>
+    <p id="dns-status" class="status-msg"></p>
+  </div>
+
+  <div id="auth-audit-card" class="tool-card" style="display:none;">
+    <h2>Auditoria de E-mail (SPF & DMARC)</h2>
+    <div id="auth-audit-grid" class="tool-grid"></div>
+  </div>
+
+  <div id="dns-records-card" class="tool-card" style="display:none;">
+    <h2>Registros DNS Retornados (Cloudflare DoH)</h2>
+    <div id="dns-records-list"></div>
+  </div>
+
+  <div id="dns-pivot-card" class="tool-card" style="display:none;">
+    <h2>Pivot OSINT para o Domínio</h2>
+    <div id="dns-pivots" class="pivot-bar"></div>
+  </div>
+</ToolShell>
+
+<script is:inline>
+  (() => {
+    const input = document.getElementById('dns-input');
+    const btn = document.getElementById('btn-dns');
+    const statusEl = document.getElementById('dns-status');
+    const auditCard = document.getElementById('auth-audit-card');
+    const auditGrid = document.getElementById('auth-audit-grid');
+    const recordsCard = document.getElementById('dns-records-card');
+    const recordsList = document.getElementById('dns-records-list');
+    const pivotCard = document.getElementById('dns-pivot-card');
+    const pivotBar = document.getElementById('dns-pivots');
+
+    async function queryDoH(domain, type) {
+      const url = `https://cloudflare-dns.com/dns-query?name=${encodeURIComponent(domain)}&type=${type}`;
+      const res = await fetch(url, { headers: { Accept: 'application/dns-json' } });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return res.json();
+    }
+
+    function addAuditBox(label, value) {
+      const box = document.createElement('div');
+      box.className = 'kv-box';
+      const l = document.createElement('div');
+      l.className = 'kv-label';
+      l.textContent = label;
+      const v = document.createElement('div');
+      v.className = 'kv-value';
+      v.textContent = value;
+      box.appendChild(l);
+      box.appendChild(v);
+      auditGrid.appendChild(box);
+    }
+
+    function analyzeSpf(txtRecords) {
+      const spf = txtRecords.find((t) => t.toLowerCase().includes('v=spf1'));
+      if (!spf) return { raw: 'Nenhum registro SPF encontrado', status: 'CRÍTICO: Domínio vulnerável a spoofing sem SPF.' };
+      if (spf.includes('+all')) return { raw: spf, status: 'CRÍTICO (+all): Qualquer servidor pode enviar e-mails em nome do domínio!' };
+      if (spf.includes('-all')) return { raw: spf, status: 'BOM (-all): HardFail ativado contra remetentes não autorizados.' };
+      if (spf.includes('~all')) return { raw: spf, status: 'MODERADO (~all): SoftFail (recomendado migrar para -all com DMARC).' };
+      return { raw: spf, status: 'Configuração personalizada detectada.' };
+    }
+
+    function analyzeDmarc(dmarcRecords) {
+      const dmarc = dmarcRecords.find((t) => t.toLowerCase().includes('v=dmarc1'));
+      if (!dmarc) return { raw: 'Nenhum registro _dmarc encontrado', status: 'ALERTA: Sem política DMARC publicada.' };
+      if (dmarc.includes('p=reject')) return { raw: dmarc, status: 'EXCELENTE (p=reject): E-mails fraudulentos são rejeitados.' };
+      if (dmarc.includes('p=quarantine')) return { raw: dmarc, status: 'BOM (p=quarantine): E-mails suspeitos vão para quarentena.' };
+      if (dmarc.includes('p=none')) return { raw: dmarc, status: 'MONITORAMENTO (p=none): Apenas gera relatórios, não bloqueia spoofing.' };
+      return { raw: dmarc, status: 'Política detectada.' };
+    }
+
+    async function inspectDomain() {
+      const domain = input.value.trim().replace(/^https?:\/\//, '').split('/')[0].toLowerCase();
+      if (!domain || !domain.includes('.')) {
+        statusEl.textContent = 'Informe um domínio válido (ex: contoso.com).';
+        statusEl.className = 'status-msg error';
+        return;
+      }
+
+      statusEl.textContent = `Consultando registros DNS para ${domain}...`;
+      statusEl.className = 'status-msg';
+      auditGrid.innerHTML = '';
+      recordsList.innerHTML = '';
+
+      try {
+        const types = ['A', 'AAAA', 'MX', 'NS', 'TXT'];
+        const results = await Promise.all(types.map((t) => queryDoH(domain, t)));
+        const dmarcRes = await queryDoH(`_dmarc.${domain}`, 'TXT');
+
+        const txtAnswers = (results[4]?.Answer || []).map((a) => a.data.replace(/^"|"$/g, ''));
+        const dmarcAnswers = (dmarcRes?.Answer || []).map((a) => a.data.replace(/^"|"$/g, ''));
+
+        const spfAnalysis = analyzeSpf(txtAnswers);
+        const dmarcAnalysis = analyzeDmarc(dmarcAnswers);
+
+        auditCard.style.display = '';
+        addAuditBox('Postura SPF', spfAnalysis.status);
+        addAuditBox('Registro SPF', spfAnalysis.raw);
+        addAuditBox('Postura DMARC', dmarcAnalysis.status);
+        addAuditBox('Registro DMARC', dmarcAnalysis.raw);
+
+        recordsCard.style.display = '';
+        types.forEach((t, idx) => {
+          const answers = results[idx]?.Answer || [];
+          const block = document.createElement('div');
+          block.style.marginBottom = '1rem';
+          const title = document.createElement('div');
+          title.className = 'kv-label';
+          title.textContent = `Registros ${t} (${answers.length})`;
+          const pre = document.createElement('pre');
+          pre.className = 'code-out';
+          pre.textContent = answers.length
+            ? answers.map((a) => `${a.name}  [TTL ${a.TTL}]  ${a.data}`).join('\n')
+            : 'Nenhum registro encontrado.';
+          block.appendChild(title);
+          block.appendChild(pre);
+          recordsList.appendChild(block);
+        });
+
+        pivotCard.style.display = '';
+        const pivots = [
+          { name: 'MXToolbox', url: `https://mxtoolbox.com/SuperTool.aspx?action=mx%3a${encodeURIComponent(domain)}` },
+          { name: 'urlscan.io', url: `https://urlscan.io/search/#domain%3A${encodeURIComponent(domain)}` },
+          { name: 'VirusTotal', url: `https://www.virustotal.com/gui/domain/${encodeURIComponent(domain)}` },
+          { name: 'Cisco Talos', url: `https://talosintelligence.com/reputation_center/lookup?search=${encodeURIComponent(domain)}` },
+          { name: 'AlienVault OTX', url: `https://otx.alienvault.com/indicator/domain/${encodeURIComponent(domain)}` },
+        ];
+        pivotBar.innerHTML = '';
+        pivots.forEach((p) => {
+          const a = document.createElement('a');
+          a.href = p.url;
+          a.target = '_blank';
+          a.rel = 'noopener noreferrer';
+          a.className = 'pivot-link';
+          a.textContent = `${p.name} ↗`;
+          pivotBar.appendChild(a);
+        });
+
+        statusEl.textContent = `Consulta DNS concluída para ${domain}.`;
+        statusEl.className = 'status-msg ok';
+      } catch (err) {
+        statusEl.textContent = `Erro na consulta DoH: ${err.message}`;
+        statusEl.className = 'status-msg error';
+      }
+    }
+
+    btn?.addEventListener('click', inspectDomain);
+    input?.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') inspectDomain();
+    });
+  })();
+</script>

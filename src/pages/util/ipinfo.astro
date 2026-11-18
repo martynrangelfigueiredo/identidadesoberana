@@ -1,0 +1,385 @@
+---
+import ToolShell from "../../components/ToolShell.astro";
+---
+
+<ToolShell
+  title="IP, IPv6, CIDR & Threat Lookup"
+  description="Consulte geolocalização, ASN, escopo IPv4/IPv6, cálculo CIDR, identificação de provedor Cloud, KQL pronto e pivot OSINT em 1 clique."
+  badge="Rede & IP"
+  icon="🌐"
+>
+  <div class="tool-card">
+    <h2>Consultar IP, IPv6 ou Bloco CIDR</h2>
+    <div class="tool-form-row">
+      <input
+        id="ip-input"
+        type="text"
+        class="tool-input"
+        placeholder="Ex: 8.8.8.8, 2001:4860:4860::8888 ou 192.168.1.0/24"
+        aria-label="Endereço IP, IPv6 ou CIDR"
+      />
+      <button id="btn-lookup" type="button" class="tool-btn">Consultar IP</button>
+      <button id="btn-myip" type="button" class="tool-btn secondary">Meu IP Atual</button>
+    </div>
+    <p id="ip-status" class="status-msg"></p>
+  </div>
+
+  <!-- Bloco 1: Análise Técnica Local (IPv4 / IPv6 / CIDR) -->
+  <div id="local-analysis-card" class="tool-card" style="display:none;">
+    <h2>Análise Técnica de Endereço & Sub-rede (Local)</h2>
+    <div id="local-grid" class="tool-grid"></div>
+  </div>
+
+  <!-- Bloco 2: Geolocalização, ASN e Cloud Provider -->
+  <div id="geo-card" class="tool-card" style="display:none;">
+    <h2>Geolocalização, ASN & Contexto de Rede</h2>
+    <div id="geo-grid" class="tool-grid" style="margin-bottom:1rem;"></div>
+    <div id="map-container" style="display:none;border-radius:12px;overflow:hidden;border:1px solid var(--is-borda);">
+      <iframe
+        id="osm-frame"
+        title="Mapa OpenStreetMap do endereço IP"
+        width="100%"
+        height="280"
+        style="border:0;display:block;"
+        loading="lazy"
+      ></iframe>
+    </div>
+  </div>
+
+  <!-- Bloco 3: Exportação KQL / Wazuh e Pivot OSINT -->
+  <div id="pivot-card" class="tool-card" style="display:none;">
+    <h2>Queries Prontas (SOC) & Pivot OSINT</h2>
+    <div class="tool-grid" style="margin-bottom:1rem;">
+      <div>
+        <div class="kv-label">KQL (Microsoft Sentinel / Entra)</div>
+        <pre id="kql-out" class="code-out"></pre>
+        <button id="copy-kql" type="button" class="tool-btn outline" style="margin-top:.5rem;">Copiar KQL</button>
+      </div>
+      <div>
+        <div class="kv-label">Wazuh / OpenSearch (Lucene)</div>
+        <pre id="wazuh-out" class="code-out"></pre>
+        <button id="copy-wazuh" type="button" class="tool-btn outline" style="margin-top:.5rem;">Copiar Wazuh</button>
+      </div>
+    </div>
+
+    <div class="kv-label">Pivotar investigação em 1 clique</div>
+    <div id="pivot-links" class="pivot-bar"></div>
+  </div>
+
+  <!-- Bloco 4: VirusTotal BYOK (Opcional) -->
+  <div id="vt-card" class="tool-card">
+    <h2>Consulta VirusTotal (Opcional · Bring Your Own Key)</h2>
+    <p style="font-size:.9rem;color:var(--is-cinza);margin-top:0;">
+      Sua chave gratuita da API v3 do VirusTotal é salva apenas no <code>localStorage</code> do seu navegador e enviada diretamente para <code>virustotal.com</code>.
+    </p>
+    <div class="tool-form-row" style="margin-bottom:.75rem;">
+      <input
+        id="vt-key"
+        type="password"
+        class="tool-input"
+        placeholder="Cole sua API Key do VirusTotal (opcional)"
+        aria-label="API Key do VirusTotal"
+      />
+      <button id="btn-save-vt" type="button" class="tool-btn secondary">Salvar Chave</button>
+      <button id="btn-vt-check" type="button" class="tool-btn">Consultar no VT</button>
+    </div>
+    <pre id="vt-out" class="code-out" style="display:none;"></pre>
+  </div>
+</ToolShell>
+
+<script is:inline>
+  (() => {
+    const ipInput = document.getElementById('ip-input');
+    const btnLookup = document.getElementById('btn-lookup');
+    const btnMyIp = document.getElementById('btn-myip');
+    const statusEl = document.getElementById('ip-status');
+
+    const localCard = document.getElementById('local-analysis-card');
+    const localGrid = document.getElementById('local-grid');
+    const geoCard = document.getElementById('geo-card');
+    const geoGrid = document.getElementById('geo-grid');
+    const mapContainer = document.getElementById('map-container');
+    const osmFrame = document.getElementById('osm-frame');
+
+    const pivotCard = document.getElementById('pivot-card');
+    const kqlOut = document.getElementById('kql-out');
+    const wazuhOut = document.getElementById('wazuh-out');
+    const pivotLinks = document.getElementById('pivot-links');
+
+    const vtKeyInput = document.getElementById('vt-key');
+    const btnSaveVt = document.getElementById('btn-save-vt');
+    const btnVtCheck = document.getElementById('btn-vt-check');
+    const vtOut = document.getElementById('vt-out');
+
+    // Carregar chave VT do localStorage
+    const savedVtKey = localStorage.getItem('is_vt_api_key');
+    if (savedVtKey && vtKeyInput) vtKeyInput.value = savedVtKey;
+
+    btnSaveVt?.addEventListener('click', () => {
+      const k = vtKeyInput.value.trim();
+      if (k) {
+        localStorage.setItem('is_vt_api_key', k);
+        statusEl.textContent = 'Chave VirusTotal salva localmente no navegador.';
+        statusEl.className = 'status-msg ok';
+      } else {
+        localStorage.removeItem('is_vt_api_key');
+        statusEl.textContent = 'Chave VirusTotal removida do localStorage.';
+        statusEl.className = 'status-msg ok';
+      }
+    });
+
+    function addKv(container, label, value) {
+      const box = document.createElement('div');
+      box.className = 'kv-box';
+      const l = document.createElement('div');
+      l.className = 'kv-label';
+      l.textContent = label;
+      const v = document.createElement('div');
+      v.className = 'kv-value';
+      v.textContent = value || '—';
+      box.appendChild(l);
+      box.appendChild(v);
+      container.appendChild(box);
+    }
+
+    function isIPv4(ip) {
+      const parts = ip.split('.');
+      if (parts.length !== 4) return false;
+      return parts.every((p) => /^\d+$/.test(p) && Number(p) >= 0 && Number(p) <= 255);
+    }
+
+    function isIPv6(ip) {
+      return ip.includes(':') && /^[0-9a-fA-F:]+$/.test(ip);
+    }
+
+    function expandIPv6(ip) {
+      if (!ip.includes(':')) return ip;
+      const halves = ip.split('::');
+      if (halves.length > 2) return 'Inválido';
+      const left = halves[0] ? halves[0].split(':') : [];
+      const right = halves[1] ? halves[1].split(':') : [];
+      const missing = 8 - (left.length + right.length);
+      if (missing < 0) return 'Inválido';
+      const full = [...left, ...Array(missing).fill('0'), ...right];
+      return full.map((h) => h.padStart(4, '0').toLowerCase()).join(':');
+    }
+
+    function classifyIPv4(ip) {
+      const [a, b] = ip.split('.').map(Number);
+      if (a === 10) return 'Privado (RFC 1918)';
+      if (a === 172 && b >= 16 && b <= 31) return 'Privado (RFC 1918)';
+      if (a === 192 && b === 168) return 'Privado (RFC 1918)';
+      if (a === 127) return 'Loopback (127.0.0.0/8)';
+      if (a === 169 && b === 254) return 'Link-Local / Cloud Metadata';
+      if (a === 100 && b >= 64 && b <= 127) return 'CG-NAT (RFC 6598)';
+      if (a === 192 && b === 0 && Number(ip.split('.')[2]) === 2) return 'Documentação (TEST-NET-1)';
+      if (a === 198 && b === 51 && Number(ip.split('.')[2]) === 100) return 'Documentação (TEST-NET-2)';
+      if (a === 203 && b === 0 && Number(ip.split('.')[2]) === 113) return 'Documentação (TEST-NET-3)';
+      return 'Público (Roteável na Internet)';
+    }
+
+    function classifyIPv6(expanded) {
+      if (expanded === '0000:0000:0000:0000:0000:0000:0000:0001') return 'Loopback (::1)';
+      if (expanded.startsWith('fe80:')) return 'Link-Local (fe80::/10)';
+      if (expanded.startsWith('fc') || expanded.startsWith('fd')) return 'ULA Privado (fc00::/7)';
+      if (expanded.startsWith('2001:0db8:')) return 'Documentação (RFC 3849)';
+      if (expanded.startsWith('ff')) return 'Multicast (ff00::/8)';
+      return 'Público Global Unicast';
+    }
+
+    function calcIPv4Cidr(ip, prefix) {
+      const p = Number(prefix);
+      if (isNaN(p) || p < 0 || p > 32) return null;
+      const parts = ip.split('.').map(Number);
+      const ipInt = ((parts[0] << 24) | (parts[1] << 16) | (parts[2] << 8) | parts[3]) >>> 0;
+      const mask = p === 0 ? 0 : (0xffffffff << (32 - p)) >>> 0;
+      const net = (ipInt & mask) >>> 0;
+      const bcast = (net | (~mask >>> 0)) >>> 0;
+      const toStr = (n) => [(n >>> 24) & 255, (n >>> 16) & 255, (n >>> 8) & 255, n & 255].join('.');
+      const total = Math.pow(2, 32 - p);
+      return {
+        mask: toStr(mask),
+        network: toStr(net),
+        broadcast: toStr(bcast),
+        hosts: p >= 31 ? total : Math.max(0, total - 2),
+      };
+    }
+
+    function detectCloud(org) {
+      const s = (org || '').toLowerCase();
+      if (s.includes('microsoft') || s.includes('azure')) return 'Microsoft Azure';
+      if (s.includes('amazon') || s.includes('aws')) return 'Amazon AWS';
+      if (s.includes('google')) return 'Google Cloud';
+      if (s.includes('cloudflare')) return 'Cloudflare';
+      if (s.includes('digitalocean')) return 'DigitalOcean';
+      if (s.includes('oracle')) return 'Oracle Cloud';
+      return 'ISP / Corporativo / Outro';
+    }
+
+    function renderPivots(targetIp) {
+      pivotCard.style.display = '';
+      kqlOut.textContent = `SigninLogs\n| where IPAddress == "${targetIp}"\n| project TimeGenerated, UserPrincipalName, AppDisplayName, Location, ResultType`;
+      wazuhOut.textContent = `data.srcip: "${targetIp}" OR data.win.eventdata.ipAddress: "${targetIp}"`;
+
+      const links = [
+        { name: 'AbuseIPDB', url: `https://www.abuseipdb.com/check/${encodeURIComponent(targetIp)}` },
+        { name: 'VirusTotal', url: `https://www.virustotal.com/gui/ip-address/${encodeURIComponent(targetIp)}` },
+        { name: 'Shodan', url: `https://www.shodan.io/host/${encodeURIComponent(targetIp)}` },
+        { name: 'Cisco Talos', url: `https://talosintelligence.com/reputation_center/lookup?search=${encodeURIComponent(targetIp)}` },
+        { name: 'AlienVault OTX', url: `https://otx.alienvault.com/indicator/ip/${encodeURIComponent(targetIp)}` },
+        { name: 'Spamhaus', url: `https://check.spamhaus.org/results/?query=${encodeURIComponent(targetIp)}` },
+      ];
+      pivotLinks.innerHTML = '';
+      links.forEach((l) => {
+        const a = document.createElement('a');
+        a.href = l.url;
+        a.target = '_blank';
+        a.rel = 'noopener noreferrer';
+        a.className = 'pivot-link';
+        a.textContent = `${l.name} ↗`;
+        pivotLinks.appendChild(a);
+      });
+    }
+
+    async function runLookup(rawInput) {
+      const input = (rawInput || '').trim();
+      const [baseIp, cidrPrefix] = input.split('/');
+      statusEl.textContent = 'Consultando...';
+      statusEl.className = 'status-msg';
+
+      localGrid.innerHTML = '';
+      geoGrid.innerHTML = '';
+      mapContainer.style.display = 'none';
+
+      let targetIp = baseIp;
+      if (input) {
+        localCard.style.display = '';
+        if (isIPv4(baseIp)) {
+          addKv(localGrid, 'Versão', 'IPv4');
+          addKv(localGrid, 'Escopo', classifyIPv4(baseIp));
+          if (cidrPrefix !== undefined) {
+            const cidr = calcIPv4Cidr(baseIp, cidrPrefix);
+            if (cidr) {
+              addKv(localGrid, 'Máscara', cidr.mask);
+              addKv(localGrid, 'Rede / Broadcast', `${cidr.network} - ${cidr.broadcast}`);
+              addKv(localGrid, 'Hosts utilizáveis', String(cidr.hosts));
+            }
+          }
+        } else if (isIPv6(baseIp)) {
+          const exp = expandIPv6(baseIp);
+          addKv(localGrid, 'Versão', 'IPv6');
+          addKv(localGrid, 'Forma Expandida', exp);
+          addKv(localGrid, 'Escopo', classifyIPv6(exp));
+        } else {
+          addKv(localGrid, 'Entrada', baseIp);
+          addKv(localGrid, 'Nota', 'Consultando resolução externa...');
+        }
+      } else {
+        localCard.style.display = 'none';
+      }
+
+      try {
+        const endpoint = targetIp ? `https://ipwho.is/${encodeURIComponent(targetIp)}` : 'https://ipwho.is/';
+        const res = await fetch(endpoint);
+        const data = await res.json();
+
+        if (!data.success) {
+          throw new Error(data.message || 'Falha ao consultar IP');
+        }
+
+        if (!targetIp && data.ip) {
+          ipInput.value = data.ip;
+          targetIp = data.ip;
+          localCard.style.display = '';
+          localGrid.innerHTML = '';
+          if (isIPv4(targetIp)) {
+            addKv(localGrid, 'Versão', 'IPv4');
+            addKv(localGrid, 'Escopo', classifyIPv4(targetIp));
+          } else if (isIPv6(targetIp)) {
+            const exp = expandIPv6(targetIp);
+            addKv(localGrid, 'Versão', 'IPv6');
+            addKv(localGrid, 'Forma Expandida', exp);
+            addKv(localGrid, 'Escopo', classifyIPv6(exp));
+          }
+        }
+
+        geoCard.style.display = '';
+        addKv(geoGrid, 'IP Analisado', data.ip);
+        addKv(geoGrid, 'País / Região', `${data.country} (${data.country_code}) · ${data.region}`);
+        addKv(geoGrid, 'Cidade', data.city);
+        addKv(geoGrid, 'ASN', data.connection?.asn ? `AS${data.connection.asn}` : '—');
+        addKv(geoGrid, 'ISP / Organização', data.connection?.isp || data.connection?.org || '—');
+        addKv(geoGrid, 'Classificação Cloud', detectCloud(data.connection?.org || data.connection?.isp));
+        addKv(geoGrid, 'Fuso Horário', data.timezone?.id ? `${data.timezone.id} (${data.timezone.utc})` : '—');
+
+        if (typeof data.latitude === 'number' && typeof data.longitude === 'number') {
+          const lat = data.latitude;
+          const lon = data.longitude;
+          const delta = 0.08;
+          osmFrame.src = `https://www.openstreetmap.org/export/embed.html?bbox=${lon - delta},${lat - delta},${lon + delta},${lat + delta}&layer=mapnik&marker=${lat},${lon}`;
+          mapContainer.style.display = '';
+        }
+
+        renderPivots(data.ip);
+        statusEl.textContent = 'Consulta concluída com sucesso.';
+        statusEl.className = 'status-msg ok';
+      } catch (err) {
+        statusEl.textContent = `Aviso: ${err.message}. Análise técnica local e links OSINT continuam disponíveis.`;
+        statusEl.className = 'status-msg error';
+        if (targetIp) renderPivots(targetIp);
+      }
+    }
+
+    btnLookup?.addEventListener('click', () => runLookup(ipInput.value));
+    btnMyIp?.addEventListener('click', () => {
+      ipInput.value = '';
+      runLookup('');
+    });
+    ipInput?.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') runLookup(ipInput.value);
+    });
+
+    document.getElementById('copy-kql')?.addEventListener('click', async (e) => {
+      await navigator.clipboard.writeText(kqlOut.textContent);
+      e.target.textContent = '✔ Copiado!';
+      setTimeout(() => (e.target.textContent = 'Copiar KQL'), 1800);
+    });
+    document.getElementById('copy-wazuh')?.addEventListener('click', async (e) => {
+      await navigator.clipboard.writeText(wazuhOut.textContent);
+      e.target.textContent = '✔ Copiado!';
+      setTimeout(() => (e.target.textContent = 'Copiar Wazuh'), 1800);
+    });
+
+    btnVtCheck?.addEventListener('click', async () => {
+      const ip = ipInput.value.trim().split('/')[0];
+      const key = vtKeyInput.value.trim();
+      if (!ip || !key) {
+        vtOut.style.display = '';
+        vtOut.textContent = 'Informe um IP válido e sua API Key do VirusTotal.';
+        return;
+      }
+      vtOut.style.display = '';
+      vtOut.textContent = 'Consultando API v3 do VirusTotal...';
+      try {
+        const res = await fetch(`https://www.virustotal.com/api/v3/ip_addresses/${encodeURIComponent(ip)}`, {
+          headers: { 'x-apikey': key },
+        });
+        const json = await res.json();
+        if (!res.ok) throw new Error(json.error?.message || `HTTP ${res.status}`);
+        const stats = json.data?.attributes?.last_analysis_stats || {};
+        vtOut.textContent = JSON.stringify({
+          ip,
+          reputation: json.data?.attributes?.reputation,
+          as_owner: json.data?.attributes?.as_owner,
+          country: json.data?.attributes?.country,
+          stats,
+        }, null, 2);
+      } catch (err) {
+        vtOut.textContent = `Erro na consulta VirusTotal: ${err.message}`;
+      }
+    });
+
+    // Auto-detectar IP atual ao carregar
+    runLookup('');
+  })();
+</script>

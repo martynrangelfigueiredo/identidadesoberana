@@ -1,0 +1,107 @@
+---
+import ToolShell from "../../components/ToolShell.astro";
+---
+
+<ToolShell
+  title="User-Agent Parser & Detector"
+  description="Analise strings de User-Agent extraídas de logs de autenticação (SigninLogs) e proxy, identificando SO, navegador e clientes automatizados suspeitos."
+  badge="Logs & Web"
+  icon="🕵️"
+>
+  <div class="tool-card">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem;margin-bottom:.75rem;">
+      <h2 style="margin:0;">Inserir User-Agent</h2>
+      <button id="btn-myua" type="button" class="tool-btn secondary">Usar Meu User-Agent</button>
+    </div>
+    <textarea
+      id="ua-input"
+      class="tool-textarea"
+      rows="3"
+      placeholder="Cole o User-Agent do log..."
+      aria-label="String User-Agent"
+    ></textarea>
+    <div style="margin-top:.75rem;">
+      <button id="btn-parse-ua" type="button" class="tool-btn">Analisar User-Agent</button>
+    </div>
+  </div>
+
+  <div id="ua-result-card" class="tool-card" style="display:none;">
+    <h2>Classificação & Sinais</h2>
+    <div id="ua-grid" class="tool-grid"></div>
+  </div>
+</ToolShell>
+
+<script is:inline>
+  (() => {
+    const input = document.getElementById('ua-input');
+    const card = document.getElementById('ua-result-card');
+    const grid = document.getElementById('ua-grid');
+
+    function addKv(label, value) {
+      const box = document.createElement('div');
+      box.className = 'kv-box';
+      const l = document.createElement('div');
+      l.className = 'kv-label';
+      l.textContent = label;
+      const v = document.createElement('div');
+      v.className = 'kv-value';
+      v.textContent = value;
+      box.appendChild(l);
+      box.appendChild(v);
+      grid.appendChild(box);
+    }
+
+    function parseUA(ua) {
+      const s = (ua || '').trim();
+      if (!s) {
+        card.style.display = 'none';
+        return;
+      }
+
+      let os = 'Desconhecido';
+      if (/Windows NT 10\.0/i.test(s)) os = 'Windows 10 / 11 / Server 2016+';
+      else if (/Windows NT 6\.3/i.test(s)) os = 'Windows 8.1 / Server 2012 R2';
+      else if (/Mac OS X/i.test(s)) os = 'macOS';
+      else if (/Android/i.test(s)) os = 'Android';
+      else if (/iPhone|iPad|iOS/i.test(s)) os = 'iOS / iPadOS';
+      else if (/Linux/i.test(s)) os = 'Linux';
+
+      let browser = 'Desconhecido';
+      let isAutomated = false;
+      if (/curl\//i.test(s)) { browser = 'cURL CLI'; isAutomated = true; }
+      else if (/python-requests|aiohttp|urllib/i.test(s)) { browser = 'Python HTTP Client'; isAutomated = true; }
+      else if (/PowerShell|WindowsPowerShell/i.test(s)) { browser = 'PowerShell Client'; isAutomated = true; }
+      else if (/Go-http-client/i.test(s)) { browser = 'Go HTTP Client'; isAutomated = true; }
+      else if (/axios|node-fetch|undici/i.test(s)) { browser = 'Node.js HTTP Client'; isAutomated = true; }
+      else if (/Edg\//i.test(s)) browser = 'Microsoft Edge';
+      else if (/OPR\//i.test(s)) browser = 'Opera';
+      else if (/Chrome\//i.test(s)) browser = 'Google Chrome / Chromium';
+      else if (/Firefox\//i.test(s)) browser = 'Mozilla Firefox';
+      else if (/Safari\//i.test(s)) browser = 'Apple Safari';
+      else if (/BAV2ROPC|Microsoft Office|Outlook/i.test(s)) browser = 'Cliente Corporativo Microsoft';
+
+      let riskSignal = 'Tráfego de Navegador / Cliente Padrão';
+      if (isAutomated) riskSignal = 'ALERTA: Cliente CLI / Script Automatizado (verificar legitimidade em logs de auth)';
+      else if (/HeadlessChrome|PhantomJS|Selenium|Playwright|Puppeteer/i.test(s)) {
+        riskSignal = 'ALERTA: Automação Headless (possível brute-force, credential stuffing ou scraping)';
+      }
+
+      grid.innerHTML = '';
+      addKv('Sistema Operacional', os);
+      addKv('Cliente / Navegador', browser);
+      addKv('Dispositivo', /Mobile|Android|iPhone/i.test(s) ? 'Mobile' : (isAutomated ? 'CLI / Script' : 'Desktop'));
+      addKv('Sinal de Risco SOC', riskSignal);
+
+      card.style.display = '';
+    }
+
+    document.getElementById('btn-parse-ua')?.addEventListener('click', () => parseUA(input.value));
+    document.getElementById('btn-myua')?.addEventListener('click', () => {
+      input.value = navigator.userAgent;
+      parseUA(input.value);
+    });
+
+    input.value = navigator.userAgent;
+    parseUA(input.value);
+  })();
+</script>

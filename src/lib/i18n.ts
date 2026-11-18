@@ -53,6 +53,7 @@ export const UI = {
       { href: "/categoria/iam/", label: "IAM" },
       { href: "/categoria/compliance/", label: "Compliance" },
       { href: "/categoria/privacidade/", label: "Privacidade" },
+      { href: "/util/", label: "Ferramentas" },
       { href: "/sobre/", label: "Sobre" },
     ],
     hero: {
@@ -114,6 +115,7 @@ export const UI = {
       { href: "/de/categoria/iam/", label: "IAM" },
       { href: "/de/categoria/compliance/", label: "Compliance" },
       { href: "/de/categoria/privacidade/", label: "Datenschutz" },
+      { href: "/de/util/", label: "Tools" },
       { href: "/de/sobre/", label: "Über uns" },
     ],
     hero: {
@@ -175,6 +177,7 @@ export const UI = {
       { href: "/zh/categoria/iam/", label: "IAM" },
       { href: "/zh/categoria/compliance/", label: "合规" },
       { href: "/zh/categoria/privacidade/", label: "隐私" },
+      { href: "/zh/util/", label: "实用工具" },
       { href: "/zh/sobre/", label: "关于" },
     ],
     hero: {
@@ -236,6 +239,7 @@ export const UI = {
       { href: "/en/categoria/iam/", label: "IAM" },
       { href: "/en/categoria/compliance/", label: "Compliance" },
       { href: "/en/categoria/privacidade/", label: "Privacy" },
+      { href: "/en/util/", label: "Tools" },
       { href: "/en/sobre/", label: "About" },
     ],
     hero: {

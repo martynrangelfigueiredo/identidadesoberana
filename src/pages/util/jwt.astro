@@ -1,0 +1,166 @@
+---
+import ToolShell from "../../components/ToolShell.astro";
+---
+
+<ToolShell
+  title="Inspetor de JWT & Tokens OAuth"
+  description="Decodifique tokens JWT e OIDC 100% no navegador sem enviar dados pela rede. Ideal para auditar claims do Microsoft Entra ID e Keycloak."
+  badge="100% Local"
+  icon="🔑"
+>
+  <div class="tool-card">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem;margin-bottom:.75rem;">
+      <h2 style="margin:0;">Cole o Token JWT</h2>
+      <div style="display:flex;gap:.5rem;">
+        <button id="btn-sample" type="button" class="tool-btn secondary">Carregar Exemplo</button>
+        <button id="btn-clear" type="button" class="tool-btn outline">Limpar</button>
+      </div>
+    </div>
+    <textarea
+      id="jwt-input"
+      class="tool-textarea"
+      rows="5"
+      placeholder="eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9..."
+      aria-label="Token JWT"
+    ></textarea>
+    <p id="jwt-status" class="status-msg"></p>
+  </div>
+
+  <div id="jwt-highlights-card" class="tool-card" style="display:none;">
+    <h2>Destaques de Segurança & IAM</h2>
+    <div id="jwt-highlights" class="tool-grid"></div>
+  </div>
+
+  <div id="jwt-output-card" class="tool-grid" style="display:none;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));">
+    <div class="tool-card">
+      <h3>Header (Cabeçalho)</h3>
+      <pre id="jwt-header" class="code-out"></pre>
+    </div>
+    <div class="tool-card">
+      <h3>Payload (Claims)</h3>
+      <pre id="jwt-payload" class="code-out"></pre>
+    </div>
+  </div>
+</ToolShell>
+
+<script is:inline>
+  (() => {
+    const input = document.getElementById('jwt-input');
+    const statusEl = document.getElementById('jwt-status');
+    const highlightsCard = document.getElementById('jwt-highlights-card');
+    const highlightsGrid = document.getElementById('jwt-highlights');
+    const outputCard = document.getElementById('jwt-output-card');
+    const headerPre = document.getElementById('jwt-header');
+    const payloadPre = document.getElementById('jwt-payload');
+
+    function base64UrlDecode(str) {
+      let b64 = str.replace(/-/g, '+').replace(/_/g, '/');
+      while (b64.length % 4) b64 += '=';
+      const bin = atob(b64);
+      const bytes = Uint8Array.from(bin, (c) => c.charCodeAt(0));
+      return new TextDecoder().decode(bytes);
+    }
+
+    function addKv(label, value) {
+      const box = document.createElement('div');
+      box.className = 'kv-box';
+      const l = document.createElement('div');
+      l.className = 'kv-label';
+      l.textContent = label;
+      const v = document.createElement('div');
+      v.className = 'kv-value';
+      v.textContent = value;
+      box.appendChild(l);
+      box.appendChild(v);
+      highlightsGrid.appendChild(box);
+    }
+
+    function formatTime(epoch) {
+      if (!epoch) return '—';
+      return new Date(epoch * 1000).toISOString().replace('T', ' ').replace('.000Z', ' UTC');
+    }
+
+    function parseJwt(token) {
+      const raw = token.trim();
+      if (!raw) {
+        statusEl.textContent = '';
+        highlightsCard.style.display = 'none';
+        outputCard.style.display = 'none';
+        return;
+      }
+
+      const parts = raw.split('.');
+      if (parts.length !== 3) {
+        statusEl.textContent = 'Formato inválido: um JWT deve conter 3 segmentos separados por ponto (Header.Payload.Signature).';
+        statusEl.className = 'status-msg error';
+        highlightsCard.style.display = 'none';
+        outputCard.style.display = 'none';
+        return;
+      }
+
+      try {
+        const header = JSON.parse(base64UrlDecode(parts[0]));
+        const payload = JSON.parse(base64UrlDecode(parts[1]));
+
+        headerPre.textContent = JSON.stringify(header, null, 2);
+        payloadPre.textContent = JSON.stringify(payload, null, 2);
+
+        highlightsGrid.innerHTML = '';
+        addKv('Algoritmo (alg)', header.alg || '—');
+        addKv('Emissor (iss)', payload.iss || '—');
+        addKv('Audiência (aud)', Array.isArray(payload.aud) ? payload.aud.join(', ') : (payload.aud || '—'));
+        addKv('Sujeito / Usuário', payload.upn || payload.preferred_username || payload.unique_name || payload.sub || '—');
+
+        if (payload.tid) addKv('Tenant ID (tid)', payload.tid);
+        if (payload.scp) addKv('Escopos (scp)', payload.scp);
+        if (payload.roles) addKv('Papéis (roles)', Array.isArray(payload.roles) ? payload.roles.join(', ') : String(payload.roles));
+        if (payload.wids) addKv('Entra Role IDs (wids)', Array.isArray(payload.wids) ? payload.wids.join(', ') : String(payload.wids));
+        if (payload.amr) addKv('Métodos Auth (amr)', Array.isArray(payload.amr) ? payload.amr.join(', ') : String(payload.amr));
+        if (payload.ipaddr) addKv('IP de Origem (ipaddr)', payload.ipaddr);
+
+        if (payload.exp) {
+          const now = Math.floor(Date.now() / 1000);
+          const diff = payload.exp - now;
+          const expStatus = diff > 0 ? `Válido (expira em ${Math.floor(diff / 60)} min)` : `EXPIRADO há ${Math.abs(Math.floor(diff / 60))} min`;
+          addKv('Expiração (exp)', `${formatTime(payload.exp)} · ${expStatus}`);
+        }
+
+        highlightsCard.style.display = '';
+        outputCard.style.display = '';
+        statusEl.textContent = 'Token decodificado localmente com sucesso (nenhum dado saiu do seu navegador).';
+        statusEl.className = 'status-msg ok';
+      } catch (err) {
+        statusEl.textContent = `Erro ao decodificar JWT: ${err.message}`;
+        statusEl.className = 'status-msg error';
+        highlightsCard.style.display = 'none';
+        outputCard.style.display = 'none';
+      }
+    }
+
+    input?.addEventListener('input', () => parseJwt(input.value));
+
+    document.getElementById('btn-clear')?.addEventListener('click', () => {
+      input.value = '';
+      parseJwt('');
+    });
+
+    document.getElementById('btn-sample')?.addEventListener('click', () => {
+      const b64u = (obj) => btoa(JSON.stringify(obj)).replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
+      const now = Math.floor(Date.now() / 1000);
+      const sampleHeader = { alg: 'RS256', typ: 'JWT', kid: 'sample-key-id-01' };
+      const samplePayload = {
+        aud: 'https://graph.microsoft.com',
+        iss: 'https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/v2.0',
+        iat: now - 300,
+        exp: now + 3300,
+        tid: '00000000-0000-0000-0000-000000000000',
+        upn: 'analista.soc@contoso.com',
+        amr: ['pwd', 'mfa'],
+        scp: 'User.Read SecurityIncident.Read.All',
+        ipaddr: '198.51.100.45',
+      };
+      input.value = `${b64u(sampleHeader)}.${b64u(samplePayload)}.exemplo-assinatura-nao-validada`;
+      parseJwt(input.value);
+    });
+  })();
+</script>

@@ -1,0 +1,127 @@
+---
+import ToolShell from "../../components/ToolShell.astro";
+---
+
+<ToolShell
+  title="Conversor Epoch, FILETIME & Timeline DFIR"
+  description="Converta instantaneamente Unix Epoch (segundos/ms/µs), Windows FILETIME (18 dígitos do AD/Entra), UTC, horário local (BRT) e formato datetime() do KQL."
+  badge="DFIR & KQL"
+  icon="⏱️"
+>
+  <div class="tool-card">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem;margin-bottom:.75rem;">
+      <h2 style="margin:0;">Inserir Timestamp ou Data ISO</h2>
+      <button id="btn-now" type="button" class="tool-btn secondary">Agora (Tempo Real)</button>
+    </div>
+    <div class="tool-form-row">
+      <input
+        id="ts-input"
+        type="text"
+        class="tool-input"
+        placeholder="Ex: 1795000000, 134131200000000000 ou 2026-11-18T12:00:00Z"
+        aria-label="Timestamp ou data ISO"
+      />
+      <button id="btn-convert" type="button" class="tool-btn">Converter</button>
+    </div>
+    <p id="ts-status" class="status-msg"></p>
+  </div>
+
+  <div id="ts-result-card" class="tool-card" style="display:none;">
+    <h2>Formatos Convertidos</h2>
+    <div id="ts-grid" class="tool-grid"></div>
+  </div>
+</ToolShell>
+
+<script is:inline>
+  (() => {
+    const input = document.getElementById('ts-input');
+    const btnConvert = document.getElementById('btn-convert');
+    const btnNow = document.getElementById('btn-now');
+    const statusEl = document.getElementById('ts-status');
+    const resultCard = document.getElementById('ts-result-card');
+    const grid = document.getElementById('ts-grid');
+
+    function addKv(label, value) {
+      const box = document.createElement('div');
+      box.className = 'kv-box';
+      const l = document.createElement('div');
+      l.className = 'kv-label';
+      l.textContent = label;
+      const v = document.createElement('div');
+      v.className = 'kv-value';
+      v.textContent = value;
+      box.appendChild(l);
+      box.appendChild(v);
+      grid.appendChild(box);
+    }
+
+    function convert(raw) {
+      const val = (raw || '').trim();
+      if (!val) return;
+      let dateObj = null;
+      let detectedType = '';
+
+      if (/^\d+$/.test(val)) {
+        const num = Number(val);
+        if (val.length >= 17) {
+          // Windows FILETIME (100ns ticks since 1601-01-01)
+          const msSince1970 = (num / 10000) - 11644473600000;
+          dateObj = new Date(msSince1970);
+          detectedType = 'Windows FILETIME / AD Timestamp (100ns)';
+        } else if (val.length >= 15) {
+          dateObj = new Date(num / 1000);
+          detectedType = 'Unix Epoch (Microssegundos)';
+        } else if (val.length >= 12) {
+          dateObj = new Date(num);
+          detectedType = 'Unix Epoch (Milissegundos)';
+        } else {
+          dateObj = new Date(num * 1000);
+          detectedType = 'Unix Epoch (Segundos)';
+        }
+      } else {
+        dateObj = new Date(val);
+        detectedType = 'String de Data / ISO 8601';
+      }
+
+      if (!dateObj || isNaN(dateObj.getTime())) {
+        statusEl.textContent = 'Formato não reconhecido. Use Epoch numérico, FILETIME (18 dígitos) ou data ISO.';
+        statusEl.className = 'status-msg error';
+        resultCard.style.display = 'none';
+        return;
+      }
+
+      const ms = dateObj.getTime();
+      const sec = Math.floor(ms / 1000);
+      const filetime = Math.round((ms + 11644473600000) * 10000);
+      const iso = dateObj.toISOString();
+
+      grid.innerHTML = '';
+      addKv('Formato Detectado', detectedType);
+      addKv('UTC (ISO 8601)', iso);
+      addKv('Horário Local (Navegador)', dateObj.toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'medium' }));
+      addKv('Unix Epoch (Segundos)', String(sec));
+      addKv('Unix Epoch (Milissegundos)', String(ms));
+      addKv('Windows FILETIME (AD/Entra)', String(filetime));
+      addKv('KQL datetime()', `datetime(${iso})`);
+
+      resultCard.style.display = '';
+      statusEl.textContent = 'Conversão realizada.';
+      statusEl.className = 'status-msg ok';
+    }
+
+    btnConvert?.addEventListener('click', () => convert(input.value));
+    input?.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') convert(input.value);
+    });
+    btnNow?.addEventListener('click', () => {
+      const nowSec = Math.floor(Date.now() / 1000);
+      input.value = String(nowSec);
+      convert(input.value);
+    });
+
+    // Inicializar com agora
+    const initSec = Math.floor(Date.now() / 1000);
+    input.value = String(initSec);
+    convert(input.value);
+  })();
+</script>

@@ -1,0 +1,242 @@
+---
+import Base from "../layouts/Base.astro";
+
+interface Props {
+  title: string;
+  description: string;
+  badge: string;
+  icon: string;
+}
+
+const { title, description, badge, icon } = Astro.props;
+---
+
+<Base title={`${title} — Utilidades`} description={description}>
+  <section class="tool-page container">
+    <div class="tool-breadcrumb">
+      <a href="/util/" class="back-link">← Voltar para todas as Ferramentas</a>
+      <span class="tool-badge">{badge}</span>
+    </div>
+
+    <header class="tool-header">
+      <h1>
+        <span aria-hidden="true">{icon}</span> {title}
+      </h1>
+      <p class="tool-desc">{description}</p>
+      <div class="privacy-pill">
+        <span class="dot" aria-hidden="true"></span>
+        <span>Arquitetura privativa · Zero cookies · Sem rastreamento</span>
+      </div>
+    </header>
+
+    <div class="tool-workspace">
+      <slot />
+    </div>
+  </section>
+</Base>
+
+<style is:global>
+  .tool-page {
+    padding-block: 2rem 4rem;
+    max-width: 980px;
+  }
+  .tool-breadcrumb {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: .75rem;
+    margin-bottom: 1.25rem;
+  }
+  .back-link {
+    font: 700 .9rem var(--is-fonte-titulo);
+    color: var(--is-verde-escuro);
+    text-decoration: none;
+    padding: .35rem .75rem;
+    border-radius: var(--is-raio-pill);
+    background: var(--is-verde-claro);
+    transition: background .15s ease;
+  }
+  .back-link:hover {
+    background: #d3f2de;
+  }
+  .tool-badge {
+    font: 800 .78rem var(--is-fonte-mono);
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    background: var(--is-amarelo);
+    color: var(--is-tinta);
+    padding: .25rem .7rem;
+    border-radius: var(--is-raio-pill);
+  }
+  .tool-header h1 {
+    font-size: clamp(1.7rem, 3.2vw, 2.35rem);
+    margin: 0 0 .5rem;
+  }
+  .tool-desc {
+    color: var(--is-cinza);
+    font-size: 1.05rem;
+    margin: 0 0 .85rem;
+    max-width: 72ch;
+  }
+  .privacy-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: .45rem;
+    font: 600 .82rem var(--is-fonte-texto);
+    color: var(--is-verde-escuro);
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    padding: .25rem .75rem;
+    border-radius: var(--is-raio-pill);
+    margin-bottom: 1.75rem;
+  }
+  .privacy-pill .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--is-verde);
+  }
+
+  /* Componentes reutilizáveis das ferramentas */
+  .tool-card {
+    background: var(--is-branco);
+    border: 1px solid var(--is-borda);
+    border-radius: var(--is-raio-card, 14px);
+    padding: 1.35rem;
+    margin-bottom: 1.25rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, .025);
+  }
+  .tool-card h2, .tool-card h3 {
+    margin-top: 0;
+    font-size: 1.15rem;
+    margin-bottom: .85rem;
+  }
+  .tool-form-row {
+    display: flex;
+    gap: .65rem;
+    flex-wrap: wrap;
+    align-items: stretch;
+  }
+  .tool-input, .tool-textarea, .tool-select {
+    width: 100%;
+    font-family: var(--is-fonte-mono);
+    font-size: .92rem;
+    padding: .7rem .9rem;
+    border: 1.5px solid var(--is-borda);
+    border-radius: 10px;
+    background: #fafafa;
+    color: var(--is-tinta);
+    transition: border-color .15s ease, background .15s ease;
+  }
+  .tool-input:focus, .tool-textarea:focus, .tool-select:focus {
+    outline: none;
+    border-color: var(--is-verde);
+    background: var(--is-branco);
+  }
+  .tool-form-row .tool-input {
+    flex: 1 1 260px;
+  }
+  .tool-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .4rem;
+    font: 800 .92rem var(--is-fonte-titulo);
+    padding: .7rem 1.25rem;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    background: var(--is-verde);
+    color: #fff;
+    transition: transform .1s ease, background .15s ease;
+    white-space: nowrap;
+  }
+  .tool-btn:hover {
+    background: var(--is-verde-escuro);
+  }
+  .tool-btn:active {
+    transform: translateY(1px);
+  }
+  .tool-btn.secondary {
+    background: var(--is-verde-claro);
+    color: var(--is-verde-escuro);
+  }
+  .tool-btn.secondary:hover {
+    background: #d3f2de;
+  }
+  .tool-btn.outline {
+    background: #fff;
+    color: var(--is-tinta);
+    border: 1.5px solid var(--is-borda);
+  }
+  .tool-btn.outline:hover {
+    border-color: var(--is-verde);
+    color: var(--is-verde-escuro);
+  }
+  .tool-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: .85rem;
+  }
+  .kv-box {
+    background: #f8fafc;
+    border: 1px solid var(--is-borda);
+    border-radius: 10px;
+    padding: .75rem .9rem;
+  }
+  .kv-label {
+    font: 700 .75rem var(--is-fonte-titulo);
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    color: var(--is-cinza);
+    margin-bottom: .25rem;
+  }
+  .kv-value {
+    font: 600 .95rem var(--is-fonte-mono);
+    color: var(--is-tinta);
+    word-break: break-all;
+  }
+  .code-out {
+    background: #f8fafc;
+    border: 1px solid var(--is-borda);
+    border-radius: 10px;
+    padding: .9rem 1rem;
+    font: 500 .88rem/1.55 var(--is-fonte-mono);
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+    margin: 0;
+  }
+  .pivot-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem;
+    margin-top: .75rem;
+  }
+  .pivot-link {
+    display: inline-flex;
+    align-items: center;
+    gap: .3rem;
+    font: 700 .82rem var(--is-fonte-titulo);
+    text-decoration: none;
+    padding: .35rem .75rem;
+    border-radius: var(--is-raio-pill);
+    border: 1px solid var(--is-borda);
+    background: #fff;
+    color: var(--is-tinta);
+    transition: all .15s ease;
+  }
+  .pivot-link:hover {
+    border-color: var(--is-verde);
+    background: var(--is-verde-claro);
+    color: var(--is-verde-escuro);
+  }
+  .status-msg {
+    font-size: .9rem;
+    margin-top: .65rem;
+    font-weight: 600;
+  }
+  .status-msg.error { color: #b91c1c; }
+  .status-msg.ok { color: var(--is-verde-escuro); }
+</style>

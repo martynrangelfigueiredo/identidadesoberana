@@ -1,0 +1,126 @@
+---
+import ToolShell from "../../components/ToolShell.astro";
+---
+
+<ToolShell
+  title="Calculadora de Viagem Impossível"
+  description="Calcule distância geodésica (Haversine) e velocidade necessária em km/h entre dois pontos geográficos para validar alertas de Viagem Impossível no SOC."
+  badge="Geo Risk"
+  icon="✈️"
+>
+  <div class="tool-card">
+    <h2>Coordenadas e Intervalo de Tempo</h2>
+    <div style="display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1rem;">
+      <button type="button" class="tool-btn secondary preset-btn" data-p="sp-fra">São Paulo ↔ Frankfurt (15 min)</button>
+      <button type="button" class="tool-btn secondary preset-btn" data-p="sp-rj">São Paulo ↔ Rio de Janeiro (45 min)</button>
+      <button type="button" class="tool-btn secondary preset-btn" data-p="ny-ldn">Nova York ↔ Londres (2h)</button>
+    </div>
+
+    <div class="tool-grid" style="margin-bottom:1rem;">
+      <div>
+        <div class="kv-label">Origem (Latitude, Longitude)</div>
+        <div style="display:flex;gap:.5rem;">
+          <input id="lat1" type="number" step="any" class="tool-input" value="-23.5505" aria-label="Latitude Origem" />
+          <input id="lon1" type="number" step="any" class="tool-input" value="-46.6333" aria-label="Longitude Origem" />
+        </div>
+      </div>
+      <div>
+        <div class="kv-label">Destino (Latitude, Longitude)</div>
+        <div style="display:flex;gap:.5rem;">
+          <input id="lat2" type="number" step="any" class="tool-input" value="50.1109" aria-label="Latitude Destino" />
+          <input id="lon2" type="number" step="any" class="tool-input" value="8.6821" aria-label="Longitude Destino" />
+        </div>
+      </div>
+      <div>
+        <div class="kv-label">Intervalo entre Logins (Minutos)</div>
+        <input id="delta-min" type="number" min="1" class="tool-input" value="15" aria-label="Intervalo em minutos" />
+      </div>
+    </div>
+
+    <button id="btn-calc" type="button" class="tool-btn">Calcular Plausibilidade</button>
+  </div>
+
+  <div id="dist-result-card" class="tool-card">
+    <h2>Resultado da Análise Geográfica</h2>
+    <div id="dist-grid" class="tool-grid"></div>
+  </div>
+</ToolShell>
+
+<script is:inline>
+  (() => {
+    const lat1El = document.getElementById('lat1');
+    const lon1El = document.getElementById('lon1');
+    const lat2El = document.getElementById('lat2');
+    const lon2El = document.getElementById('lon2');
+    const minEl = document.getElementById('delta-min');
+    const grid = document.getElementById('dist-grid');
+
+    const PRESETS = {
+      'sp-fra': { lat1: -23.5505, lon1: -46.6333, lat2: 50.1109, lon2: 8.6821, min: 15 },
+      'sp-rj': { lat1: -23.5505, lon1: -46.6333, lat2: -22.9068, lon2: -43.1729, min: 45 },
+      'ny-ldn': { lat1: 40.7128, lon1: -74.0060, lat2: 51.5074, lon2: -0.1278, min: 120 },
+    };
+
+    function haversineKm(lat1, lon1, lat2, lon2) {
+      const R = 6371;
+      const toRad = (deg) => (deg * Math.PI) / 180;
+      const dLat = toRad(lat2 - lat1);
+      const dLon = toRad(lon2 - lon1);
+      const a =
+        Math.sin(dLat / 2) ** 2 +
+        Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
+      return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    }
+
+    function addKv(label, value) {
+      const box = document.createElement('div');
+      box.className = 'kv-box';
+      const l = document.createElement('div');
+      l.className = 'kv-label';
+      l.textContent = label;
+      const v = document.createElement('div');
+      v.className = 'kv-value';
+      v.textContent = value;
+      box.appendChild(l);
+      box.appendChild(v);
+      grid.appendChild(box);
+    }
+
+    function calculate() {
+      const la1 = parseFloat(lat1El.value);
+      const lo1 = parseFloat(lon1El.value);
+      const la2 = parseFloat(lat2El.value);
+      const lo2 = parseFloat(lon2El.value);
+      const mins = Math.max(1, parseFloat(minEl.value) || 1);
+
+      const km = haversineKm(la1, lo1, la2, lo2);
+      const hours = mins / 60;
+      const speed = km / hours;
+
+      let verdict = 'Plausível (Deslocamento Terrestre / Aéreo Normal)';
+      if (speed > 950) verdict = 'VIAGEM IMPOSSÍVEL (> 950 km/h) — Suspeita de VPN, Proxy ou Credencial Comprometida';
+      else if (speed > 250) verdict = 'Alta Velocidade (Possível Voo Comercial ou Troca de Torre/IP de Operadora)';
+
+      grid.innerHTML = '';
+      addKv('Distância Geodésica', `${km.toFixed(1)} km (${(km * 0.621371).toFixed(1)} mi)`);
+      addKv('Velocidade Necessária', `${speed.toFixed(1)} km/h`);
+      addKv('Veredito SOC', verdict);
+    }
+
+    document.getElementById('btn-calc')?.addEventListener('click', calculate);
+    document.querySelectorAll('.preset-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const p = PRESETS[btn.getAttribute('data-p')];
+        if (!p) return;
+        lat1El.value = p.lat1;
+        lon1El.value = p.lon1;
+        lat2El.value = p.lat2;
+        lon2El.value = p.lon2;
+        minEl.value = p.min;
+        calculate();
+      });
+    });
+
+    calculate();
+  })();
+</script>

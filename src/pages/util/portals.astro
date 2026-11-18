@@ -1,0 +1,135 @@
+---
+import ToolShell from "../../components/ToolShell.astro";
+
+const SECTIONS = [
+  {
+    name: "Microsoft Security & Entra ID",
+    links: [
+      { label: "Microsoft Defender XDR Portal", url: "https://security.microsoft.com/", desc: "Central de incidentes, alertas, hunting KQL e postura no M365." },
+      { label: "Microsoft Entra Admin Center", url: "https://entra.microsoft.com/", desc: "Administração de identidades, Conditional Access, PIM e apps." },
+      { label: "Defender Threat Intelligence", url: "https://ti.defender.microsoft.com/", desc: "Inteligência de ameaças oficial Microsoft para triagem de IoCs." },
+      { label: "Azure Built-in Roles (RBAC)", url: "https://learn.microsoft.com/en-us/azure/role-based-access-control/built-in-roles", desc: "Referência oficial de permissões e revisão de privilégio mínimo." },
+      { label: "Microsoft Online Error Lookup", url: "https://login.microsoftonline.com/error", desc: "Explicador oficial para códigos AADSTS." },
+    ],
+  },
+  {
+    name: "Threat Intelligence & Reputação de IoCs",
+    links: [
+      { label: "AlienVault OTX", url: "https://otx.alienvault.com/", desc: "Inteligência de ameaças colaborativa com pulses de IPs, domínios e hashes." },
+      { label: "Cisco Talos Intelligence", url: "https://talosintelligence.com/", desc: "Reputação de IPs, domínios e campanhas de malware." },
+      { label: "AbuseIPDB", url: "https://www.abuseipdb.com/", desc: "Relatórios de abuso crowdsourced para endereços IP." },
+      { label: "urlscan.io", url: "https://urlscan.io/", desc: "Análise de URLs suspeitas com screenshots, DOM e redirecionamentos." },
+      { label: "Spamhaus Reputation Checker", url: "https://check.spamhaus.org/", desc: "Verificação de IPs e domínios em blocklists de spam/botnets." },
+      { label: "Shodan", url: "https://www.shodan.io/", desc: "Mecanismo de busca para serviços e portas expostas na Internet." },
+    ],
+  },
+  {
+    name: "Vulnerabilidades & Supply Chain Open Source",
+    links: [
+      { label: "OSV.dev (Open Source Vulnerabilities)", url: "https://osv.dev/", desc: "Base aberta distribuída mantida pelo OpenSSF/Google para pacotes e CVEs." },
+      { label: "deps.dev (Open Source Insights)", url: "https://deps.dev/", desc: "Mapeamento de dependências open-source e riscos de cadeia de suprimentos." },
+      { label: "CIRCL CVE Search", url: "https://cve.circl.lu/", desc: "Portal aberto europeu (CIRCL) para pesquisa de vulnerabilidades CVE." },
+      { label: "Tenable CVE", url: "https://www.tenable.com/cve", desc: "Base de dados CVE com pontuações CVSS e referências." },
+    ],
+  },
+];
+---
+
+<ToolShell
+  title="Hub de Portais Security, CVE & OSINT"
+  description="Atalhos rápidos para portais do Microsoft Security, Entra ID, plataformas abertas de CVE/OSV e inteligência de ameaças para o dia a dia do SOC."
+  badge="Diretório"
+  icon="🧭"
+>
+  <!-- Consulta Rápida de CVE Aberta (CIRCL / OSV) -->
+  <div class="tool-card">
+    <h2>Consulta Rápida de CVE (Base Aberta CIRCL)</h2>
+    <div class="tool-form-row">
+      <input
+        id="cve-input"
+        type="text"
+        class="tool-input"
+        placeholder="Ex: CVE-2024-3094 ou CVE-2021-44228"
+        aria-label="Código CVE"
+      />
+      <button id="btn-cve" type="button" class="tool-btn">Buscar CVE</button>
+    </div>
+    <p id="cve-status" class="status-msg"></p>
+    <pre id="cve-out" class="code-out" style="display:none;margin-top:.75rem;"></pre>
+  </div>
+
+  {SECTIONS.map((sec) => (
+    <div class="tool-card">
+      <h2>{sec.name}</h2>
+      <div class="tool-grid">
+        {sec.links.map((item) => (
+          <a href={item.url} target="_blank" rel="noopener noreferrer" class="kv-box portal-card">
+            <div class="kv-value" style="color:var(--is-verde-escuro);margin-bottom:.25rem;">
+              {item.label} ↗
+            </div>
+            <div style="font-size:.86rem;color:var(--is-cinza);line-height:1.45;">
+              {item.desc}
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  ))}
+</ToolShell>
+
+<script is:inline>
+  (() => {
+    const input = document.getElementById('cve-input');
+    const btn = document.getElementById('btn-cve');
+    const statusEl = document.getElementById('cve-status');
+    const out = document.getElementById('cve-out');
+
+    async function lookupCve() {
+      const id = input.value.trim().toUpperCase();
+      if (!/^CVE-\d{4}-\d{4,}$/.test(id)) {
+        statusEl.textContent = 'Formato inválido. Use o padrão CVE-AAAA-NNNN (ex: CVE-2024-3094).';
+        statusEl.className = 'status-msg error';
+        return;
+      }
+      statusEl.textContent = `Consultando ${id}...`;
+      statusEl.className = 'status-msg';
+      try {
+        const res = await fetch(`https://cve.circl.lu/api/cve/${encodeURIComponent(id)}`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        if (!data || !data.id) throw new Error('CVE não encontrado na base CIRCL.');
+        out.style.display = '';
+        out.textContent = JSON.stringify({
+          id: data.id,
+          cvss: data.cvss || data.cvss3 || 'N/A',
+          cwe: data.cwe || 'N/A',
+          published: data.Published,
+          summary: data.summary,
+          references: (data.references || []).slice(0, 5),
+        }, null, 2);
+        statusEl.textContent = `${id} carregado com sucesso.`;
+        statusEl.className = 'status-msg ok';
+      } catch (err) {
+        out.style.display = 'none';
+        statusEl.textContent = `Erro na consulta: ${err.message}`;
+        statusEl.className = 'status-msg error';
+      }
+    }
+
+    btn?.addEventListener('click', lookupCve);
+    input?.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') lookupCve();
+    });
+  })();
+</script>
+
+<style>
+  .portal-card {
+    text-decoration: none;
+    transition: border-color .15s ease, background .15s ease;
+  }
+  .portal-card:hover {
+    border-color: var(--is-verde);
+    background: #f0fdf4;
+  }
+</style>

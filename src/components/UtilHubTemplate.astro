@@ -1,0 +1,320 @@
+---
+import Base from "../layouts/Base.astro";
+import { type Locale } from "../lib/i18n";
+import { UTIL_TOOLS } from "../lib/tools";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+
+const COPY = {
+  pt: {
+    pageTitle: "Ferramentas Úteis de Segurança",
+    pageDesc: "Utilitários gratuitos e privativos para analistas de SOC, engenheiros de IAM e resposta a incidentes: IP/IPv6 Lookup, JWT Inspector, DNS/DMARC, RDAP, Epoch, Defang e mais.",
+    chip: "util.identidadesoberana.com.br",
+    h1Start: "Ferramentas úteis para ",
+    h1Highlight: "SOC, IAM e DFIR",
+    subtitle: "Utilitários rápidos, sem rastreadores e com foco em código aberto para apoiar investigações, triagem de alertas e auditorias técnicas no dia a dia.",
+    searchPlaceholder: "Buscar ferramenta (ex: ip, ipv6, jwt, spf, epoch, kql...)",
+    cats: {
+      all: "Todas",
+      network: "Rede, IP & DNS",
+      identity: "Identidade & JWT",
+      dfir: "DFIR & Logs",
+      osint: "OSINT & Portais",
+    },
+    openBtn: "Abrir ferramenta →",
+    privacyNote: "Privacidade por padrão: decodificações (JWT, Base64, Defang, Hash, FILETIME) rodam 100% no seu navegador sem enviar dados a terceiros.",
+  },
+  de: {
+    pageTitle: "Nützliche Security-Tools",
+    pageDesc: "Kostenlose und datenschutzfreundliche Tools für SOC-Analysten, IAM-Ingenieure und Incident Response: IP/IPv6 Lookup, JWT, DNS/DMARC, RDAP, Epoch und mehr.",
+    chip: "util.identidadesoberana.com.br",
+    h1Start: "Nützliche Tools für ",
+    h1Highlight: "SOC, IAM und DFIR",
+    subtitle: "Schnelle Hilfsmittel ohne Tracker und mit Open-Source-Fokus für tägliche Ermittlungen, Triage und technische Audits.",
+    searchPlaceholder: "Tool suchen (z. B. ip, ipv6, jwt, spf, epoch...)",
+    cats: {
+      all: "Alle",
+      network: "Netzwerk, IP & DNS",
+      identity: "Identität & JWT",
+      dfir: "DFIR & Logs",
+      osint: "OSINT & Portale",
+    },
+    openBtn: "Tool öffnen →",
+    privacyNote: "Datenschutz by Design: Dekodierungen (JWT, Base64, Defang, Hash, FILETIME) laufen zu 100% lokal in Ihrem Browser.",
+  },
+  zh: {
+    pageTitle: "实用安全工具集",
+    pageDesc: "面向 SOC 分析师、IAM 工程师和应急响应团队的免费隐私工具集：IP/IPv6 查询、JWT 解析、DNS/DMARC、RDAP、时间戳转换等。",
+    chip: "util.identidadesoberana.com.br",
+    h1Start: "实用的 ",
+    h1Highlight: "SOC、IAM 与 DFIR 工具",
+    subtitle: "无追踪、高响应的开源实用工具集，全面赋能日常安全研判、事件分流与技术审计。",
+    searchPlaceholder: "搜索工具（例如：ip, ipv6, jwt, spf, epoch...）",
+    cats: {
+      all: "全部",
+      network: "网络、IP 与 DNS",
+      identity: "身份与 JWT",
+      dfir: "DFIR 与日志",
+      osint: "OSINT 与导航",
+    },
+    openBtn: "打开工具 →",
+    privacyNote: "默认隐私保护：JWT、Base64、IoC 脱敏、哈希与时间戳转换均 100% 在本地浏览器运行，绝不上传数据。",
+  },
+  en: {
+    pageTitle: "Useful Security Tools",
+    pageDesc: "Free, privacy-first utilities for SOC analysts, IAM engineers, and incident responders: IP/IPv6 Lookup, JWT Inspector, DNS/DMARC, RDAP, Epoch, Defang, and more.",
+    chip: "util.identidadesoberana.com.br",
+    h1Start: "Useful tools for ",
+    h1Highlight: "SOC, IAM & DFIR",
+    subtitle: "Fast, tracker-free utilities built on open standards to support daily investigations, alert triage, and technical security audits.",
+    searchPlaceholder: "Search tools (e.g., ip, ipv6, jwt, spf, epoch, kql...)",
+    cats: {
+      all: "All",
+      network: "Network, IP & DNS",
+      identity: "Identity & JWT",
+      dfir: "DFIR & Logs",
+      osint: "OSINT & Portals",
+    },
+    openBtn: "Open tool →",
+    privacyNote: "Privacy by design: decoding tools (JWT, Base64, Defang, Hash, FILETIME) run 100% locally in your browser with zero data transmission.",
+  },
+} as const;
+
+const t = COPY[locale];
+---
+
+<Base title={t.pageTitle} description={t.pageDesc}>
+  <section class="util-hero container">
+    <span class="chip">{t.chip}</span>
+    <h1>{t.h1Start}<span class="hl">{t.h1Highlight}</span></h1>
+    <p class="util-sub">{t.subtitle}</p>
+    <p class="util-privacy">🛡️ {t.privacyNote}</p>
+
+    <div class="util-controls">
+      <input
+        id="tool-search"
+        type="search"
+        class="util-search"
+        placeholder={t.searchPlaceholder}
+        aria-label={t.searchPlaceholder}
+      />
+      <div class="util-filters" role="group" aria-label="Filtrar por categoria">
+        <button class="filter-pill active" data-cat="all" type="button">{t.cats.all}</button>
+        <button class="filter-pill" data-cat="network" type="button">{t.cats.network}</button>
+        <button class="filter-pill" data-cat="identity" type="button">{t.cats.identity}</button>
+        <button class="filter-pill" data-cat="dfir" type="button">{t.cats.dfir}</button>
+        <button class="filter-pill" data-cat="osint" type="button">{t.cats.osint}</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="container util-grid-wrap">
+    <div id="tools-grid" class="util-grid">
+      {UTIL_TOOLS.map((tool) => (
+        <a
+          href={tool.slug}
+          class="util-card"
+          data-cat={tool.category}
+          data-search={`${tool.id} ${tool.title[locale]} ${tool.description[locale]} ${tool.highlights[locale].join(" ")}`.toLowerCase()}
+        >
+          <div class="util-card-top">
+            <span class="util-icon" aria-hidden="true">{tool.icon}</span>
+            <span class="util-badge">{tool.badge}</span>
+          </div>
+          <h2>{tool.title[locale]}</h2>
+          <p>{tool.description[locale]}</p>
+          <ul class="util-highlights">
+            {tool.highlights[locale].map((item) => (
+              <li>✓ {item}</li>
+            ))}
+          </ul>
+          <span class="util-cta">{t.openBtn}</span>
+        </a>
+      ))}
+    </div>
+  </section>
+</Base>
+
+<script is:inline>
+  (() => {
+    const searchInput = document.getElementById('tool-search');
+    const filterBtns = document.querySelectorAll('.filter-pill');
+    const cards = document.querySelectorAll('.util-card');
+    let activeCat = 'all';
+
+    function applyFilters() {
+      const q = (searchInput?.value || '').trim().toLowerCase();
+      cards.forEach((card) => {
+        const cat = card.getAttribute('data-cat');
+        const text = card.getAttribute('data-search') || '';
+        const matchCat = activeCat === 'all' || cat === activeCat;
+        const matchSearch = !q || text.includes(q);
+        card.style.display = matchCat && matchSearch ? '' : 'none';
+      });
+    }
+
+    searchInput?.addEventListener('input', applyFilters);
+    filterBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        filterBtns.forEach((b) => b.classList.remove('active'));
+        btn.classList.add('active');
+        activeCat = btn.getAttribute('data-cat') || 'all';
+        applyFilters();
+      });
+    });
+  })();
+</script>
+
+<style>
+  .util-hero {
+    padding-block: 2.5rem 1.5rem;
+  }
+  .chip {
+    display: inline-block;
+    font: 800 .8rem var(--is-fonte-mono);
+    background: var(--is-verde-claro);
+    color: var(--is-verde-escuro);
+    padding: .3rem .85rem;
+    border-radius: var(--is-raio-pill);
+    margin-bottom: .85rem;
+  }
+  .util-hero h1 {
+    font-size: clamp(2rem, 4vw, 2.85rem);
+    margin: 0 0 .75rem;
+  }
+  .util-sub {
+    color: var(--is-cinza);
+    font-size: 1.1rem;
+    max-width: 68ch;
+    margin: 0 0 .75rem;
+  }
+  .util-privacy {
+    font-size: .92rem;
+    color: var(--is-verde-escuro);
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    padding: .55rem .95rem;
+    border-radius: 10px;
+    display: inline-block;
+    margin: 0 0 1.5rem;
+  }
+  .util-controls {
+    display: flex;
+    flex-direction: column;
+    gap: .85rem;
+  }
+  .util-search {
+    width: 100%;
+    max-width: 520px;
+    padding: .75rem 1rem;
+    font: 500 .98rem var(--is-fonte-texto);
+    border: 1.5px solid var(--is-borda);
+    border-radius: 12px;
+    background: #fafafa;
+  }
+  .util-search:focus {
+    outline: none;
+    border-color: var(--is-verde);
+    background: #fff;
+  }
+  .util-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .45rem;
+  }
+  .filter-pill {
+    font: 700 .86rem var(--is-fonte-titulo);
+    padding: .42rem .9rem;
+    border-radius: var(--is-raio-pill);
+    border: 1px solid var(--is-borda);
+    background: #fff;
+    color: var(--is-cinza);
+    cursor: pointer;
+    transition: all .15s ease;
+  }
+  .filter-pill:hover {
+    border-color: var(--is-verde);
+    color: var(--is-verde-escuro);
+  }
+  .filter-pill.active {
+    background: var(--is-verde);
+    border-color: var(--is-verde);
+    color: #fff;
+  }
+  .util-grid-wrap {
+    padding-bottom: 4rem;
+  }
+  .util-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(305px, 1fr));
+    gap: 1.25rem;
+  }
+  .util-card {
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border: 1.5px solid var(--is-borda);
+    border-radius: 16px;
+    padding: 1.35rem;
+    text-decoration: none;
+    color: inherit;
+    transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease;
+  }
+  .util-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--is-verde);
+    box-shadow: 0 10px 26px rgba(0, 156, 59, .08);
+  }
+  .util-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: .75rem;
+  }
+  .util-icon {
+    font-size: 1.65rem;
+    line-height: 1;
+  }
+  .util-badge {
+    font: 800 .74rem var(--is-fonte-mono);
+    background: var(--is-amarelo);
+    color: var(--is-tinta);
+    padding: .2rem .65rem;
+    border-radius: var(--is-raio-pill);
+  }
+  .util-card h2 {
+    font-size: 1.2rem;
+    margin: 0 0 .5rem;
+    color: var(--is-tinta);
+  }
+  .util-card p {
+    font-size: .94rem;
+    color: var(--is-cinza);
+    margin: 0 0 1rem;
+    line-height: 1.5;
+    flex: 1;
+  }
+  .util-highlights {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: .4rem;
+  }
+  .util-highlights li {
+    font: 600 .78rem var(--is-fonte-texto);
+    background: #f3f4f6;
+    color: var(--is-tinta);
+    padding: .2rem .55rem;
+    border-radius: 6px;
+  }
+  .util-cta {
+    font: 800 .9rem var(--is-fonte-titulo);
+    color: var(--is-verde-escuro);
+  }
+</style>

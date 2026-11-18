@@ -1,0 +1,81 @@
+---
+import ToolShell from "../../components/ToolShell.astro";
+---
+
+<ToolShell
+  title="Consulta Rápida de Erros AADSTS (Microsoft Entra ID)"
+  description="Pesquise códigos de erro AADSTS / ResultType encontrados nos logs do Microsoft Entra ID (SigninLogs) com causa provável e ação recomendada para o SOC."
+  badge="Entra ID"
+  icon="📘"
+>
+  <div class="tool-card">
+    <h2>Pesquisar Código AADSTS ou Descrição</h2>
+    <input
+      id="aadsts-search"
+      type="search"
+      class="tool-input"
+      placeholder="Digite o código (ex: 50076, 50126, 53003) ou palavra-chave (MFA, bloqueada, consent)..."
+      aria-label="Pesquisar código AADSTS"
+    />
+  </div>
+
+  <div class="tool-card" style="overflow-x:auto;">
+    <table style="width:100%;border-collapse:collapse;font-size:.92rem;">
+      <thead>
+        <tr style="border-bottom:2px solid var(--is-borda);text-align:left;">
+          <th style="padding:.65rem;">Código</th>
+          <th style="padding:.65rem;">Significado</th>
+          <th style="padding:.65rem;">Ação / Triagem no SOC</th>
+        </tr>
+      </thead>
+      <tbody id="aadsts-tbody"></tbody>
+    </table>
+  </div>
+</ToolShell>
+
+<script is:inline>
+  (() => {
+    const CODES = [
+      { code: "0", meaning: "Autenticação bem-sucedida.", action: "Logon concluído. Verificar se houve MFA satisfeito (AuthenticationDetails) e IP esperado." },
+      { code: "50053", meaning: "Account is locked (Smart Lockout).", action: "Ataque de força bruta ou password spray em andamento. Verificar IPs de origem em SigninLogs." },
+      { code: "50055", meaning: "Senha expirada.", action: "Solicitar troca de senha pelo fluxo de autoatendimento (SSPR) ou helpdesk." },
+      { code: "50057", meaning: "Conta de usuário desabilitada.", action: "Se houver tentativas repetidas de logon, investigar possível tentativa de acesso com credenciais vazadas." },
+      { code: "50074", meaning: "Strong Authentication required (MFA).", action: "Fluxo aguardando segundo fator ou interrompido antes do desafio." },
+      { code: "50076", meaning: "MFA obrigatório por Acesso Condicional ou Risco.", action: "O usuário precisa concluir o MFA. Se houver múltiplas falhas seguidas, investigar fadiga de MFA." },
+      { code: "50079", meaning: "Usuário precisa registrar método de MFA.", action: "Acompanhar se o registro foi feito pelo usuário legítimo ou por atacante em sessão recém-aberta." },
+      { code: "50126", meaning: "Nome de usuário ou senha inválidos.", action: "Alto volume de 50126 em várias contas indica Password Spraying. Correlacionar por IPAddress." },
+      { code: "50140", meaning: "Prompt 'Keep me signed in' interrompido.", action: "Usuário fechou a aba antes de concluir o fluxo; geralmente benigno." },
+      { code: "53003", meaning: "Acesso bloqueado por política de Acesso Condicional (Conditional Access).", action: "Verificar qual política bloqueou (dispositivo não conforme, país bloqueado, risco alto)." },
+      { code: "530032", meaning: "Bloqueado por políticas de segurança no nível do tenant.", action: "Auditar alteração recente ou restrição de localização/dispositivo." },
+      { code: "65001", meaning: "Usuário ou administrador não concedeu consentimento ao aplicativo.", action: "Verificar tentativa de OAuth Consent Grant no aplicativo; checar se é app malicioso." },
+      { code: "700016", meaning: "Aplicativo não encontrado no tenant.", action: "AppId inválido ou removido; investigar se houve tentativa de acesso a Service Principal excluído." },
+      { code: "7000215", meaning: "Client secret inválido fornecido para Service Principal.", action: "Secret expirado ou incorreto em automação/pipeline; verificar se alguém tenta adivinhar secret." },
+      { code: "70043", meaning: "Refresh token expirado por política de tempo de vida de sessão.", action: "Exige nova autenticação interativa." },
+      { code: "90002", meaning: "Tenant não encontrado.", action: "Erro no Tenant ID ou domínio especificado na requisição OAuth." },
+    ];
+
+    const search = document.getElementById('aadsts-search');
+    const tbody = document.getElementById('aadsts-tbody');
+
+    function render(filter) {
+      const q = (filter || '').trim().toLowerCase().replace(/^aadsts/, '');
+      const filtered = CODES.filter(
+        (c) => !q || c.code.includes(q) || c.meaning.toLowerCase().includes(q) || c.action.toLowerCase().includes(q)
+      );
+      tbody.innerHTML = '';
+      filtered.forEach((c) => {
+        const tr = document.createElement('tr');
+        tr.style.borderBottom = '1px solid var(--is-borda)';
+        tr.innerHTML = `
+          <td style="padding:.65rem;font-family:var(--is-fonte-mono);font-weight:700;color:var(--is-verde-escuro);white-space:nowrap;">AADSTS${c.code}</td>
+          <td style="padding:.65rem;font-weight:600;">${c.meaning}</td>
+          <td style="padding:.65rem;color:var(--is-cinza);">${c.action}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    search?.addEventListener('input', () => render(search.value));
+    render('');
+  })();
+</script>

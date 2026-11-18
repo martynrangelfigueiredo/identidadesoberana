@@ -1,0 +1,177 @@
+---
+import ToolShell from "../../components/ToolShell.astro";
+---
+
+<ToolShell
+  title="IoC Defang, Base64/PowerShell & Hash Local"
+  description="Sanitize URLs e IPs maliciosos (defang/refang), decodifique comandos PowerShell -EncodedCommand (UTF-16LE) e calcule SHA-256 localmente."
+  badge="100% Local"
+  icon="🛡️"
+>
+  <!-- 1. Defang / Refang -->
+  <div class="tool-card">
+    <h2>1. IoC Defang & Refang</h2>
+    <p style="font-size:.9rem;color:var(--is-cinza);margin-top:0;">
+      Torne URLs, domínios e IPs seguros para compartilhamento em chamados e relatórios sem risco de clique acidental.
+    </p>
+    <textarea
+      id="defang-input"
+      class="tool-textarea"
+      rows="3"
+      placeholder="Ex: https://login-malicioso.example.com/auth?ip=198.51.100.45"
+      aria-label="IoC para defang ou refang"
+    ></textarea>
+    <div style="display:flex;gap:.5rem;margin-top:.75rem;flex-wrap:wrap;">
+      <button id="btn-defang" type="button" class="tool-btn">Defang (Sanitizar)</button>
+      <button id="btn-refang" type="button" class="tool-btn secondary">Refang (Restaurar)</button>
+      <button id="btn-copy-defang" type="button" class="tool-btn outline">Copiar Saída</button>
+    </div>
+    <pre id="defang-out" class="code-out" style="margin-top:.85rem;display:none;"></pre>
+  </div>
+
+  <!-- 2. Base64 & PowerShell UTF-16LE -->
+  <div class="tool-card">
+    <h2>2. Base64 & PowerShell (-EncodedCommand) Decoder</h2>
+    <textarea
+      id="b64-input"
+      class="tool-textarea"
+      rows="3"
+      placeholder="Cole a string Base64 (UTF-8 ou UTF-16LE do PowerShell)..."
+      aria-label="Entrada Base64"
+    ></textarea>
+    <div style="display:flex;gap:.5rem;margin-top:.75rem;flex-wrap:wrap;">
+      <button id="btn-b64-utf8" type="button" class="tool-btn">Decodificar UTF-8</button>
+      <button id="btn-b64-ps" type="button" class="tool-btn secondary">Decodificar PowerShell (UTF-16LE)</button>
+      <button id="btn-b64-enc" type="button" class="tool-btn outline">Codificar para Base64</button>
+    </div>
+    <pre id="b64-out" class="code-out" style="margin-top:.85rem;display:none;"></pre>
+  </div>
+
+  <!-- 3. Hash Local (SHA-256 / SHA-512) -->
+  <div class="tool-card">
+    <h2>3. Gerador de Hash Local (Web Crypto API · Zero Upload)</h2>
+    <textarea
+      id="hash-input"
+      class="tool-textarea"
+      rows="2"
+      placeholder="Digite um texto ou selecione um arquivo abaixo..."
+      aria-label="Texto para cálculo de hash"
+    ></textarea>
+    <div style="display:flex;gap:.75rem;align-items:center;flex-wrap:wrap;margin-top:.75rem;">
+      <input id="hash-file" type="file" aria-label="Selecionar arquivo para hash local" />
+      <button id="btn-hash-text" type="button" class="tool-btn">Calcular Hash do Texto</button>
+    </div>
+    <div id="hash-grid" class="tool-grid" style="margin-top:.85rem;"></div>
+  </div>
+</ToolShell>
+
+<script is:inline>
+  (() => {
+    // 1. Defang / Refang
+    const defangIn = document.getElementById('defang-input');
+    const defangOut = document.getElementById('defang-out');
+
+    document.getElementById('btn-defang')?.addEventListener('click', () => {
+      let s = defangIn.value;
+      s = s.replace(/https:\/\//gi, 'hxxps[://]').replace(/http:\/\//gi, 'hxxp[://]').replace(/\./g, '[.]');
+      defangOut.style.display = '';
+      defangOut.textContent = s;
+    });
+
+    document.getElementById('btn-refang')?.addEventListener('click', () => {
+      let s = defangIn.value;
+      s = s.replace(/hxxps\[:\/\/\]/gi, 'https://').replace(/hxxp\[:\/\/\]/gi, 'http://').replace(/\[\.\]/g, '.');
+      defangOut.style.display = '';
+      defangOut.textContent = s;
+    });
+
+    document.getElementById('btn-copy-defang')?.addEventListener('click', async (e) => {
+      if (!defangOut.textContent) return;
+      await navigator.clipboard.writeText(defangOut.textContent);
+      e.target.textContent = '✔ Copiado!';
+      setTimeout(() => (e.target.textContent = 'Copiar Saída'), 1600);
+    });
+
+    // 2. Base64 & PowerShell
+    const b64In = document.getElementById('b64-input');
+    const b64Out = document.getElementById('b64-out');
+
+    function decodeBase64Bytes(str) {
+      const clean = str.trim().replace(/\s+/g, '');
+      const bin = atob(clean);
+      return Uint8Array.from(bin, (c) => c.charCodeAt(0));
+    }
+
+    document.getElementById('btn-b64-utf8')?.addEventListener('click', () => {
+      try {
+        const bytes = decodeBase64Bytes(b64In.value);
+        b64Out.style.display = '';
+        b64Out.textContent = new TextDecoder('utf-8').decode(bytes);
+      } catch (err) {
+        b64Out.style.display = '';
+        b64Out.textContent = `Erro ao decodificar UTF-8: ${err.message}`;
+      }
+    });
+
+    document.getElementById('btn-b64-ps')?.addEventListener('click', () => {
+      try {
+        const bytes = decodeBase64Bytes(b64In.value);
+        b64Out.style.display = '';
+        b64Out.textContent = new TextDecoder('utf-16le').decode(bytes);
+      } catch (err) {
+        b64Out.style.display = '';
+        b64Out.textContent = `Erro ao decodificar PowerShell UTF-16LE: ${err.message}`;
+      }
+    });
+
+    document.getElementById('btn-b64-enc')?.addEventListener('click', () => {
+      const bytes = new TextEncoder().encode(b64In.value);
+      let bin = '';
+      bytes.forEach((b) => (bin += String.fromCharCode(b)));
+      b64Out.style.display = '';
+      b64Out.textContent = btoa(bin);
+    });
+
+    // 3. Hash Local
+    const hashIn = document.getElementById('hash-input');
+    const hashFile = document.getElementById('hash-file');
+    const hashGrid = document.getElementById('hash-grid');
+
+    function toHex(buf) {
+      return Array.from(new Uint8Array(buf))
+        .map((b) => b.toString(16).padStart(2, '0'))
+        .join('');
+    }
+
+    async function computeHashes(buffer, sourceName) {
+      hashGrid.innerHTML = '';
+      const algos = ['SHA-1', 'SHA-256', 'SHA-512'];
+      for (const alg of algos) {
+        const digest = await crypto.subtle.digest(alg, buffer);
+        const box = document.createElement('div');
+        box.className = 'kv-box';
+        const l = document.createElement('div');
+        l.className = 'kv-label';
+        l.textContent = `${alg} (${sourceName})`;
+        const v = document.createElement('div');
+        v.className = 'kv-value';
+        v.textContent = toHex(digest);
+        box.appendChild(l);
+        box.appendChild(v);
+        hashGrid.appendChild(box);
+      }
+    }
+
+    document.getElementById('btn-hash-text')?.addEventListener('click', () => {
+      const buf = new TextEncoder().encode(hashIn.value).buffer;
+      computeHashes(buf, 'Texto');
+    });
+
+    hashFile?.addEventListener('change', async () => {
+      const file = hashFile.files?.[0];
+      if (!file) return;
+      const buf = await file.arrayBuffer();
+      computeHashes(buf, file.name);
+    });
+  })();
+</script>
