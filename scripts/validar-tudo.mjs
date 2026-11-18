@@ -23,6 +23,7 @@ const VALIDATORS = [
   { name: "Compliance & Privacidade", script: "scripts/validators/compliance.mjs" },
   { name: "Sintaxe KQL (Bryce Engine)", script: "scripts/test-kql.mjs" },
   { name: "i18n & Integridade", script: "scripts/validators/i18n.mjs" },
+  { name: "UX & Copiabilidade", script: "scripts/validators/ux-copiabilidade.mjs" },
 ];
 
 function runScript(scriptPath) {

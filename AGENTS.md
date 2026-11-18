@@ -59,6 +59,7 @@ Antes de qualquer build ou deploy, o pipeline de validação unificado DEVE ser 
 5. **`validar-compliance`** ([`.agents/skills/validar-compliance/SKILL.md`](.agents/skills/validar-compliance/SKILL.md)): Bloqueio de dados pessoais reais (PII), conformidade LGPD e cookie-less.
 6. **`validar-kql`** ([`.agents/skills/validar-kql/SKILL.md`](.agents/skills/validar-kql/SKILL.md)): Compilação e validação das queries KQL no parser do Bryce Maxheimer Playground.
 7. **`validar-i18n`** ([`.agents/skills/validar-i18n/SKILL.md`](.agents/skills/validar-i18n/SKILL.md)): Paridade de artigos nos 4 idiomas (DE, ZH, EN, PT) e preservação estrita do nome da marca.
+8. **`validar-ux-copiabilidade`** ([`.agents/skills/validar-ux-copiabilidade/SKILL.md`](.agents/skills/validar-ux-copiabilidade/SKILL.md)): Garante cópia em 1 clique de códigos, tabelas (Markdown), âncoras de seção e saídas das ferramentas `/util/`, além de legibilidade otimizada.
 
 ## Fluxos
 - **Novo artigo:** criar `src/content/blog/<data>-<slug>.md` com o frontmatter de `brand/CONTEUDO.md` → `npm run dev` para revisar.

@@ -35,6 +35,86 @@ const { title, description, badge, icon } = Astro.props;
   </section>
 </Base>
 
+<script is:inline>
+  (() => {
+    const workspace = document.querySelector('.tool-workspace');
+    if (!workspace) return;
+
+    const copySvg = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>`;
+
+    function attachCopyHandlers() {
+      // 1. Caixas Key-Value (.kv-box) exceto links (portal-card)
+      workspace.querySelectorAll('.kv-box:not(a)').forEach((box) => {
+        if (box.querySelector('.kv-copy-btn')) return;
+        const valEl = box.querySelector('.kv-value');
+        if (!valEl) return;
+
+        box.classList.add('has-copy');
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'kv-copy-btn';
+        btn.title = 'Copiar valor';
+        btn.setAttribute('aria-label', 'Copiar valor');
+        btn.innerHTML = copySvg;
+
+        btn.addEventListener('click', async (e) => {
+          e.stopPropagation();
+          const text = valEl.innerText.trim();
+          if (!text || text === '—') return;
+          try {
+            await navigator.clipboard.writeText(text);
+            btn.innerHTML = '✔';
+            btn.classList.add('copied');
+            setTimeout(() => {
+              btn.innerHTML = copySvg;
+              btn.classList.remove('copied');
+            }, 1500);
+          } catch (err) {
+            console.error('Erro ao copiar:', err);
+          }
+        });
+        box.appendChild(btn);
+      });
+
+      // 2. Blocos de saída de código (.code-out)
+      workspace.querySelectorAll('.code-out').forEach((pre) => {
+        if (pre.querySelector('.out-copy-btn')) return;
+        pre.classList.add('has-copy');
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'out-copy-btn';
+        btn.setAttribute('aria-label', 'Copiar saída');
+        btn.innerHTML = `${copySvg} Copiar`;
+
+        btn.addEventListener('click', async () => {
+          const text = Array.from(pre.childNodes)
+            .filter((n) => n !== btn)
+            .map((n) => n.textContent)
+            .join('')
+            .trim();
+          if (!text) return;
+          try {
+            await navigator.clipboard.writeText(text);
+            btn.innerHTML = '✔ Copiado!';
+            btn.classList.add('copied');
+            setTimeout(() => {
+              btn.innerHTML = `${copySvg} Copiar`;
+              btn.classList.remove('copied');
+            }, 1800);
+          } catch (err) {
+            console.error('Erro ao copiar:', err);
+          }
+        });
+        pre.appendChild(btn);
+      });
+    }
+
+    attachCopyHandlers();
+    const observer = new MutationObserver(() => attachCopyHandlers());
+    observer.observe(workspace, { childList: true, subtree: true });
+  })();
+</script>
+
 <style is:global>
   .tool-page {
     padding-block: 2rem 4rem;
@@ -184,6 +264,31 @@ const { title, description, badge, icon } = Astro.props;
     border: 1px solid var(--is-borda);
     border-radius: 10px;
     padding: .75rem .9rem;
+    position: relative;
+  }
+  .kv-box.has-copy {
+    padding-right: 2.6rem;
+  }
+  .kv-copy-btn {
+    position: absolute;
+    top: .55rem;
+    right: .55rem;
+    background: #fff;
+    border: 1px solid var(--is-borda);
+    border-radius: 7px;
+    width: 28px;
+    height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--is-cinza);
+    cursor: pointer;
+    transition: all .15s ease;
+  }
+  .kv-copy-btn:hover, .kv-copy-btn.copied {
+    border-color: var(--is-verde);
+    background: var(--is-verde-claro);
+    color: var(--is-verde-escuro);
   }
   .kv-label {
     font: 700 .75rem var(--is-fonte-titulo);
@@ -196,8 +301,10 @@ const { title, description, badge, icon } = Astro.props;
     font: 600 .95rem var(--is-fonte-mono);
     color: var(--is-tinta);
     word-break: break-all;
+    user-select: text;
   }
   .code-out {
+    position: relative;
     background: #f8fafc;
     border: 1px solid var(--is-borda);
     border-radius: 10px;
@@ -207,6 +314,31 @@ const { title, description, badge, icon } = Astro.props;
     white-space: pre-wrap;
     word-break: break-word;
     margin: 0;
+    user-select: text;
+  }
+  .code-out.has-copy {
+    padding-top: 2.35rem;
+  }
+  .out-copy-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: #fff;
+    border: 1px solid var(--is-borda);
+    border-radius: 7px;
+    padding: 3px 9px;
+    font: 700 .74rem var(--is-fonte-titulo);
+    color: var(--is-cinza);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: all .15s ease;
+  }
+  .out-copy-btn:hover, .out-copy-btn.copied {
+    border-color: var(--is-verde);
+    background: var(--is-verde-claro);
+    color: var(--is-verde-escuro);
   }
   .pivot-bar {
     display: flex;
@@ -240,3 +372,4 @@ const { title, description, badge, icon } = Astro.props;
   .status-msg.error { color: #b91c1c; }
   .status-msg.ok { color: var(--is-verde-escuro); }
 </style>
+

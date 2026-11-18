@@ -227,6 +227,7 @@ a.card:hover { transform: translateY(-3px); box-shadow: var(--is-sombra-2); bord
 .prosa h2::before { content: ""; display: block; width: 44px; height: 6px; border-radius: 3px; background: var(--is-amarelo); margin-bottom: .75rem; }
 
 /* Código e Queries (com scroll horizontal mobile e botão de copiar) */
+.prosa { user-select: text; }
 .prosa code {
   font: .9em var(--is-fonte-codigo);
   background: var(--is-verde-nevoa);
@@ -234,17 +235,20 @@ a.card:hover { transform: translateY(-3px); box-shadow: var(--is-sombra-2); bord
   padding: .15em .45em;
   border-radius: 6px;
   word-break: break-word;
+  user-select: text;
 }
 .prosa pre {
   position: relative;
   border: 1px solid var(--is-borda);
   border-radius: var(--is-raio-sm);
-  padding: 1.2rem;
+  padding: 2.4rem 1.2rem 1.2rem;
   overflow-x: auto;
   font-size: .88rem;
+  line-height: 1.55;
   background: #F8FAF9 !important;
   -webkit-overflow-scrolling: touch;
   margin: 1.5rem 0;
+  user-select: text;
 }
 .prosa pre code {
   background: none;
@@ -252,10 +256,11 @@ a.card:hover { transform: translateY(-3px); box-shadow: var(--is-sombra-2); bord
   padding: 0;
   word-break: normal;
   white-space: pre;
+  user-select: text;
 }
 
-/* Botão de Copiar Código */
-.copy-code-btn {
+/* Botão de Copiar Código e Tabela */
+.copy-code-btn, .copy-table-btn {
   position: absolute;
   top: 8px;
   right: 8px;
@@ -263,18 +268,55 @@ a.card:hover { transform: translateY(-3px); box-shadow: var(--is-sombra-2); bord
   border: 1px solid var(--is-borda);
   border-radius: var(--is-raio-sm);
   padding: 4px 10px;
-  font: 600 .75rem var(--is-fonte-titulo);
+  font: 700 .75rem var(--is-fonte-titulo);
   color: var(--is-cinza);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   gap: 4px;
   transition: all .15s ease;
+  z-index: 2;
 }
-.copy-code-btn:hover {
+.copy-code-btn:hover, .copy-table-btn:hover {
   background: var(--is-verde-claro);
   color: var(--is-verde-escuro);
   border-color: var(--is-verde);
+}
+
+/* Âncora copiável de seções */
+.prosa h2, .prosa h3 {
+  position: relative;
+}
+.heading-copy-btn {
+  opacity: 0;
+  margin-left: .45rem;
+  border: none;
+  background: var(--is-verde-claro);
+  color: var(--is-verde-escuro);
+  font: 800 .78rem var(--is-fonte-mono);
+  padding: .15rem .45rem;
+  border-radius: 6px;
+  cursor: pointer;
+  vertical-align: middle;
+  transition: opacity .15s ease, background .15s ease;
+}
+.prosa h2:hover .heading-copy-btn,
+.prosa h3:hover .heading-copy-btn,
+.heading-copy-btn:focus {
+  opacity: 1;
+}
+
+/* Barra de progresso de leitura */
+#reading-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  width: 0%;
+  background: var(--is-verde);
+  z-index: 999;
+  transition: width .08s linear;
+  pointer-events: none;
 }
 
 .prosa blockquote {
@@ -286,20 +328,24 @@ a.card:hover { transform: translateY(-3px); box-shadow: var(--is-sombra-2); bord
 }
 .prosa blockquote p { margin: 0; }
 
-/* Tabelas responsivas (com scroll no mobile) */
+/* Tabelas responsivas (com scroll no mobile e leitura otimizada no desktop) */
 .table-wrapper {
+  position: relative;
   width: 100%;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   margin: 1.75rem 0;
   border: 1px solid var(--is-borda);
   border-radius: var(--is-raio-sm);
+  padding-top: 2.2rem;
+  background: var(--is-branco);
 }
 .prosa table {
   width: 100%;
   border-collapse: collapse;
   font-size: .92rem;
   margin: 0;
+  user-select: text;
 }
 .prosa th {
   font-family: var(--is-fonte-titulo);
@@ -307,11 +353,17 @@ a.card:hover { transform: translateY(-3px); box-shadow: var(--is-sombra-2); bord
   background: var(--is-verde-claro);
   color: var(--is-verde-escuro);
   font-weight: 800;
+  white-space: nowrap;
 }
 .prosa th, .prosa td {
   padding: .75rem .95rem;
   border-bottom: 1px solid var(--is-borda);
-  white-space: nowrap;
+}
+.prosa td {
+  white-space: normal;
+  min-width: 130px;
+  line-height: 1.5;
+  vertical-align: top;
 }
 .prosa tbody tr:last-child td { border-bottom: none; }
 .prosa img { border-radius: var(--is-raio-md); }
