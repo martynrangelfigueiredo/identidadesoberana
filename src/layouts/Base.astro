@@ -40,14 +40,21 @@ const homeUrl = currentLocale === "pt" ? "/" : `/${currentLocale}/`;
         var p=location.pathname;
         if(/^\/(de|zh|en)(\/|$)/.test(p))return;
         if(p.indexOf('/util/')===0&&p!=='/util/'&&p!=='/util')return;
-        var langs=(navigator.languages&&navigator.languages.length?navigator.languages:[navigator.language||'']).map(function(l){return l.toLowerCase();});
-        var target='en';
-        for(var i=0;i<langs.length;i++){
-          var l=langs[i];
-          if(l.indexOf('pt')===0){target='pt';break;}
-          if(l.indexOf('de')===0){target='de';break;}
-          if(l.indexOf('zh')===0){target='zh';break;}
-          if(l.indexOf('en')===0){target='en';break;}
+        var tz=(Intl.DateTimeFormat().resolvedOptions().timeZone||'');
+        var target='';
+        if(/^(America\/(Sao_Paulo|Fortaleza|Recife|Bahia|Belem|Manaus|Cuiaba|Porto_Velho|Boa_Vista|Rio_Branco|Campo_Grande|Maceio|Araguaina|Noronha|Santarem|Eirunepe)|Brazil\/|Europe\/Lisbon|Atlantic\/(Madeira|Azores|Cape_Verde)|Africa\/(Luanda|Maputo|Bissau|Sao_Tome)|Asia\/Dili)/.test(tz)){target='pt';}
+        else if(/^Europe\/(Berlin|Vienna|Zurich|Vaduz|Busingen)$/.test(tz)){target='de';}
+        else if(/^Asia\/(Shanghai|Chongqing|Harbin|Urumqi|Hong_Kong|Macau|Taipei)$/.test(tz)){target='zh';}
+        if(!target){
+          var langs=(navigator.languages&&navigator.languages.length?navigator.languages:[navigator.language||'']).map(function(l){return l.toLowerCase();});
+          target='en';
+          for(var i=0;i<langs.length;i++){
+            var l=langs[i];
+            if(l.indexOf('pt')===0){target='pt';break;}
+            if(l.indexOf('de')===0){target='de';break;}
+            if(l.indexOf('zh')===0){target='zh';break;}
+            if(l.indexOf('en')===0){target='en';break;}
+          }
         }
         sessionStorage.setItem('is_lang_auto',target);
         if(target!=='pt'){
