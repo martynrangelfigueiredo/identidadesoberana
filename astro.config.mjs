@@ -3,6 +3,12 @@ import { defineConfig } from "astro/config";
 
 export default defineConfig({
   site: "https://identidadesoberana.com.br",
+  prefetch: {
+    defaultStrategy: "hover",
+  },
+  build: {
+    inlineStylesheets: "auto",
+  },
   i18n: {
     defaultLocale: "pt",
     locales: ["pt", "de", "zh", "en"],

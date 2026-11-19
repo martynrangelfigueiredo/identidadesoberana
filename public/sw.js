@@ -1,5 +1,5 @@
-// Service Worker — Identidade Soberana PWA
-const CACHE_NAME = "is-cache-v2";
+// Service Worker — Identidade Soberana PWA (Otimizado para Core Web Vitals)
+const CACHE_NAME = "is-cache-v3";
 const OFFLINE_URL = "/";
 
 const PRECACHE_ASSETS = [
@@ -33,17 +33,32 @@ self.addEventListener("activate", (event) => {
 });
 
 self.addEventListener("fetch", (event) => {
-  // Only handle GET requests
   if (event.request.method !== "GET") return;
 
-  // Don't intercept Google Translate API or external requests
   const url = new URL(event.request.url);
   if (url.origin !== self.location.origin) return;
 
+  // Cache-First para assets imutáveis com hash (/_astro/) e ícones
+  if (url.pathname.startsWith("/_astro/") || url.pathname.startsWith("/icons/") || url.pathname.endsWith(".svg")) {
+    event.respondWith(
+      caches.match(event.request).then((cached) => {
+        if (cached) return cached;
+        return fetch(event.request).then((res) => {
+          if (res && res.status === 200) {
+            const clone = res.clone();
+            caches.open(CACHE_NAME).then((c) => c.put(event.request, clone));
+          }
+          return res;
+        });
+      })
+    );
+    return;
+  }
+
+  // Network-First com fallback instantâneo para páginas HTML
   event.respondWith(
     fetch(event.request)
       .then((networkResponse) => {
-        // Cache successful response
         if (networkResponse && networkResponse.status === 200) {
           const responseToCache = networkResponse.clone();
           caches.open(CACHE_NAME).then((cache) => {
@@ -53,7 +68,6 @@ self.addEventListener("fetch", (event) => {
         return networkResponse;
       })
       .catch(async () => {
-        // Fallback to cache
         const cachedResponse = await caches.match(event.request);
         if (cachedResponse) return cachedResponse;
         if (event.request.headers.get("accept")?.includes("text/html")) {
