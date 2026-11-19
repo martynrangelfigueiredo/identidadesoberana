@@ -11,6 +11,44 @@ const T = {
   zh: { h2: "通过 RDAP 查询 IP 或域名", ph: "例如：8.8.8.8 或 microsoft.com", btn: "查询 RDAP", h2Sum: "注册摘要信息", h2Raw: "原始 JSON 响应 (RDAP)" },
   en: { h2: "Lookup IP or Domain via RDAP", ph: "e.g., 8.8.8.8 or microsoft.com", btn: "Lookup RDAP", h2Sum: "Registry Summary", h2Raw: "Raw JSON Response (RDAP)" },
 }[locale];
+const L = {
+  pt: {
+    invalid: "Informe um IP ou domínio válido.",
+    querying: "Consultando rdap.org para ",
+    notFound: "Registro não encontrado ou servidor RDAP indisponível",
+    handle: "Identificador / Handle", name: "Nome / Bloco", status: "Status",
+    reg: "Criação / Registro", exp: "Expiração", upd: "Última Atualização",
+    ns: "Nameservers", abuse: "Contatos / Abuse", noAbuse: "Não exposto via RDAP",
+    done: "Consulta RDAP concluída.", err: "Erro: ",
+  },
+  de: {
+    invalid: "Geben Sie eine gültige IP oder Domain ein.",
+    querying: "rdap.org wird abgefragt für ",
+    notFound: "Eintrag nicht gefunden oder RDAP-Server nicht verfügbar",
+    handle: "Kennung / Handle", name: "Name / Block", status: "Status",
+    reg: "Erstellung / Registrierung", exp: "Ablauf", upd: "Letzte Aktualisierung",
+    ns: "Nameserver", abuse: "Kontakte / Abuse", noAbuse: "Nicht über RDAP offengelegt",
+    done: "RDAP-Abfrage abgeschlossen.", err: "Fehler: ",
+  },
+  zh: {
+    invalid: "请输入有效的 IP 或域名。",
+    querying: "正在通过 rdap.org 查询：",
+    notFound: "未找到记录或 RDAP 服务器不可用",
+    handle: "标识符 / Handle", name: "名称 / 地址块", status: "状态",
+    reg: "创建 / 注册时间", exp: "到期时间", upd: "最后更新时间",
+    ns: "域名服务器 (NS)", abuse: "联系 / 滥用投诉", noAbuse: "RDAP 未公开",
+    done: "RDAP 查询完成。", err: "错误：",
+  },
+  en: {
+    invalid: "Enter a valid IP or domain.",
+    querying: "Querying rdap.org for ",
+    notFound: "Record not found or RDAP server unavailable",
+    handle: "Identifier / Handle", name: "Name / Block", status: "Status",
+    reg: "Created / Registered", exp: "Expiration", upd: "Last Updated",
+    ns: "Nameservers", abuse: "Contacts / Abuse", noAbuse: "Not exposed via RDAP",
+    done: "RDAP lookup completed.", err: "Error: ",
+  },
+}[locale];
 ---
 
 <ToolShell
@@ -40,7 +78,7 @@ const T = {
   </div>
 </ToolShell>
 
-<script is:inline>
+<script is:inline define:vars={{ L }}>
   (() => {
     const input = document.getElementById('rdap-input');
     const btn = document.getElementById('btn-rdap');
@@ -83,49 +121,49 @@ const T = {
     async function runRdap() {
       const target = input.value.trim().replace(/^https?:\/\//, '').split('/')[0];
       if (!target) {
-        statusEl.textContent = 'Informe um IP ou domínio válido.';
+        statusEl.textContent = L.invalid;
         statusEl.className = 'status-msg error';
         return;
       }
 
-      statusEl.textContent = `Consultando rdap.org para ${target}...`;
+      statusEl.textContent = `${L.querying}${target}...`;
       statusEl.className = 'status-msg';
       grid.innerHTML = '';
 
       const type = isIp(target) ? 'ip' : 'domain';
       try {
         const res = await fetch(`https://rdap.org/${type}/${encodeURIComponent(target)}`);
-        if (!res.ok) throw new Error(`HTTP ${res.status} — Registro não encontrado ou servidor RDAP indisponível`);
+        if (!res.ok) throw new Error(`HTTP ${res.status} — ${L.notFound}`);
         const data = await res.json();
 
         summaryCard.style.display = '';
         rawCard.style.display = '';
 
-        addKv('Identificador / Handle', data.handle || data.ldhName || target);
-        addKv('Nome / Bloco', data.name || data.ldhName || '—');
-        addKv('Status', Array.isArray(data.status) ? data.status.join(', ') : '—');
+        addKv(L.handle, data.handle || data.ldhName || target);
+        addKv(L.name, data.name || data.ldhName || '—');
+        addKv(L.status, Array.isArray(data.status) ? data.status.join(', ') : '—');
 
         const events = data.events || [];
         const regEvent = events.find((e) => e.eventAction === 'registration');
         const expEvent = events.find((e) => e.eventAction === 'expiration');
         const updEvent = events.find((e) => e.eventAction === 'last changed');
 
-        if (regEvent) addKv('Criação / Registro', regEvent.eventDate);
-        if (expEvent) addKv('Expiração', expEvent.eventDate);
-        if (updEvent) addKv('Última Atualização', updEvent.eventDate);
+        if (regEvent) addKv(L.reg, regEvent.eventDate);
+        if (expEvent) addKv(L.exp, expEvent.eventDate);
+        if (updEvent) addKv(L.upd, updEvent.eventDate);
 
         if (data.nameservers?.length) {
-          addKv('Nameservers', data.nameservers.map((n) => n.ldhName).join(', '));
+          addKv(L.ns, data.nameservers.map((n) => n.ldhName).join(', '));
         }
 
         const emails = extractEmails(data.entities);
-        addKv('Contatos / Abuse', emails.length ? emails.join(', ') : 'Não exposto via RDAP');
+        addKv(L.abuse, emails.length ? emails.join(', ') : L.noAbuse);
 
         rawPre.textContent = JSON.stringify(data, null, 2);
-        statusEl.textContent = 'Consulta RDAP concluída.';
+        statusEl.textContent = L.done;
         statusEl.className = 'status-msg ok';
       } catch (err) {
-        statusEl.textContent = `Erro: ${err.message}`;
+        statusEl.textContent = `${L.err}${err.message}`;
         statusEl.className = 'status-msg error';
         summaryCard.style.display = 'none';
         rawCard.style.display = 'none';

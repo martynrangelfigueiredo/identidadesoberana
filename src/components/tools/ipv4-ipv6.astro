@@ -11,6 +11,44 @@ const T = {
   zh: { h2v4: "1. IPv4 ↔ 十进制 / 二进制 / IPv6 转换器", btnV4: "转换", h2v6: "2. IPv6 展开、压缩与本地 ULA 生成器", btnV6: "解析 IPv6", btnGen: "生成本地 IPv6 (ULA fd00::/8)" },
   en: { h2v4: "1. IPv4 ↔ Decimal / Binary / IPv6 Converter", btnV4: "Convert", h2v6: "2. IPv6 Expander, Compressor & ULA Generator", btnV6: "Analyze IPv6", btnGen: "Generate Local IPv6 (ULA fd00::/8)" },
 }[locale];
+const L = {
+  pt: {
+    invalidV4: "Informe um IPv4 válido (ex: 192.0.2.10) ou inteiro decimal de 32 bits.",
+    stdV4: "IPv4 Padrão", dec: "Decimal (32-bit)", hex: "Hexadecimal", bin: "Binário",
+    mapped: "IPv4-mapped IPv6", mappedHex: "IPv4-mapped (Hex)", six4: "6to4 IPv6",
+    doneV4: "Conversão IPv4 concluída.",
+    invalidV6: "Endereço IPv6 inválido.",
+    v6Exp: "Forma Expandida (128-bit)", v6Comp: "Forma Comprimida (RFC 5952)", rdns: "DNS Reverso (PTR)",
+    doneV6: "Análise IPv6 concluída.",
+  },
+  de: {
+    invalidV4: "Geben Sie eine gültige IPv4 (z. B. 192.0.2.10) oder eine 32-Bit-Dezimalzahl ein.",
+    stdV4: "Standard-IPv4", dec: "Dezimal (32-Bit)", hex: "Hexadezimal", bin: "Binär",
+    mapped: "IPv4-mapped IPv6", mappedHex: "IPv4-mapped (Hex)", six4: "6to4 IPv6",
+    doneV4: "IPv4-Konvertierung abgeschlossen.",
+    invalidV6: "Ungültige IPv6-Adresse.",
+    v6Exp: "Erweiterte Form (128-Bit)", v6Comp: "Komprimierte Form (RFC 5952)", rdns: "Reverse-DNS (PTR)",
+    doneV6: "IPv6-Analyse abgeschlossen.",
+  },
+  zh: {
+    invalidV4: "请输入有效的 IPv4 地址（如 192.0.2.10）或 32 位十进制整数。",
+    stdV4: "标准 IPv4", dec: "十进制 (32-bit)", hex: "十六进制", bin: "二进制",
+    mapped: "IPv4 映射 IPv6", mappedHex: "IPv4 映射 (十六进制)", six4: "6to4 IPv6",
+    doneV4: "IPv4 转换完成。",
+    invalidV6: "无效的 IPv6 地址。",
+    v6Exp: "完整展开形式 (128-bit)", v6Comp: "压缩形式 (RFC 5952)", rdns: "反向 DNS (PTR)",
+    doneV6: "IPv6 解析完成。",
+  },
+  en: {
+    invalidV4: "Enter a valid IPv4 (e.g., 192.0.2.10) or 32-bit decimal integer.",
+    stdV4: "Standard IPv4", dec: "Decimal (32-bit)", hex: "Hexadecimal", bin: "Binary",
+    mapped: "IPv4-mapped IPv6", mappedHex: "IPv4-mapped (Hex)", six4: "6to4 IPv6",
+    doneV4: "IPv4 conversion completed.",
+    invalidV6: "Invalid IPv6 address.",
+    v6Exp: "Expanded Form (128-bit)", v6Comp: "Compressed Form (RFC 5952)", rdns: "Reverse DNS (PTR)",
+    doneV6: "IPv6 analysis completed.",
+  },
+}[locale];
 ---
 
 <ToolShell
@@ -42,7 +80,7 @@ const T = {
   </div>
 </ToolShell>
 
-<script is:inline>
+<script is:inline define:vars={{ L }}>
   (() => {
     const v4In = document.getElementById('v4-in');
     const v4Grid = document.getElementById('v4-grid');
@@ -75,7 +113,7 @@ const T = {
       }
 
       if (!parts) {
-        v4Status.textContent = 'Informe um IPv4 válido (ex: 192.0.2.10) ou inteiro decimal de 32 bits.';
+        v4Status.textContent = L.invalidV4;
         v4Status.className = 'status-msg error';
         return;
       }
@@ -88,15 +126,15 @@ const T = {
       const mappedHex = `::ffff:${hexPairs[0]}${hexPairs[1]}:${hexPairs[2]}${hexPairs[3]}`;
       const sixToFour = `2002:${hexPairs[0]}${hexPairs[1]}:${hexPairs[2]}${hexPairs[3]}::`;
 
-      addKv(v4Grid, 'IPv4 Padrão', ipStr);
-      addKv(v4Grid, 'Decimal (32-bit)', String(dec));
-      addKv(v4Grid, 'Hexadecimal', `0x${dec.toString(16).padStart(8, '0')}`);
-      addKv(v4Grid, 'Binário', binOctets);
-      addKv(v4Grid, 'IPv4-mapped IPv6', mapped);
-      addKv(v4Grid, 'IPv4-mapped (Hex)', mappedHex);
-      addKv(v4Grid, '6to4 IPv6', sixToFour);
+      addKv(v4Grid, L.stdV4, ipStr);
+      addKv(v4Grid, L.dec, String(dec));
+      addKv(v4Grid, L.hex, `0x${dec.toString(16).padStart(8, '0')}`);
+      addKv(v4Grid, L.bin, binOctets);
+      addKv(v4Grid, L.mapped, mapped);
+      addKv(v4Grid, L.mappedHex, mappedHex);
+      addKv(v4Grid, L.six4, sixToFour);
 
-      v4Status.textContent = 'Conversão IPv4 concluída.';
+      v4Status.textContent = L.doneV4;
       v4Status.className = 'status-msg ok';
     }
 
@@ -137,16 +175,16 @@ const T = {
       v6Grid.innerHTML = '';
       const exp = expandIPv6(raw);
       if (!exp) {
-        v6Status.textContent = 'Endereço IPv6 inválido.';
+        v6Status.textContent = L.invalidV6;
         v6Status.className = 'status-msg error';
         return;
       }
       const comp = compressIPv6(exp);
       const ptr = exp.replace(/:/g, '').split('').reverse().join('.') + '.ip6.arpa';
-      addKv(v6Grid, 'Forma Expandida (128-bit)', exp);
-      addKv(v6Grid, 'Forma Comprimida (RFC 5952)', comp);
-      addKv(v6Grid, 'DNS Reverso (PTR)', ptr);
-      v6Status.textContent = 'Análise IPv6 concluída.';
+      addKv(v6Grid, L.v6Exp, exp);
+      addKv(v6Grid, L.v6Comp, comp);
+      addKv(v6Grid, L.rdns, ptr);
+      v6Status.textContent = L.doneV6;
       v6Status.className = 'status-msg ok';
     }
 

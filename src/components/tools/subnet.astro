@@ -11,6 +11,36 @@ const T = {
   zh: { h2: "计算 IPv4 / CIDR 网段", btn: "计算", h2Det: "子网详细信息" },
   en: { h2: "Calculate IPv4 / CIDR Block", btn: "Calculate", h2Det: "Subnet Details" },
 }[locale];
+const L = {
+  pt: {
+    invalid: "Informe um endereço IPv4 válido.",
+    cidr: "Notação CIDR", mask: "Máscara de Sub-rede", wildcard: "Wildcard Mask (ACL)",
+    net: "Endereço de Rede", bcast: "Endereço de Broadcast", range: "Range Utilizável",
+    totals: "Total de IPs / Utilizáveis", binMask: "Máscara em Binário",
+    done: "Sub-rede calculada.", numLoc: "pt-BR",
+  },
+  de: {
+    invalid: "Geben Sie eine gültige IPv4-Adresse ein.",
+    cidr: "CIDR-Notation", mask: "Subnetzmaske", wildcard: "Wildcard-Maske (ACL)",
+    net: "Netzwerkadresse", bcast: "Broadcast-Adresse", range: "Nutzbarer Bereich",
+    totals: "Gesamte IPs / Nutzbar", binMask: "Maske (Binär)",
+    done: "Subnetz berechnet.", numLoc: "de-DE",
+  },
+  zh: {
+    invalid: "请输入有效的 IPv4 地址。",
+    cidr: "CIDR 表示法", mask: "子网掩码", wildcard: "通配符掩码 (ACL)",
+    net: "网络地址", bcast: "广播地址", range: "可用 IP 范围",
+    totals: "总 IP 数 / 可用数", binMask: "二进制掩码",
+    done: "子网计算完成。", numLoc: "zh-CN",
+  },
+  en: {
+    invalid: "Enter a valid IPv4 address.",
+    cidr: "CIDR Notation", mask: "Subnet Mask", wildcard: "Wildcard Mask (ACL)",
+    net: "Network Address", bcast: "Broadcast Address", range: "Usable Range",
+    totals: "Total IPs / Usable", binMask: "Binary Mask",
+    done: "Subnet calculated.", numLoc: "en-US",
+  },
+}[locale];
 ---
 
 <ToolShell
@@ -36,7 +66,7 @@ const T = {
   </div>
 </ToolShell>
 
-<script is:inline>
+<script is:inline define:vars={{ L }}>
   (() => {
     const ipEl = document.getElementById('sub-ip');
     const cidrEl = document.getElementById('sub-cidr');
@@ -76,7 +106,7 @@ const T = {
 
       const parts = ipOnly.split('.').map(Number);
       if (parts.length !== 4 || parts.some((x) => isNaN(x) || x < 0 || x > 255)) {
-        statusEl.textContent = 'Informe um endereço IPv4 válido.';
+        statusEl.textContent = L.invalid;
         statusEl.className = 'status-msg error';
         return;
       }
@@ -93,16 +123,16 @@ const T = {
       const lastHost = p >= 31 ? bcast : (bcast - 1) >>> 0;
 
       grid.innerHTML = '';
-      addKv('Notação CIDR', `${toStr(net)}/${p}`);
-      addKv('Máscara de Sub-rede', toStr(mask));
-      addKv('Wildcard Mask (ACL)', toStr(wildcard));
-      addKv('Endereço de Rede', toStr(net));
-      addKv('Endereço de Broadcast', toStr(bcast));
-      addKv('Range Utilizável', `${toStr(firstHost)} – ${toStr(lastHost)}`);
-      addKv('Total de IPs / Utilizáveis', `${total.toLocaleString('pt-BR')} / ${usable.toLocaleString('pt-BR')}`);
-      addKv('Máscara em Binário', toBin(mask));
+      addKv(L.cidr, `${toStr(net)}/${p}`);
+      addKv(L.mask, toStr(mask));
+      addKv(L.wildcard, toStr(wildcard));
+      addKv(L.net, toStr(net));
+      addKv(L.bcast, toStr(bcast));
+      addKv(L.range, `${toStr(firstHost)} – ${toStr(lastHost)}`);
+      addKv(L.totals, `${total.toLocaleString(L.numLoc)} / ${usable.toLocaleString(L.numLoc)}`);
+      addKv(L.binMask, toBin(mask));
 
-      statusEl.textContent = 'Sub-rede calculada.';
+      statusEl.textContent = L.done;
       statusEl.className = 'status-msg ok';
     }
 

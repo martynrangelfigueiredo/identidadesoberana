@@ -11,6 +11,28 @@ const T = {
   zh: { h2Sla: "1. SLA 可用性停机预算计算器", btnSla: "计算停机窗口", h2Bb: "2. 存储单位与带宽换算", btnBb: "换算", h2Raid: "3. RAID 容量规划计算器", btnRaid: "计算 RAID" },
   en: { h2Sla: "1. SLA Uptime Calculator (Allowed Downtime)", btnSla: "Calculate Downtime", h2Bb: "2. Bytes, Bits & Bandwidth Converter", btnBb: "Convert", h2Raid: "3. RAID Capacity Calculator", btnRaid: "Calculate RAID" },
 }[locale];
+const L = {
+  pt: {
+    secUnit: "seg", daily: "Diário", monthly: "Mensal (30d)", yearly: "Anual (365d)",
+    r0: "0 discos (Sem redundância)", r1: "disco(s)", r5: "1 disco", r6: "2 discos", r10: "Até 1 disco por espelho",
+    usable: "Capacidade Útil", raw: "Espaço Bruto Total", fault: "Tolerância a Falhas",
+  },
+  de: {
+    secUnit: "Sek.", daily: "Täglich", monthly: "Monatlich (30T)", yearly: "Jährlich (365T)",
+    r0: "0 Festplatten (Keine Redundanz)", r1: "Festplatte(n)", r5: "1 Festplatte", r6: "2 Festplatten", r10: "Bis zu 1 Platte pro Mirror",
+    usable: "Nutzbare Kapazität", raw: "Brutto-Speicherplatz", fault: "Fehlertoleranz",
+  },
+  zh: {
+    secUnit: "秒", daily: "每日", monthly: "每月 (30天)", yearly: "每年 (365天)",
+    r0: "0 块盘（无冗余）", r1: "块盘", r5: "1 块盘", r6: "2 块盘", r10: "每组镜像最多允许坏 1 块盘",
+    usable: "可用容量", raw: "总原始容量", fault: "容错能力",
+  },
+  en: {
+    secUnit: "sec", daily: "Daily", monthly: "Monthly (30d)", yearly: "Yearly (365d)",
+    r0: "0 disks (No redundancy)", r1: "disk(s)", r5: "1 disk", r6: "2 disks", r10: "Up to 1 disk per mirror",
+    usable: "Usable Capacity", raw: "Total Raw Space", fault: "Fault Tolerance",
+  },
+}[locale];
 ---
 
 <ToolShell
@@ -65,7 +87,7 @@ const T = {
   </div>
 </ToolShell>
 
-<script is:inline>
+<script is:inline define:vars={{ L }}>
   (() => {
     function addKv(container, label, value) {
       const box = document.createElement('div');
@@ -75,7 +97,7 @@ const T = {
     }
 
     function fmtSec(sec) {
-      if (sec < 60) return `${sec.toFixed(1)} seg`;
+      if (sec < 60) return `${sec.toFixed(1)} ${L.secUnit}`;
       const m = Math.floor(sec / 60);
       const s = Math.round(sec % 60);
       if (m < 60) return `${m}m ${s}s`;
@@ -91,9 +113,9 @@ const T = {
       const pct = Math.min(100, Math.max(0, parseFloat(slaPct.value) || 0));
       const down = (100 - pct) / 100;
       slaGrid.innerHTML = '';
-      addKv(slaGrid, 'Diário', fmtSec(86400 * down));
-      addKv(slaGrid, 'Mensal (30d)', fmtSec(2592000 * down));
-      addKv(slaGrid, 'Anual (365d)', fmtSec(31536000 * down));
+      addKv(slaGrid, L.daily, fmtSec(86400 * down));
+      addKv(slaGrid, L.monthly, fmtSec(2592000 * down));
+      addKv(slaGrid, L.yearly, fmtSec(31536000 * down));
     }
     document.getElementById('btn-sla')?.addEventListener('click', calcSla);
     calcSla();
@@ -132,16 +154,16 @@ const T = {
       const sz = Math.max(1, parseFloat(raidSize.value) || 1);
       let usable = 0;
       let fault = '';
-      if (lvl === '0') { usable = n * sz; fault = '0 discos (Sem redundância)'; }
-      else if (lvl === '1') { usable = sz; fault = `${n - 1} disco(s)`; }
-      else if (lvl === '5') { usable = Math.max(0, (n - 1) * sz); fault = '1 disco'; }
-      else if (lvl === '6') { usable = Math.max(0, (n - 2) * sz); fault = '2 discos'; }
-      else if (lvl === '10') { usable = Math.floor(n / 2) * sz; fault = 'Até 1 disco por espelho'; }
+      if (lvl === '0') { usable = n * sz; fault = L.r0; }
+      else if (lvl === '1') { usable = sz; fault = `${n - 1} ${L.r1}`; }
+      else if (lvl === '5') { usable = Math.max(0, (n - 1) * sz); fault = L.r5; }
+      else if (lvl === '6') { usable = Math.max(0, (n - 2) * sz); fault = L.r6; }
+      else if (lvl === '10') { usable = Math.floor(n / 2) * sz; fault = L.r10; }
 
       raidGrid.innerHTML = '';
-      addKv(raidGrid, 'Capacidade Útil', `${usable.toFixed(1)} TB`);
-      addKv(raidGrid, 'Espaço Bruto Total', `${(n * sz).toFixed(1)} TB`);
-      addKv(raidGrid, 'Tolerância a Falhas', fault);
+      addKv(raidGrid, L.usable, `${usable.toFixed(1)} TB`);
+      addKv(raidGrid, L.raw, `${(n * sz).toFixed(1)} TB`);
+      addKv(raidGrid, L.fault, fault);
     }
     document.getElementById('btn-raid')?.addEventListener('click', calcRaid);
     raidLevel?.addEventListener('change', calcRaid);

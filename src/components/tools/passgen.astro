@@ -11,6 +11,24 @@ const T = {
   zh: { h2: "密码生成选项", btnPwd: "生成强密码", btnPhr: "生成口令短语（5个词）", h2Res: "生成结果" },
   en: { h2: "Password Configuration", btnPwd: "Generate Password", btnPhr: "Generate Passphrase (5 words)", h2Res: "Result" },
 }[locale];
+const L = {
+  pt: {
+    strEx: "Excelente (Alta Resistência)", strStrong: "Forte", strMod: "Moderada",
+    entropy: "Entropia Estimada", pwdGen: "Senha Gerada", phrGen: "Passphrase Gerada",
+  },
+  de: {
+    strEx: "Exzellent (Hohe Widerstandskraft)", strStrong: "Stark", strMod: "Mittel",
+    entropy: "Geschätzte Entropie", pwdGen: "Generiertes Passwort", phrGen: "Generierte Passphrase",
+  },
+  zh: {
+    strEx: "极强（高抗破解强度）", strStrong: "强", strMod: "中等",
+    entropy: "估算熵值", pwdGen: "生成的密码", phrGen: "生成的口令短语",
+  },
+  en: {
+    strEx: "Excellent (High Resistance)", strStrong: "Strong", strMod: "Moderate",
+    entropy: "Estimated Entropy", pwdGen: "Generated Password", phrGen: "Generated Passphrase",
+  },
+}[locale];
 ---
 
 <ToolShell
@@ -46,7 +64,7 @@ const T = {
   </div>
 </ToolShell>
 
-<script is:inline>
+<script is:inline define:vars={{ L }}>
   (() => {
     const lenEl = document.getElementById('pwd-len');
     const lenVal = document.getElementById('len-val');
@@ -72,8 +90,8 @@ const T = {
       box1.innerHTML = `<div class="kv-label">${label}</div><div class="kv-value">${secret}</div>`;
       const box2 = document.createElement('div');
       box2.className = 'kv-box';
-      const strength = entropyBits >= 80 ? 'Excelente (Alta Resistência)' : entropyBits >= 60 ? 'Forte' : 'Moderada';
-      box2.innerHTML = `<div class="kv-label">Entropia Estimada</div><div class="kv-value">${entropyBits.toFixed(1)} bits · ${strength}</div>`;
+      const strength = entropyBits >= 80 ? L.strEx : entropyBits >= 60 ? L.strStrong : L.strMod;
+      box2.innerHTML = `<div class="kv-label">${L.entropy}</div><div class="kv-value">${entropyBits.toFixed(1)} bits · ${strength}</div>`;
       grid.appendChild(box1);
       grid.appendChild(box2);
     }
@@ -90,7 +108,7 @@ const T = {
       let out = '';
       for (let i = 0; i < len; i++) out += pool[randInt(pool.length)];
       const entropy = len * Math.log2(pool.length);
-      renderResult(out, entropy, 'Senha Gerada');
+      renderResult(out, entropy, L.pwdGen);
     }
 
     function genPhrase() {
@@ -98,7 +116,7 @@ const T = {
       for (let i = 0; i < 5; i++) chosen.push(WORDS[randInt(WORDS.length)]);
       const out = `${chosen.join('-')}-${randInt(90) + 10}`;
       const entropy = 5 * Math.log2(WORDS.length) + Math.log2(90);
-      renderResult(out, entropy, 'Passphrase Gerada');
+      renderResult(out, entropy, L.phrGen);
     }
 
     lenEl?.addEventListener('input', () => {

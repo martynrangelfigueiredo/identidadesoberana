@@ -11,6 +11,84 @@ const T = {
   zh: { badge: "开放 DoH", h2Search: "查询域名", ph: "例如：microsoft.com 或 contoso.com", btn: "检测 DNS", h2Auth: "邮件安全审计（SPF 与 DMARC）", h2Rec: "DNS 解析记录（Cloudflare DoH）", h2Piv: "域名 OSINT 关联分析" },
   en: { badge: "Open DoH", h2Search: "Lookup Domain", ph: "e.g., microsoft.com or contoso.com", btn: "Inspect DNS", h2Auth: "Email Security Audit (SPF & DMARC)", h2Rec: "DNS Records Returned (Cloudflare DoH)", h2Piv: "Domain OSINT Pivots" },
 }[locale];
+const L = {
+  pt: {
+    noSpf: "Nenhum registro SPF encontrado",
+    spfCrit: "CRÍTICO: Domínio vulnerável a spoofing sem SPF.",
+    spfPlusAll: "CRÍTICO (+all): Qualquer servidor pode enviar e-mails em nome do domínio!",
+    spfMinusAll: "BOM (-all): HardFail ativado contra remetentes não autorizados.",
+    spfTildeAll: "MODERADO (~all): SoftFail (recomendado migrar para -all com DMARC).",
+    spfCustom: "Configuração personalizada detectada.",
+    noDmarc: "Nenhum registro _dmarc encontrado",
+    dmarcWarn: "ALERTA: Sem política DMARC publicada.",
+    dmarcReject: "EXCELENTE (p=reject): E-mails fraudulentos são rejeitados.",
+    dmarcQuar: "BOM (p=quarantine): E-mails suspeitos vão para quarentena.",
+    dmarcNone: "MONITORAMENTO (p=none): Apenas gera relatórios, não bloqueia spoofing.",
+    dmarcCustom: "Política detectada.",
+    invalidDom: "Informe um domínio válido (ex: contoso.com).",
+    querying: "Consultando registros DNS para ",
+    spfPosture: "Postura SPF", spfRec: "Registro SPF", dmarcPosture: "Postura DMARC", dmarcRec: "Registro DMARC",
+    recPrefix: "Registros", noRec: "Nenhum registro encontrado.",
+    done: "Consulta DNS concluída para ", err: "Erro na consulta DoH: ",
+  },
+  de: {
+    noSpf: "Kein SPF-Eintrag gefunden",
+    spfCrit: "KRITISCH: Domain ohne SPF anfällig für Spoofing.",
+    spfPlusAll: "KRITISCH (+all): Jeder Server darf E-Mails im Namen der Domain senden!",
+    spfMinusAll: "GUT (-all): HardFail gegen nicht autorisierte Absender aktiviert.",
+    spfTildeAll: "MITTEL (~all): SoftFail (Migration auf -all mit DMARC empfohlen).",
+    spfCustom: "Benutzerdefinierte Konfiguration erkannt.",
+    noDmarc: "Kein _dmarc-Eintrag gefunden",
+    dmarcWarn: "WARNUNG: Keine DMARC-Richtlinie veröffentlicht.",
+    dmarcReject: "EXZELLENT (p=reject): Gefälschte E-Mails werden abgelehnt.",
+    dmarcQuar: "GUT (p=quarantine): Verdächtige E-Mails landen in Quarantäne.",
+    dmarcNone: "MONITORING (p=none): Erstellt nur Berichte, blockiert kein Spoofing.",
+    dmarcCustom: "Richtlinie erkannt.",
+    invalidDom: "Geben Sie eine gültige Domain ein (z. B. contoso.com).",
+    querying: "DNS-Einträge werden abgefragt für ",
+    spfPosture: "SPF-Status", spfRec: "SPF-Eintrag", dmarcPosture: "DMARC-Status", dmarcRec: "DMARC-Eintrag",
+    recPrefix: "Einträge", noRec: "Keine Einträge gefunden.",
+    done: "DNS-Abfrage abgeschlossen für ", err: "DoH-Abfragefehler: ",
+  },
+  zh: {
+    noSpf: "未找到 SPF 记录",
+    spfCrit: "严重：无 SPF 记录，域名易受邮件伪造（Spoofing）攻击。",
+    spfPlusAll: "严重 (+all)：任何服务器均可代表该域名发送邮件！",
+    spfMinusAll: "良好 (-all)：已对未授权发件人启用 HardFail 拒绝机制。",
+    spfTildeAll: "中等 (~all)：SoftFail（建议配合 DMARC 迁移至 -all）。",
+    spfCustom: "检测到自定义配置。",
+    noDmarc: "未找到 _dmarc 记录",
+    dmarcWarn: "警告：尚未发布 DMARC 策略。",
+    dmarcReject: "极佳 (p=reject)：伪造邮件将被直接拒绝。",
+    dmarcQuar: "良好 (p=quarantine)：可疑邮件将被放入隔离区。",
+    dmarcNone: "仅监控 (p=none)：仅生成报告，不阻止邮件伪造。",
+    dmarcCustom: "检测到策略。",
+    invalidDom: "请输入有效的域名（例如：contoso.com）。",
+    querying: "正在查询 DNS 记录：",
+    spfPosture: "SPF 状态", spfRec: "SPF 记录", dmarcPosture: "DMARC 状态", dmarcRec: "DMARC 记录",
+    recPrefix: "记录", noRec: "未找到任何记录。",
+    done: "DNS 查询完成：", err: "DoH 查询出错：",
+  },
+  en: {
+    noSpf: "No SPF record found",
+    spfCrit: "CRITICAL: Domain vulnerable to spoofing without SPF.",
+    spfPlusAll: "CRITICAL (+all): Any server can send emails on behalf of this domain!",
+    spfMinusAll: "GOOD (-all): HardFail enabled against unauthorized senders.",
+    spfTildeAll: "MODERATE (~all): SoftFail (recommended to migrate to -all with DMARC).",
+    spfCustom: "Custom configuration detected.",
+    noDmarc: "No _dmarc record found",
+    dmarcWarn: "ALERT: No DMARC policy published.",
+    dmarcReject: "EXCELLENT (p=reject): Fraudulent emails are rejected.",
+    dmarcQuar: "GOOD (p=quarantine): Suspicious emails are quarantined.",
+    dmarcNone: "MONITORING (p=none): Generates reports only, does not block spoofing.",
+    dmarcCustom: "Policy detected.",
+    invalidDom: "Enter a valid domain (e.g., contoso.com).",
+    querying: "Querying DNS records for ",
+    spfPosture: "SPF Posture", spfRec: "SPF Record", dmarcPosture: "DMARC Posture", dmarcRec: "DMARC Record",
+    recPrefix: "Records", noRec: "No records found.",
+    done: "DNS lookup completed for ", err: "DoH lookup error: ",
+  },
+}[locale];
 ---
 
 <ToolShell
@@ -51,7 +129,7 @@ const T = {
   </div>
 </ToolShell>
 
-<script is:inline>
+<script is:inline define:vars={{ L }}>
   (() => {
     const input = document.getElementById('dns-input');
     const btn = document.getElementById('btn-dns');
@@ -86,31 +164,31 @@ const T = {
 
     function analyzeSpf(txtRecords) {
       const spf = txtRecords.find((t) => t.toLowerCase().includes('v=spf1'));
-      if (!spf) return { raw: 'Nenhum registro SPF encontrado', status: 'CRÍTICO: Domínio vulnerável a spoofing sem SPF.' };
-      if (spf.includes('+all')) return { raw: spf, status: 'CRÍTICO (+all): Qualquer servidor pode enviar e-mails em nome do domínio!' };
-      if (spf.includes('-all')) return { raw: spf, status: 'BOM (-all): HardFail ativado contra remetentes não autorizados.' };
-      if (spf.includes('~all')) return { raw: spf, status: 'MODERADO (~all): SoftFail (recomendado migrar para -all com DMARC).' };
-      return { raw: spf, status: 'Configuração personalizada detectada.' };
+      if (!spf) return { raw: L.noSpf, status: L.spfCrit };
+      if (spf.includes('+all')) return { raw: spf, status: L.spfPlusAll };
+      if (spf.includes('-all')) return { raw: spf, status: L.spfMinusAll };
+      if (spf.includes('~all')) return { raw: spf, status: L.spfTildeAll };
+      return { raw: spf, status: L.spfCustom };
     }
 
     function analyzeDmarc(dmarcRecords) {
       const dmarc = dmarcRecords.find((t) => t.toLowerCase().includes('v=dmarc1'));
-      if (!dmarc) return { raw: 'Nenhum registro _dmarc encontrado', status: 'ALERTA: Sem política DMARC publicada.' };
-      if (dmarc.includes('p=reject')) return { raw: dmarc, status: 'EXCELENTE (p=reject): E-mails fraudulentos são rejeitados.' };
-      if (dmarc.includes('p=quarantine')) return { raw: dmarc, status: 'BOM (p=quarantine): E-mails suspeitos vão para quarentena.' };
-      if (dmarc.includes('p=none')) return { raw: dmarc, status: 'MONITORAMENTO (p=none): Apenas gera relatórios, não bloqueia spoofing.' };
-      return { raw: dmarc, status: 'Política detectada.' };
+      if (!dmarc) return { raw: L.noDmarc, status: L.dmarcWarn };
+      if (dmarc.includes('p=reject')) return { raw: dmarc, status: L.dmarcReject };
+      if (dmarc.includes('p=quarantine')) return { raw: dmarc, status: L.dmarcQuar };
+      if (dmarc.includes('p=none')) return { raw: dmarc, status: L.dmarcNone };
+      return { raw: dmarc, status: L.dmarcCustom };
     }
 
     async function inspectDomain() {
       const domain = input.value.trim().replace(/^https?:\/\//, '').split('/')[0].toLowerCase();
       if (!domain || !domain.includes('.')) {
-        statusEl.textContent = 'Informe um domínio válido (ex: contoso.com).';
+        statusEl.textContent = L.invalidDom;
         statusEl.className = 'status-msg error';
         return;
       }
 
-      statusEl.textContent = `Consultando registros DNS para ${domain}...`;
+      statusEl.textContent = `${L.querying}${domain}...`;
       statusEl.className = 'status-msg';
       auditGrid.innerHTML = '';
       recordsList.innerHTML = '';
@@ -127,10 +205,10 @@ const T = {
         const dmarcAnalysis = analyzeDmarc(dmarcAnswers);
 
         auditCard.style.display = '';
-        addAuditBox('Postura SPF', spfAnalysis.status);
-        addAuditBox('Registro SPF', spfAnalysis.raw);
-        addAuditBox('Postura DMARC', dmarcAnalysis.status);
-        addAuditBox('Registro DMARC', dmarcAnalysis.raw);
+        addAuditBox(L.spfPosture, spfAnalysis.status);
+        addAuditBox(L.spfRec, spfAnalysis.raw);
+        addAuditBox(L.dmarcPosture, dmarcAnalysis.status);
+        addAuditBox(L.dmarcRec, dmarcAnalysis.raw);
 
         recordsCard.style.display = '';
         types.forEach((t, idx) => {
@@ -139,12 +217,12 @@ const T = {
           block.style.marginBottom = '1rem';
           const title = document.createElement('div');
           title.className = 'kv-label';
-          title.textContent = `Registros ${t} (${answers.length})`;
+          title.textContent = `${L.recPrefix} ${t} (${answers.length})`;
           const pre = document.createElement('pre');
           pre.className = 'code-out';
           pre.textContent = answers.length
             ? answers.map((a) => `${a.name}  [TTL ${a.TTL}]  ${a.data}`).join('\n')
-            : 'Nenhum registro encontrado.';
+            : L.noRec;
           block.appendChild(title);
           block.appendChild(pre);
           recordsList.appendChild(block);
@@ -169,10 +247,10 @@ const T = {
           pivotBar.appendChild(a);
         });
 
-        statusEl.textContent = `Consulta DNS concluída para ${domain}.`;
+        statusEl.textContent = `${L.done}${domain}.`;
         statusEl.className = 'status-msg ok';
       } catch (err) {
-        statusEl.textContent = `Erro na consulta DoH: ${err.message}`;
+        statusEl.textContent = `${L.err}${err.message}`;
         statusEl.className = 'status-msg error';
       }
     }

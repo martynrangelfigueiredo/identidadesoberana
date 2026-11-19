@@ -11,6 +11,80 @@ const T = {
   zh: { h2: "搜索 AADSTS 错误代码或描述", ph: "输入代码（如 50076、50126、53003）或关键词（MFA、锁定、同意）...", thCode: "代码", thMean: "含义", thAct: "SOC 排查建议" },
   en: { h2: "Search AADSTS Error Code or Description", ph: "Enter code (e.g., 50076, 50126, 53003) or keyword (MFA, locked, consent)...", thCode: "Code", thMean: "Meaning", thAct: "SOC Triage Action" },
 }[locale];
+const CODES = {
+  pt: [
+    { code: "0", meaning: "Autenticação bem-sucedida.", action: "Logon concluído. Verificar se houve MFA satisfeito (AuthenticationDetails) e IP esperado." },
+    { code: "50053", meaning: "Account is locked (Smart Lockout).", action: "Ataque de força bruta ou password spray em andamento. Verificar IPs de origem em SigninLogs." },
+    { code: "50055", meaning: "Senha expirada.", action: "Solicitar troca de senha pelo fluxo de autoatendimento (SSPR) ou helpdesk." },
+    { code: "50057", meaning: "Conta de usuário desabilitada.", action: "Se houver tentativas repetidas de logon, investigar possível tentativa de acesso com credenciais vazadas." },
+    { code: "50074", meaning: "Strong Authentication required (MFA).", action: "Fluxo aguardando segundo fator ou interrompido antes do desafio." },
+    { code: "50076", meaning: "MFA obrigatório por Acesso Condicional ou Risco.", action: "O usuário precisa concluir o MFA. Se houver múltiplas falhas seguidas, investigar fadiga de MFA." },
+    { code: "50079", meaning: "Usuário precisa registrar método de MFA.", action: "Acompanhar se o registro foi feito pelo usuário legítimo ou por atacante em sessão recém-aberta." },
+    { code: "50126", meaning: "Nome de usuário ou senha inválidos.", action: "Alto volume de 50126 em várias contas indica Password Spraying. Correlacionar por IPAddress." },
+    { code: "50140", meaning: "Prompt 'Keep me signed in' interrompido.", action: "Usuário fechou a aba antes de concluir o fluxo; geralmente benigno." },
+    { code: "53003", meaning: "Acesso bloqueado por política de Acesso Condicional (Conditional Access).", action: "Verificar qual política bloqueou (dispositivo não conforme, país bloqueado, risco alto)." },
+    { code: "530032", meaning: "Bloqueado por políticas de segurança no nível do tenant.", action: "Auditar alteração recente ou restrição de localização/dispositivo." },
+    { code: "65001", meaning: "Usuário ou administrador não concedeu consentimento ao aplicativo.", action: "Verificar tentativa de OAuth Consent Grant no aplicativo; checar se é app malicioso." },
+    { code: "700016", meaning: "Aplicativo não encontrado no tenant.", action: "AppId inválido ou removido; investigar se houve tentativa de acesso a Service Principal excluído." },
+    { code: "7000215", meaning: "Client secret inválido fornecido para Service Principal.", action: "Secret expirado ou incorreto em automação/pipeline; verificar se alguém tenta adivinhar secret." },
+    { code: "70043", meaning: "Refresh token expirado por política de tempo de vida de sessão.", action: "Exige nova autenticação interativa." },
+    { code: "90002", meaning: "Tenant não encontrado.", action: "Erro no Tenant ID ou domínio especificado na requisição OAuth." },
+  ],
+  de: [
+    { code: "0", meaning: "Authentifizierung erfolgreich.", action: "Anmeldung abgeschlossen. Prüfen Sie MFA-Erfüllung (AuthenticationDetails) und erwartete IP." },
+    { code: "50053", meaning: "Konto gesperrt (Smart Lockout).", action: "Laufender Brute-Force- oder Password-Spray-Angriff. Quell-IPs in SigninLogs prüfen." },
+    { code: "50055", meaning: "Passwort abgelaufen.", action: "Passwortwechsel über Self-Service (SSPR) oder Helpdesk anfordern." },
+    { code: "50057", meaning: "Benutzerkonto deaktiviert.", action: "Bei wiederholten Anmeldeversuchen auf geleakte Zugangsdaten untersuchen." },
+    { code: "50074", meaning: "Starke Authentifizierung erforderlich (MFA).", action: "Wartet auf zweiten Faktor oder vor MFA-Challenge abgebrochen." },
+    { code: "50076", meaning: "MFA durch Conditional Access oder Risiko erforderlich.", action: "Benutzer muss MFA abschließen. Bei vielen Fehlversuchen auf MFA-Fatigue prüfen." },
+    { code: "50079", meaning: "Benutzer muss MFA-Methode registrieren.", action: "Prüfen, ob Registrierung durch legitimen Benutzer oder Angreifer erfolgte." },
+    { code: "50126", meaning: "Ungültiger Benutzername oder Passwort.", action: "Hohes Volumen bei mehreren Konten deutet auf Password Spraying hin. Nach IPAddress korrelieren." },
+    { code: "50140", meaning: "Prompt 'Angemeldet bleiben' abgebrochen.", action: "Benutzer hat Tab vor Abschluss geschlossen; meist harmlos." },
+    { code: "53003", meaning: "Zugriff durch Conditional Access-Richtlinie blockiert.", action: "Blockierende Richtlinie prüfen (nicht konformes Gerät, blockiertes Land, hohes Risiko)." },
+    { code: "530032", meaning: "Durch Sicherheitsrichtlinien auf Tenant-Ebene blockiert.", action: "Kürzliche Änderungen oder Standort-/Gerätebeschränkungen auditieren." },
+    { code: "65001", meaning: "Benutzer oder Admin hat App-Zustimmung verweigert.", action: "OAuth Consent Grant-Versuch prüfen; verifizieren, ob App bösartig ist." },
+    { code: "700016", meaning: "Anwendung im Tenant nicht gefunden.", action: "Ungültige oder entfernte AppId; Zugriffsversuch auf gelöschten Service Principal prüfen." },
+    { code: "7000215", meaning: "Ungültiges Client Secret für Service Principal.", action: "Abgelaufenes/falsches Secret in Automatisierung; prüfen, ob Secret-Guessing stattfindet." },
+    { code: "70043", meaning: "Refresh-Token durch Sitzungsrichtlinie abgelaufen.", action: "Erfordert erneute interaktive Authentifizierung." },
+    { code: "90002", meaning: "Tenant nicht gefunden.", action: "Fehler in Tenant-ID oder Domain in der OAuth-Anfrage." },
+  ],
+  zh: [
+    { code: "0", meaning: "身份验证成功。", action: "登录已完成。请核实是否满足 MFA（AuthenticationDetails）及源 IP 是否符合预期。" },
+    { code: "50053", meaning: "账户已锁定（Smart Lockout）。", action: "可能正在遭受暴力破解或密码喷洒攻击。请在 SigninLogs 中排查源 IP。" },
+    { code: "50055", meaning: "密码已过期。", action: "引导用户通过自助密码重置 (SSPR) 或服务台更改密码。" },
+    { code: "50057", meaning: "用户账户已禁用。", action: "若存在多次重复登录尝试，需排查凭据是否已泄露。" },
+    { code: "50074", meaning: "需要强身份验证 (MFA)。", action: "流程正在等待第二因素，或在弹出 MFA 验证前中断。" },
+    { code: "50076", meaning: "条件访问或风险策略要求 MFA。", action: "用户必须完成 MFA。若连续出现多次失败，请排查 MFA 疲劳攻击。" },
+    { code: "50079", meaning: "用户需要注册 MFA 验证方式。", action: "确认该注册操作是由合法用户发起，还是攻击者利用新会话进行的。" },
+    { code: "50126", meaning: "用户名或密码无效。", action: "多个账户出现大量 50126 通常意味着密码喷洒（Password Spraying），请按 IPAddress 关联分析。" },
+    { code: "50140", meaning: "“保持登录状态”提示被中断。", action: "用户在完成流程前关闭了标签页；通常为良性事件。" },
+    { code: "53003", meaning: "访问被条件访问（Conditional Access）策略阻止。", action: "检查具体触发阻止的策略（设备不合规、受限国家/地区或高风险登录）。" },
+    { code: "530032", meaning: "被租户（Tenant）级别的安全策略阻止。", action: "审计近期策略变更或位置/设备限制规则。" },
+    { code: "65001", meaning: "用户或管理员未向应用授予同意权限。", action: "排查 OAuth Consent Grant 请求，核实应用是否为恶意应用。" },
+    { code: "700016", meaning: "在 Tenant 中未找到应用程序。", action: "AppId 无效或已被删除；排查是否有人尝试访问已删除的 Service Principal。" },
+    { code: "7000215", meaning: "为 Service Principal 提供的 Client secret 无效。", action: "自动化流水线中的 secret 已过期或错误；排查是否存在猜测 secret 的行为。" },
+    { code: "70043", meaning: "由于会话生命周期策略，刷新令牌已过期。", action: "需要重新进行交互式身份验证。" },
+    { code: "90002", meaning: "未找到 Tenant。", action: "OAuth 请求中指定的 Tenant ID 或域名有误。" },
+  ],
+  en: [
+    { code: "0", meaning: "Authentication succeeded.", action: "Logon completed. Verify MFA satisfaction (AuthenticationDetails) and expected source IP." },
+    { code: "50053", meaning: "Account is locked (Smart Lockout).", action: "Ongoing brute-force or password spray attack. Check source IPs in SigninLogs." },
+    { code: "50055", meaning: "Password expired.", action: "Prompt user to change password via self-service (SSPR) or helpdesk." },
+    { code: "50057", meaning: "User account is disabled.", action: "If repeated login attempts occur, investigate potential leaked credentials." },
+    { code: "50074", meaning: "Strong Authentication required (MFA).", action: "Flow awaiting second factor or interrupted before MFA challenge." },
+    { code: "50076", meaning: "MFA required by Conditional Access or Risk.", action: "User must complete MFA. Multiple consecutive failures may indicate MFA fatigue." },
+    { code: "50079", meaning: "User needs to register an MFA method.", action: "Verify whether registration was performed by legitimate user or attacker." },
+    { code: "50126", meaning: "Invalid username or password.", action: "High volume across multiple accounts indicates Password Spraying. Correlate by IPAddress." },
+    { code: "50140", meaning: "'Keep me signed in' prompt interrupted.", action: "User closed tab before completing flow; usually benign." },
+    { code: "53003", meaning: "Access blocked by Conditional Access policy.", action: "Check which policy blocked access (non-compliant device, blocked country, high risk)." },
+    { code: "530032", meaning: "Blocked by tenant-level security policies.", action: "Audit recent policy changes or location/device restrictions." },
+    { code: "65001", meaning: "User or admin has not consented to the application.", action: "Investigate OAuth Consent Grant attempt; verify if app is malicious." },
+    { code: "700016", meaning: "Application not found in tenant.", action: "Invalid or removed AppId; investigate access attempt to deleted Service Principal." },
+    { code: "7000215", meaning: "Invalid client secret provided for Service Principal.", action: "Expired or incorrect secret in automation/pipeline; check for secret guessing." },
+    { code: "70043", meaning: "Refresh token expired due to session lifetime policy.", action: "Requires new interactive authentication." },
+    { code: "90002", meaning: "Tenant not found.", action: "Invalid Tenant ID or domain specified in OAuth request." },
+  ],
+}[locale];
 ---
 
 <ToolShell
@@ -45,27 +119,8 @@ const T = {
   </div>
 </ToolShell>
 
-<script is:inline>
+<script is:inline define:vars={{ CODES }}>
   (() => {
-    const CODES = [
-      { code: "0", meaning: "Autenticação bem-sucedida.", action: "Logon concluído. Verificar se houve MFA satisfeito (AuthenticationDetails) e IP esperado." },
-      { code: "50053", meaning: "Account is locked (Smart Lockout).", action: "Ataque de força bruta ou password spray em andamento. Verificar IPs de origem em SigninLogs." },
-      { code: "50055", meaning: "Senha expirada.", action: "Solicitar troca de senha pelo fluxo de autoatendimento (SSPR) ou helpdesk." },
-      { code: "50057", meaning: "Conta de usuário desabilitada.", action: "Se houver tentativas repetidas de logon, investigar possível tentativa de acesso com credenciais vazadas." },
-      { code: "50074", meaning: "Strong Authentication required (MFA).", action: "Fluxo aguardando segundo fator ou interrompido antes do desafio." },
-      { code: "50076", meaning: "MFA obrigatório por Acesso Condicional ou Risco.", action: "O usuário precisa concluir o MFA. Se houver múltiplas falhas seguidas, investigar fadiga de MFA." },
-      { code: "50079", meaning: "Usuário precisa registrar método de MFA.", action: "Acompanhar se o registro foi feito pelo usuário legítimo ou por atacante em sessão recém-aberta." },
-      { code: "50126", meaning: "Nome de usuário ou senha inválidos.", action: "Alto volume de 50126 em várias contas indica Password Spraying. Correlacionar por IPAddress." },
-      { code: "50140", meaning: "Prompt 'Keep me signed in' interrompido.", action: "Usuário fechou a aba antes de concluir o fluxo; geralmente benigno." },
-      { code: "53003", meaning: "Acesso bloqueado por política de Acesso Condicional (Conditional Access).", action: "Verificar qual política bloqueou (dispositivo não conforme, país bloqueado, risco alto)." },
-      { code: "530032", meaning: "Bloqueado por políticas de segurança no nível do tenant.", action: "Auditar alteração recente ou restrição de localização/dispositivo." },
-      { code: "65001", meaning: "Usuário ou administrador não concedeu consentimento ao aplicativo.", action: "Verificar tentativa de OAuth Consent Grant no aplicativo; checar se é app malicioso." },
-      { code: "700016", meaning: "Aplicativo não encontrado no tenant.", action: "AppId inválido ou removido; investigar se houve tentativa de acesso a Service Principal excluído." },
-      { code: "7000215", meaning: "Client secret inválido fornecido para Service Principal.", action: "Secret expirado ou incorreto em automação/pipeline; verificar se alguém tenta adivinhar secret." },
-      { code: "70043", meaning: "Refresh token expirado por política de tempo de vida de sessão.", action: "Exige nova autenticação interativa." },
-      { code: "90002", meaning: "Tenant não encontrado.", action: "Erro no Tenant ID ou domínio especificado na requisição OAuth." },
-    ];
-
     const search = document.getElementById('aadsts-search');
     const tbody = document.getElementById('aadsts-tbody');
 

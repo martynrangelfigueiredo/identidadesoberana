@@ -11,6 +11,44 @@ const T = {
   zh: { badge: "100% 本地", h2In: "粘贴 JWT 令牌", btnEx: "加载示例", btnClr: "清空", h2Hi: "安全与 IAM 关键声明", h3Hdr: "Header（头部）", h3Pay: "Payload（载荷）" },
   en: { badge: "100% Local", h2In: "Paste JWT Token", btnEx: "Load Sample", btnClr: "Clear", h2Hi: "Security & IAM Highlights", h3Hdr: "Header", h3Pay: "Payload (Claims)" },
 }[locale];
+const L = {
+  pt: {
+    invalidFmt: "Formato inválido: um JWT deve conter 3 segmentos separados por ponto (Header.Payload.Signature).",
+    alg: "Algoritmo (alg)", iss: "Emissor (iss)", aud: "Audiência (aud)", sub: "Sujeito / Usuário",
+    tid: "Tenant ID (tid)", scp: "Escopos (scp)", roles: "Papéis (roles)", wids: "Entra Role IDs (wids)",
+    amr: "Métodos Auth (amr)", ipaddr: "IP de Origem (ipaddr)", exp: "Expiração (exp)",
+    validIn: "Válido (expira em {m} min)", expiredAgo: "EXPIRADO há {m} min",
+    ok: "Token decodificado localmente com sucesso (nenhum dado saiu do seu navegador).",
+    err: "Erro ao decodificar JWT: ",
+  },
+  de: {
+    invalidFmt: "Ungültiges Format: Ein JWT muss aus 3 durch Punkte getrennten Segmenten bestehen (Header.Payload.Signature).",
+    alg: "Algorithmus (alg)", iss: "Aussteller (iss)", aud: "Zielgruppe (aud)", sub: "Subjekt / Benutzer",
+    tid: "Tenant-ID (tid)", scp: "Bereiche (scp)", roles: "Rollen (roles)", wids: "Entra Role IDs (wids)",
+    amr: "Auth-Methoden (amr)", ipaddr: "Quell-IP (ipaddr)", exp: "Ablaufzeit (exp)",
+    validIn: "Gültig (läuft in {m} Min. ab)", expiredAgo: "ABGELAUFEN vor {m} Min.",
+    ok: "Token lokal erfolgreich dekodiert (keine Daten haben Ihren Browser verlassen).",
+    err: "Fehler beim Dekodieren des JWT: ",
+  },
+  zh: {
+    invalidFmt: "格式无效：JWT 必须包含由点分隔的 3 个部分（Header.Payload.Signature）。",
+    alg: "算法 (alg)", iss: "签发者 (iss)", aud: "受众 (aud)", sub: "主体 / 用户",
+    tid: "Tenant ID (tid)", scp: "权限范围 (scp)", roles: "角色 (roles)", wids: "Entra Role IDs (wids)",
+    amr: "认证方式 (amr)", ipaddr: "源 IP (ipaddr)", exp: "过期时间 (exp)",
+    validIn: "有效（将在 {m} 分钟后过期）", expiredAgo: "已过期 {m} 分钟",
+    ok: "已在本地成功解码令牌（未向外部发送任何数据）。",
+    err: "解码 JWT 时出错：",
+  },
+  en: {
+    invalidFmt: "Invalid format: a JWT must contain 3 dot-separated segments (Header.Payload.Signature).",
+    alg: "Algorithm (alg)", iss: "Issuer (iss)", aud: "Audience (aud)", sub: "Subject / User",
+    tid: "Tenant ID (tid)", scp: "Scopes (scp)", roles: "Roles (roles)", wids: "Entra Role IDs (wids)",
+    amr: "Auth Methods (amr)", ipaddr: "Source IP (ipaddr)", exp: "Expiration (exp)",
+    validIn: "Valid (expires in {m} min)", expiredAgo: "EXPIRED {m} min ago",
+    ok: "Token decoded locally with success (no data left your browser).",
+    err: "Error decoding JWT: ",
+  },
+}[locale];
 ---
 
 <ToolShell
@@ -55,7 +93,7 @@ const T = {
   </div>
 </ToolShell>
 
-<script is:inline>
+<script is:inline define:vars={{ L }}>
   (() => {
     const input = document.getElementById('jwt-input');
     const statusEl = document.getElementById('jwt-status');
@@ -103,7 +141,7 @@ const T = {
 
       const parts = raw.split('.');
       if (parts.length !== 3) {
-        statusEl.textContent = 'Formato inválido: um JWT deve conter 3 segmentos separados por ponto (Header.Payload.Signature).';
+        statusEl.textContent = L.invalidFmt;
         statusEl.className = 'status-msg error';
         highlightsCard.style.display = 'none';
         outputCard.style.display = 'none';
@@ -118,31 +156,32 @@ const T = {
         payloadPre.textContent = JSON.stringify(payload, null, 2);
 
         highlightsGrid.innerHTML = '';
-        addKv('Algoritmo (alg)', header.alg || '—');
-        addKv('Emissor (iss)', payload.iss || '—');
-        addKv('Audiência (aud)', Array.isArray(payload.aud) ? payload.aud.join(', ') : (payload.aud || '—'));
-        addKv('Sujeito / Usuário', payload.upn || payload.preferred_username || payload.unique_name || payload.sub || '—');
+        addKv(L.alg, header.alg || '—');
+        addKv(L.iss, payload.iss || '—');
+        addKv(L.aud, Array.isArray(payload.aud) ? payload.aud.join(', ') : (payload.aud || '—'));
+        addKv(L.sub, payload.upn || payload.preferred_username || payload.unique_name || payload.sub || '—');
 
-        if (payload.tid) addKv('Tenant ID (tid)', payload.tid);
-        if (payload.scp) addKv('Escopos (scp)', payload.scp);
-        if (payload.roles) addKv('Papéis (roles)', Array.isArray(payload.roles) ? payload.roles.join(', ') : String(payload.roles));
-        if (payload.wids) addKv('Entra Role IDs (wids)', Array.isArray(payload.wids) ? payload.wids.join(', ') : String(payload.wids));
-        if (payload.amr) addKv('Métodos Auth (amr)', Array.isArray(payload.amr) ? payload.amr.join(', ') : String(payload.amr));
-        if (payload.ipaddr) addKv('IP de Origem (ipaddr)', payload.ipaddr);
+        if (payload.tid) addKv(L.tid, payload.tid);
+        if (payload.scp) addKv(L.scp, payload.scp);
+        if (payload.roles) addKv(L.roles, Array.isArray(payload.roles) ? payload.roles.join(', ') : String(payload.roles));
+        if (payload.wids) addKv(L.wids, Array.isArray(payload.wids) ? payload.wids.join(', ') : String(payload.wids));
+        if (payload.amr) addKv(L.amr, Array.isArray(payload.amr) ? payload.amr.join(', ') : String(payload.amr));
+        if (payload.ipaddr) addKv(L.ipaddr, payload.ipaddr);
 
         if (payload.exp) {
           const now = Math.floor(Date.now() / 1000);
           const diff = payload.exp - now;
-          const expStatus = diff > 0 ? `Válido (expira em ${Math.floor(diff / 60)} min)` : `EXPIRADO há ${Math.abs(Math.floor(diff / 60))} min`;
-          addKv('Expiração (exp)', `${formatTime(payload.exp)} · ${expStatus}`);
+          const mins = Math.abs(Math.floor(diff / 60));
+          const expStatus = (diff > 0 ? L.validIn : L.expiredAgo).replace('{m}', String(mins));
+          addKv(L.exp, `${formatTime(payload.exp)} · ${expStatus}`);
         }
 
         highlightsCard.style.display = '';
         outputCard.style.display = '';
-        statusEl.textContent = 'Token decodificado localmente com sucesso (nenhum dado saiu do seu navegador).';
+        statusEl.textContent = L.ok;
         statusEl.className = 'status-msg ok';
       } catch (err) {
-        statusEl.textContent = `Erro ao decodificar JWT: ${err.message}`;
+        statusEl.textContent = `${L.err}${err.message}`;
         statusEl.className = 'status-msg error';
         highlightsCard.style.display = 'none';
         outputCard.style.display = 'none';

@@ -6,10 +6,48 @@ interface Props { locale?: Locale; }
 const { locale = "pt" } = Astro.props;
 const meta = UTIL_TOOLS.find((t) => t.id === "ip-extract")!;
 const T = {
-  pt: { h2: "1. Extrair IPs de Logs / Texto Bruto & Bulk Lookup", btnExt: "Extrair IPs Únicos", btnBulk: "Consultar Geo/ASN em Lote (até 10)", btnGen: "Gerar 5 IPs Aleatórios", h2Res: "Resultado da Consulta em Lote" },
-  de: { h2: "1. IPs aus Logs extrahieren & Bulk Lookup", btnExt: "Eindeutige IPs extrahieren", btnBulk: "Bulk-Geo/ASN-Lookup (bis 10)", btnGen: "5 Zufalls-IPs generieren", h2Res: "Bulk-Lookup-Ergebnis" },
-  zh: { h2: "1. 从原始日志提取 IP 与批量查询", btnExt: "提取去重 IP", btnBulk: "批量 Geo/ASN 查询（最多 10 个）", btnGen: "生成 5 个随机测试 IP", h2Res: "批量查询结果" },
-  en: { h2: "1. Extract IPs from Logs & Bulk Lookup", btnExt: "Extract Unique IPs", btnBulk: "Bulk Geo/ASN Lookup (up to 10)", btnGen: "Generate 5 Random IPs", h2Res: "Bulk Lookup Results" },
+  pt: { h2: "1. Extrair IPs de Logs / Texto Bruto & Bulk Lookup", btnExt: "Extrair IPs Únicos", btnBulk: "Consultar Geo/ASN em Lote (até 10)", btnGen: "Gerar 5 IPs Aleatórios", h2Res: "Resultado da Consulta em Lote", thLoc: "País / Cidade", thOrg: "ASN / Organização" },
+  de: { h2: "1. IPs aus Logs extrahieren & Bulk Lookup", btnExt: "Eindeutige IPs extrahieren", btnBulk: "Bulk-Geo/ASN-Lookup (bis 10)", btnGen: "5 Zufalls-IPs generieren", h2Res: "Bulk-Lookup-Ergebnis", thLoc: "Land / Stadt", thOrg: "ASN / Organisation" },
+  zh: { h2: "1. 从原始日志提取 IP 与批量查询", btnExt: "提取去重 IP", btnBulk: "批量 Geo/ASN 查询（最多 10 个）", btnGen: "生成 5 个随机测试 IP", h2Res: "批量查询结果", thLoc: "国家 / 城市", thOrg: "ASN / 组织" },
+  en: { h2: "1. Extract IPs from Logs & Bulk Lookup", btnExt: "Extract Unique IPs", btnBulk: "Bulk Geo/ASN Lookup (up to 10)", btnGen: "Generate 5 Random IPs", h2Res: "Bulk Lookup Results", thLoc: "Country / City", thOrg: "ASN / Organization" },
+}[locale];
+const L = {
+  pt: {
+    noValid: "Nenhum endereço IPv4 válido encontrado.",
+    extracted: "{n} endereço(s) único(s) extraído(s).",
+    noIp: "Nenhum IP encontrado para consultar.",
+    querying: "Consultando {n} IPs...",
+    privRes: "Privado/Reservado",
+    err: "Erro na consulta",
+    done: "Consulta em lote concluída ({n} IPs).",
+  },
+  de: {
+    noValid: "Keine gültige IPv4-Adresse gefunden.",
+    extracted: "{n} eindeutige Adresse(n) extrahiert.",
+    noIp: "Keine IP für die Abfrage gefunden.",
+    querying: "{n} IPs werden abgefragt...",
+    privRes: "Privat/Reserviert",
+    err: "Abfragefehler",
+    done: "Bulk-Abfrage abgeschlossen ({n} IPs).",
+  },
+  zh: {
+    noValid: "未找到有效的 IPv4 地址。",
+    extracted: "已提取 {n} 个唯一地址。",
+    noIp: "未找到可查询的 IP。",
+    querying: "正在查询 {n} 个 IP...",
+    privRes: "私有/保留地址",
+    err: "查询出错",
+    done: "批量查询完成（{n} 个 IP）。",
+  },
+  en: {
+    noValid: "No valid IPv4 address found.",
+    extracted: "{n} unique address(es) extracted.",
+    noIp: "No IP found to query.",
+    querying: "Querying {n} IPs...",
+    privRes: "Private/Reserved",
+    err: "Lookup error",
+    done: "Bulk lookup completed ({n} IPs).",
+  },
 }[locale];
 ---
 
@@ -48,8 +86,8 @@ const T = {
       <thead>
         <tr style="border-bottom:2px solid var(--is-borda);text-align:left;">
           <th style="padding:.55rem;">IP</th>
-          <th style="padding:.55rem;">País / Cidade</th>
-          <th style="padding:.55rem;">ASN / Organização</th>
+          <th style="padding:.55rem;">{T.thLoc}</th>
+          <th style="padding:.55rem;">{T.thOrg}</th>
         </tr>
       </thead>
       <tbody id="bulk-tbody"></tbody>
@@ -57,7 +95,7 @@ const T = {
   </div>
 </ToolShell>
 
-<script is:inline>
+<script is:inline define:vars={{ L }}>
   (() => {
     const input = document.getElementById('bulk-input');
     const statusEl = document.getElementById('bulk-status');
@@ -77,8 +115,8 @@ const T = {
       const ips = extractIps(input.value);
       ipCount.textContent = String(ips.length);
       extractedCard.style.display = '';
-      extractedOut.textContent = ips.length ? ips.join('\n') : 'Nenhum endereço IPv4 válido encontrado.';
-      statusEl.textContent = `${ips.length} endereço(s) único(s) extraído(s).`;
+      extractedOut.textContent = ips.length ? ips.join('\n') : L.noValid;
+      statusEl.textContent = L.extracted.replace('{n}', String(ips.length));
       statusEl.className = 'status-msg ok';
     });
 
@@ -97,11 +135,11 @@ const T = {
     document.getElementById('btn-bulk-geo')?.addEventListener('click', async () => {
       const ips = extractIps(input.value).slice(0, 10);
       if (!ips.length) {
-        statusEl.textContent = 'Nenhum IP encontrado para consultar.';
+        statusEl.textContent = L.noIp;
         statusEl.className = 'status-msg error';
         return;
       }
-      statusEl.textContent = `Consultando ${ips.length} IPs...`;
+      statusEl.textContent = L.querying.replace('{n}', String(ips.length));
       statusEl.className = 'status-msg';
       bulkTbody.innerHTML = '';
       bulkCard.style.display = '';
@@ -114,17 +152,17 @@ const T = {
           tr.style.borderBottom = '1px solid var(--is-borda)';
           tr.innerHTML = `
             <td style="padding:.55rem;font-family:var(--is-fonte-mono);font-weight:700;">${ip}</td>
-            <td style="padding:.55rem;">${d.success ? `${d.country || '—'} · ${d.city || '—'}` : (d.message || 'Privado/Reservado')}</td>
+            <td style="padding:.55rem;">${d.success ? `${d.country || '—'} · ${d.city || '—'}` : (d.message || L.privRes)}</td>
             <td style="padding:.55rem;">${d.success ? `AS${d.connection?.asn || '?'} · ${d.connection?.isp || d.connection?.org || '—'}` : '—'}</td>
           `;
           bulkTbody.appendChild(tr);
         } catch {
           const tr = document.createElement('tr');
-          tr.innerHTML = `<td style="padding:.55rem;font-family:var(--is-fonte-mono);">${ip}</td><td colspan="2" style="padding:.55rem;">Erro na consulta</td>`;
+          tr.innerHTML = `<td style="padding:.55rem;font-family:var(--is-fonte-mono);">${ip}</td><td colspan="2" style="padding:.55rem;">${L.err}</td>`;
           bulkTbody.appendChild(tr);
         }
       }
-      statusEl.textContent = `Consulta em lote concluída (${ips.length} IPs).`;
+      statusEl.textContent = L.done.replace('{n}', String(ips.length));
       statusEl.className = 'status-msg ok';
     });
   })();

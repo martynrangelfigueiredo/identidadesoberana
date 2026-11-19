@@ -71,6 +71,169 @@ const T = {
     lblPivot: "Pivot to Global, South America & Asia Sources (1 click)",
   },
 }[locale];
+
+const L = {
+  pt: {
+    invalidIp: "Informe um endereço IPv4 ou IPv6 válido.",
+    querying: "Consultando {ip} em múltiplos provedores em paralelo...",
+    done: "Consulta concluída para {ip}.",
+    detecting: "Detectando seu IP público atual...",
+    detectErr: "Não foi possível detectar o IP automaticamente.",
+    protoVer: "Versão do Protocolo",
+    scope: "Escopo / Classificação",
+    privRfc: "Privado (RFC 1918)",
+    loopback: "Loopback",
+    linkLocal: "Link-Local / Cloud Metadata",
+    cgnat: "CG-NAT (RFC 6598)",
+    docRange: "Documentação / Teste",
+    pubIp: "Público (Roteável na Internet)",
+    pubV6: "Público Global Unicast",
+    mask: "Máscara de Sub-rede",
+    netAddr: "Endereço de Rede",
+    bcast: "Broadcast",
+    hosts: "Hosts Utilizáveis",
+    v6Exp: "Forma Expandida (128-bit)",
+    v6Comp: "Forma Comprimida",
+    rdns: "Hostname / rDNS (PTR)",
+    noPtr: "Sem registro PTR",
+    ipAddr: "Endereço IP",
+    contCountry: "Continente / País",
+    stateCity: "Estado / Cidade",
+    postal: "CEP / Postal",
+    asnIsp: "ASN / ISP",
+    orgCloud: "Organização / Cloud",
+    tz: "Fuso Horário",
+    coords: "Coordenadas",
+    proxyYes: "⚠️ Proxy/VPN Detectado",
+    proxyNo: "Sem flag Proxy",
+    netName: "Nome da Rede (Netname)",
+    cidrBlock: "Bloco CIDR Alocado",
+    handle: "Handle / Registro",
+    rir: "Servidor WHOIS / RIR",
+    abuse: "Contato de Abuso",
+    noAbuse: "Não exposto via RDAP",
+  },
+  de: {
+    invalidIp: "Bitte geben Sie eine gültige IPv4- oder IPv6-Adresse ein.",
+    querying: "Frage {ip} parallel bei mehreren Anbietern ab...",
+    done: "Abfrage für {ip} abgeschlossen.",
+    detecting: "Ermittle aktuelle öffentliche IP...",
+    detectErr: "Öffentliche IP konnte nicht automatisch erkannt werden.",
+    protoVer: "Protokollversion",
+    scope: "Bereich / Klassifizierung",
+    privRfc: "Privat (RFC 1918)",
+    loopback: "Loopback",
+    linkLocal: "Link-Local / Cloud-Metadaten",
+    cgnat: "CG-NAT (RFC 6598)",
+    docRange: "Dokumentation / Testnetz",
+    pubIp: "Öffentlich (Internet-routingfähig)",
+    pubV6: "Öffentlich Global Unicast",
+    mask: "Subnetzmaske",
+    netAddr: "Netzwerkadresse",
+    bcast: "Broadcast",
+    hosts: "Nutzbare Hosts",
+    v6Exp: "Erweiterte Form (128-Bit)",
+    v6Comp: "Komprimierte Form",
+    rdns: "Hostname / rDNS (PTR)",
+    noPtr: "Kein PTR-Eintrag",
+    ipAddr: "IP-Adresse",
+    contCountry: "Kontinent / Land",
+    stateCity: "Region / Stadt",
+    postal: "Postleitzahl",
+    asnIsp: "ASN / ISP",
+    orgCloud: "Organisation / Cloud",
+    tz: "Zeitzone",
+    coords: "Koordinaten",
+    proxyYes: "⚠️ Proxy/VPN erkannt",
+    proxyNo: "Kein Proxy-Flag",
+    netName: "Netzwerkname (Netname)",
+    cidrBlock: "Zugewiesener CIDR-Block",
+    handle: "Handle / Registrierung",
+    rir: "WHOIS-Server / RIR",
+    abuse: "Abuse-Kontakt",
+    noAbuse: "Nicht über RDAP verfügbar",
+  },
+  zh: {
+    invalidIp: "请输入有效的 IPv4 或 IPv6 地址。",
+    querying: "正在并发查询 {ip} 的多源信息...",
+    done: "已完成 {ip} 的全部查询。",
+    detecting: "正在检测您的当前公网 IP...",
+    detectErr: "无法自动检测公网 IP。",
+    protoVer: "协议版本",
+    scope: "作用域 / 分类",
+    privRfc: "私有地址 (RFC 1918)",
+    loopback: "本地环回 (Loopback)",
+    linkLocal: "链路本地 / 云元数据",
+    cgnat: "运营商级 NAT (RFC 6598)",
+    docRange: "文档 / 测试网段",
+    pubIp: "公网地址（互联网可路由）",
+    pubV6: "公网全球单播地址",
+    mask: "子网掩码",
+    netAddr: "网络地址",
+    bcast: "广播地址",
+    hosts: "可用主机数",
+    v6Exp: "完整展开格式 (128-bit)",
+    v6Comp: "压缩格式",
+    rdns: "主机名 / 反向 DNS (PTR)",
+    noPtr: "无 PTR 记录",
+    ipAddr: "IP 地址",
+    contCountry: "大洲 / 国家",
+    stateCity: "省州 / 城市",
+    postal: "邮政编码",
+    asnIsp: "ASN / 运营商 (ISP)",
+    orgCloud: "所属组织 / 云厂商",
+    tz: "时区",
+    coords: "经纬度坐标",
+    proxyYes: "⚠️ 检测到代理/VPN",
+    proxyNo: "未发现代理标记",
+    netName: "网络名称 (Netname)",
+    cidrBlock: "分配的 CIDR 网段",
+    handle: "注册句柄 (Handle)",
+    rir: "WHOIS / RIR 注册机构",
+    abuse: "滥用举报联系邮箱",
+    noAbuse: "RDAP 未公开",
+  },
+  en: {
+    invalidIp: "Please enter a valid IPv4 or IPv6 address.",
+    querying: "Querying {ip} across multiple providers in parallel...",
+    done: "Lookup completed for {ip}.",
+    detecting: "Detecting your current public IP...",
+    detectErr: "Could not detect your public IP automatically.",
+    protoVer: "Protocol Version",
+    scope: "Scope / Classification",
+    privRfc: "Private (RFC 1918)",
+    loopback: "Loopback",
+    linkLocal: "Link-Local / Cloud Metadata",
+    cgnat: "CG-NAT (RFC 6598)",
+    docRange: "Documentation / Test Range",
+    pubIp: "Public (Internet Routable)",
+    pubV6: "Public Global Unicast",
+    mask: "Subnet Mask",
+    netAddr: "Network Address",
+    bcast: "Broadcast",
+    hosts: "Usable Hosts",
+    v6Exp: "Expanded Form (128-bit)",
+    v6Comp: "Compressed Form",
+    rdns: "Hostname / rDNS (PTR)",
+    noPtr: "No PTR record",
+    ipAddr: "IP Address",
+    contCountry: "Continent / Country",
+    stateCity: "Region / City",
+    postal: "Postal / ZIP",
+    asnIsp: "ASN / ISP",
+    orgCloud: "Organization / Cloud",
+    tz: "Timezone",
+    coords: "Coordinates",
+    proxyYes: "⚠️ Proxy/VPN Detected",
+    proxyNo: "No Proxy flag",
+    netName: "Network Name (Netname)",
+    cidrBlock: "Allocated CIDR Block",
+    handle: "Handle / Registry",
+    rir: "WHOIS Server / RIR",
+    abuse: "Abuse Contact",
+    noAbuse: "Not exposed via RDAP",
+  },
+}[locale];
 ---
 
 <ToolShell
@@ -165,7 +328,7 @@ const T = {
   </div>
 </ToolShell>
 
-<script is:inline>
+<script is:inline define:vars={{ L }}>
   (() => {
     const ipInput = document.getElementById('ip-input');
     const btnLookup = document.getElementById('btn-lookup');
@@ -234,11 +397,11 @@ const T = {
     function expandIPv6(ip) {
       if (!ip.includes(':')) return ip;
       const halves = ip.split('::');
-      if (halves.length > 2) return 'Inválido';
+      if (halves.length > 2) return L.invalidIp;
       const left = halves[0] ? halves[0].split(':') : [];
       const right = halves[1] ? halves[1].split(':') : [];
       const missing = 8 - (left.length + right.length);
-      if (missing < 0) return 'Inválido';
+      if (missing < 0) return L.invalidIp;
       const full = [...left, ...Array(missing).fill('0'), ...right];
       return full.map((h) => h.padStart(4, '0').toLowerCase()).join(':');
     }
@@ -254,25 +417,25 @@ const T = {
 
     function classifyIPv4(ip) {
       const [a, b, c] = ip.split('.').map(Number);
-      if (a === 10) return 'Privado (RFC 1918)';
-      if (a === 172 && b >= 16 && b <= 31) return 'Privado (RFC 1918)';
-      if (a === 192 && b === 168) return 'Privado (RFC 1918)';
-      if (a === 127) return 'Loopback (127.0.0.0/8)';
-      if (a === 169 && b === 254) return 'Link-Local / Cloud Metadata';
-      if (a === 100 && b >= 64 && b <= 127) return 'CG-NAT (RFC 6598)';
-      if (a === 192 && b === 0 && c === 2) return 'Documentação (TEST-NET-1)';
-      if (a === 198 && b === 51 && c === 100) return 'Documentação (TEST-NET-2)';
-      if (a === 203 && b === 0 && c === 113) return 'Documentação (TEST-NET-3)';
-      return 'Público (Roteável na Internet)';
+      if (a === 10) return L.privRfc;
+      if (a === 172 && b >= 16 && b <= 31) return L.privRfc;
+      if (a === 192 && b === 168) return L.privRfc;
+      if (a === 127) return `${L.loopback} (127.0.0.0/8)`;
+      if (a === 169 && b === 254) return `${L.linkLocal} / Cloud Metadata`;
+      if (a === 100 && b >= 64 && b <= 127) return L.cgnat;
+      if (a === 192 && b === 0 && c === 2) return `${L.docRange} (TEST-NET-1)`;
+      if (a === 198 && b === 51 && c === 100) return `${L.docRange} (TEST-NET-2)`;
+      if (a === 203 && b === 0 && c === 113) return `${L.docRange} (TEST-NET-3)`;
+      return L.pubIp;
     }
 
     function classifyIPv6(expanded) {
-      if (expanded === '0000:0000:0000:0000:0000:0000:0000:0001') return 'Loopback (::1)';
-      if (expanded.startsWith('fe80:')) return 'Link-Local (fe80::/10)';
-      if (expanded.startsWith('fc') || expanded.startsWith('fd')) return 'ULA Privado (fc00::/7)';
-      if (expanded.startsWith('2001:0db8:')) return 'Documentação (RFC 3849)';
+      if (expanded === '0000:0000:0000:0000:0000:0000:0000:0001') return `${L.loopback} (::1)`;
+      if (expanded.startsWith('fe80:')) return `${L.linkLocal} (fe80::/10)`;
+      if (expanded.startsWith('fc') || expanded.startsWith('fd')) return 'ULA Private (fc00::/7)';
+      if (expanded.startsWith('2001:0db8:')) return `${L.docRange} (RFC 3849)`;
       if (expanded.startsWith('ff')) return 'Multicast (ff00::/8)';
-      return 'Público Global Unicast';
+      return L.pubV6;
     }
 
     function calcIPv4Cidr(ip, prefix) {
@@ -301,9 +464,9 @@ const T = {
       if (s.includes('cloudflare')) return 'Cloudflare';
       if (s.includes('digitalocean')) return 'DigitalOcean';
       if (s.includes('oracle')) return 'Oracle Cloud';
-      if (s.includes('alibaba') || s.includes('tencent')) return 'Alibaba / Tencent Cloud (Ásia)';
+      if (s.includes('alibaba') || s.includes('tencent')) return 'Alibaba / Tencent Cloud';
       if (s.includes('ovh') || s.includes('hetzner')) return 'OVH / Hetzner';
-      return 'ISP / Corporativo / Outro';
+      return 'ISP / Enterprise';
     }
 
     function fetchWithTimeout(url, opts = {}, signal, ms = 4500) {
@@ -319,23 +482,23 @@ const T = {
       localGrid.innerHTML = '';
       localCard.style.display = '';
       if (isIPv4(baseIp)) {
-        addKv(localGrid, 'Versão do Protocolo', 'IPv4');
-        addKv(localGrid, 'Escopo / Classificação', classifyIPv4(baseIp));
+        addKv(localGrid, L.protoVer, 'IPv4');
+        addKv(localGrid, L.scope, classifyIPv4(baseIp));
         if (cidrPrefix !== undefined) {
           const cidr = calcIPv4Cidr(baseIp, cidrPrefix);
           if (cidr) {
-            addKv(localGrid, 'Máscara de Sub-rede', cidr.mask);
-            addKv(localGrid, 'Endereço de Rede', cidr.network);
-            addKv(localGrid, 'Broadcast', cidr.broadcast);
-            addKv(localGrid, 'Hosts Utilizáveis', String(cidr.hosts));
+            addKv(localGrid, L.mask, cidr.mask);
+            addKv(localGrid, L.netAddr, cidr.network);
+            addKv(localGrid, L.bcast, cidr.broadcast);
+            addKv(localGrid, L.hosts, String(cidr.hosts));
           }
         }
       } else if (isIPv6(baseIp)) {
         const exp = expandIPv6(baseIp);
-        addKv(localGrid, 'Versão do Protocolo', 'IPv6');
-        addKv(localGrid, 'Forma Expandida (128-bit)', exp);
-        addKv(localGrid, 'Forma Comprimida', compressIPv6(exp));
-        addKv(localGrid, 'Escopo / Classificação', classifyIPv6(exp));
+        addKv(localGrid, L.protoVer, 'IPv6');
+        addKv(localGrid, L.v6Exp, exp);
+        addKv(localGrid, L.v6Comp, compressIPv6(exp));
+        addKv(localGrid, L.scope, classifyIPv6(exp));
       }
     }
 
@@ -350,10 +513,10 @@ const T = {
         { name: 'CriminalIP', url: `https://www.criminalip.io/asset/report/${encodeURIComponent(targetIp)}` },
         { name: 'IPinfo.io', url: `https://ipinfo.io/${encodeURIComponent(targetIp)}` },
         { name: 'iplocation.io', url: `https://iplocation.io/ip/${encodeURIComponent(targetIp)}` },
-        { name: 'LACNIC (América do Sul)', url: `https://rdap.lacnic.net/rdap/ip/${encodeURIComponent(targetIp)}` },
-        { name: 'Registro.br (Brasil)', url: `https://registro.br/tecnologia/ferramentas/whois/?search=${encodeURIComponent(targetIp)}` },
-        { name: 'APNIC (Ásia-Pacífico)', url: `https://wq.apnic.net/static/search.html?query=${encodeURIComponent(targetIp)}` },
-        { name: 'ThreatBook (Ásia CTI)', url: `https://threatbook.io/ip/${encodeURIComponent(targetIp)}` },
+        { name: 'LACNIC (LATAM)', url: `https://rdap.lacnic.net/rdap/ip/${encodeURIComponent(targetIp)}` },
+        { name: 'Registro.br (BR)', url: `https://registro.br/tecnologia/ferramentas/whois/?search=${encodeURIComponent(targetIp)}` },
+        { name: 'APNIC (APAC)', url: `https://wq.apnic.net/static/search.html?query=${encodeURIComponent(targetIp)}` },
+        { name: 'ThreatBook (APAC CTI)', url: `https://threatbook.io/ip/${encodeURIComponent(targetIp)}` },
         { name: 'AbuseIPDB', url: `https://www.abuseipdb.com/check/${encodeURIComponent(targetIp)}` },
         { name: 'Shodan', url: `https://www.shodan.io/host/${encodeURIComponent(targetIp)}` },
         { name: 'Cisco Talos', url: `https://talosintelligence.com/reputation_center/lookup?search=${encodeURIComponent(targetIp)}` },
@@ -377,7 +540,7 @@ const T = {
       const [baseIp, cidrPrefix] = input.split('/');
 
       if (!baseIp || (!isIPv4(baseIp) && !isIPv6(baseIp))) {
-        statusEl.textContent = 'Informe um endereço IPv4 ou IPv6 válido.';
+        statusEl.textContent = L.invalidIp;
         statusEl.className = 'status-msg error';
         return;
       }
@@ -401,7 +564,7 @@ const T = {
       multiCard.style.display = '';
       rdapCard.style.display = 'none';
 
-      statusEl.textContent = `Consultando ${baseIp} em múltiplos provedores em paralelo...`;
+      statusEl.textContent = `${L.querying} (${baseIp})...`;
       statusEl.className = 'status-msg';
 
       // Análise local e Pivots aparecem em 0ms
@@ -419,14 +582,14 @@ const T = {
           if (!geoPopulated) {
             geoPopulated = true;
             geoCard.style.display = '';
-            addKv(geoGrid, 'Endereço IP', d.ip);
-            addKv(geoGrid, 'Continente / País', `${d.continent || ''} · ${d.flag?.emoji || ''} ${d.country || ''} (${d.country_code || ''})`.trim());
-            addKv(geoGrid, 'Estado / Cidade', `${d.region || '—'} · ${d.city || '—'}`);
-            addKv(geoGrid, 'CEP / Postal', d.postal || '—');
-            addKv(geoGrid, 'ASN / ISP', `AS${d.connection?.asn || '—'} · ${d.connection?.isp || '—'}`);
-            addKv(geoGrid, 'Organização / Cloud', `${d.connection?.org || '—'} (${detectCloud(d.connection?.org || d.connection?.isp)})`);
-            addKv(geoGrid, 'Fuso Horário', d.timezone?.id ? `${d.timezone.id} (UTC ${d.timezone.utc})` : '—');
-            addKv(geoGrid, 'Coordenadas', `${d.latitude}, ${d.longitude}`);
+            addKv(geoGrid, L.ipAddr, d.ip);
+            addKv(geoGrid, L.contCountry, `${d.continent || ''} · ${d.flag?.emoji || ''} ${d.country || ''} (${d.country_code || ''})`.trim());
+            addKv(geoGrid, L.stateCity, `${d.region || '—'} · ${d.city || '—'}`);
+            addKv(geoGrid, L.postal, d.postal || '—');
+            addKv(geoGrid, L.asnIsp, `AS${d.connection?.asn || '—'} · ${d.connection?.isp || '—'}`);
+            addKv(geoGrid, L.orgCloud, `${d.connection?.org || '—'} (${detectCloud(d.connection?.org || d.connection?.isp)})`);
+            addKv(geoGrid, L.tz, d.timezone?.id ? `${d.timezone.id} (UTC ${d.timezone.utc})` : '—');
+            addKv(geoGrid, L.coords, `${d.latitude}, ${d.longitude}`);
             if (typeof d.latitude === 'number' && typeof d.longitude === 'number') {
               pendingCoords = { lat: d.latitude, lon: d.longitude };
               btnLoadMap.style.display = '';
@@ -444,11 +607,11 @@ const T = {
           if (!geoPopulated && d.loc) {
             geoPopulated = true;
             geoCard.style.display = '';
-            addKv(geoGrid, 'Endereço IP', d.ip);
-            addKv(geoGrid, 'País / Região / Cidade', `${d.country} · ${d.region} · ${d.city}`);
-            addKv(geoGrid, 'Organização / ASN', d.org || '—');
-            addKv(geoGrid, 'Hostname', d.hostname || '—');
-            addKv(geoGrid, 'Fuso Horário', d.timezone || '—');
+            addKv(geoGrid, L.ipAddr, d.ip);
+            addKv(geoGrid, L.contCountry, `${d.country} · ${d.region} · ${d.city}`);
+            addKv(geoGrid, L.asnIsp, d.org || '—');
+            addKv(geoGrid, L.rdns, d.hostname || '—');
+            addKv(geoGrid, L.tz, d.timezone || '—');
             const [lat, lon] = d.loc.split(',').map(Number);
             if (!isNaN(lat) && !isNaN(lon)) {
               pendingCoords = { lat, lon };
@@ -463,7 +626,7 @@ const T = {
         .then((r) => r.json())
         .then((d) => {
           if (reqId !== activeReqId || !d.ipAddress) return;
-          const sig = d.isProxy ? '⚠️ Proxy/VPN Detectado' : 'Sem flag Proxy';
+          const sig = d.isProxy ? L.proxyYes : L.proxyNo;
           addMultiRow('FreeIPAPI', `${d.countryName || '—'} · ${d.cityName || '—'}`, d.asnOrganization || (d.asn ? `AS${d.asn}` : '—'), sig);
         })
         .catch(() => {});
@@ -487,8 +650,8 @@ const T = {
             .then((r) => r.json())
             .then((d) => {
               if (reqId !== activeReqId) return;
-              const ptr = d.Answer?.[0]?.data?.replace(/\.$/, '') || 'Sem registro PTR';
-              addKv(localGrid, 'Hostname / rDNS (PTR)', ptr);
+              const ptr = d.Answer?.[0]?.data?.replace(/\.$/, '') || L.noPtr;
+              addKv(localGrid, L.rdns, ptr);
             })
             .catch(() => {})
         : Promise.resolve();
@@ -513,18 +676,18 @@ const T = {
             : data.handle;
 
           rdapCard.style.display = '';
-          addKv(rdapGrid, 'Nome da Rede (Netname)', data.name || '—');
-          addKv(rdapGrid, 'Bloco CIDR Alocado', cidr || '—');
-          addKv(rdapGrid, 'Handle / Registro', data.handle || '—');
-          addKv(rdapGrid, 'Servidor WHOIS / RIR', data.port43 || '—');
-          addKv(rdapGrid, 'Contato de Abuso', [...new Set(emails)].join(', ') || 'Não exposto via RDAP');
+          addKv(rdapGrid, L.netName, data.name || '—');
+          addKv(rdapGrid, L.cidrBlock, cidr || '—');
+          addKv(rdapGrid, L.handle, data.handle || '—');
+          addKv(rdapGrid, L.rir, data.port43 || '—');
+          addKv(rdapGrid, L.abuse, [...new Set(emails)].join(', ') || L.noAbuse);
         })
         .catch(() => {});
 
       await Promise.allSettled([p1, p2, p3, p4, p5, p6]);
       if (reqId !== activeReqId) return;
 
-      statusEl.textContent = `Consulta concluída para ${baseIp}.`;
+      statusEl.textContent = `${L.done} (${baseIp})`;
       statusEl.className = 'status-msg ok';
     }
 
@@ -543,7 +706,7 @@ const T = {
     });
 
     btnMyIp?.addEventListener('click', async () => {
-      statusEl.textContent = 'Detectando seu IP público atual...';
+      statusEl.textContent = L.detecting;
       statusEl.className = 'status-msg';
       try {
         const res = await fetch('https://api.ipify.org?format=json');
@@ -553,7 +716,7 @@ const T = {
           runLookup(d.ip);
         }
       } catch {
-        statusEl.textContent = 'Não foi possível detectar o IP automaticamente.';
+        statusEl.textContent = L.detectErr;
         statusEl.className = 'status-msg error';
       }
     });

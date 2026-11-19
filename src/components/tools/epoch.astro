@@ -11,6 +11,44 @@ const T = {
   zh: { h2: "输入时间戳或 ISO 日期", btnNow: "当前时间", btnConv: "转换", h2Res: "转换结果" },
   en: { h2: "Enter Timestamp or ISO Date", btnNow: "Now (Real-Time)", btnConv: "Convert", h2Res: "Converted Formats" },
 }[locale];
+const L = {
+  pt: {
+    ft: "Windows FILETIME / AD Timestamp (100ns)",
+    us: "Unix Epoch (Microssegundos)", ms: "Unix Epoch (Milissegundos)", sec: "Unix Epoch (Segundos)",
+    isoStr: "String de Data / ISO 8601",
+    invalid: "Formato não reconhecido. Use Epoch numérico, FILETIME (18 dígitos) ou data ISO.",
+    fmtDet: "Formato Detectado", utc: "UTC (ISO 8601)", localTime: "Horário Local (Navegador)",
+    kSec: "Unix Epoch (Segundos)", kMs: "Unix Epoch (Milissegundos)", kFt: "Windows FILETIME (AD/Entra)",
+    done: "Conversão realizada.", dateLoc: "pt-BR",
+  },
+  de: {
+    ft: "Windows FILETIME / AD-Zeitstempel (100ns)",
+    us: "Unix-Epoch (Mikrosekunden)", ms: "Unix-Epoch (Millisekunden)", sec: "Unix-Epoch (Sekunden)",
+    isoStr: "Datumsstring / ISO 8601",
+    invalid: "Format nicht erkannt. Verwenden Sie Unix-Epoch, FILETIME (18 Ziffern) oder ISO-Datum.",
+    fmtDet: "Erkanntes Format", utc: "UTC (ISO 8601)", localTime: "Lokale Zeit (Browser)",
+    kSec: "Unix-Epoch (Sekunden)", kMs: "Unix-Epoch (Millisekunden)", kFt: "Windows FILETIME (AD/Entra)",
+    done: "Konvertierung abgeschlossen.", dateLoc: "de-DE",
+  },
+  zh: {
+    ft: "Windows FILETIME / AD 时间戳 (100ns)",
+    us: "Unix 时间戳（微秒）", ms: "Unix 时间戳（毫秒）", sec: "Unix 时间戳（秒）",
+    isoStr: "日期字符串 / ISO 8601",
+    invalid: "无法识别的格式。请使用数字时间戳、FILETIME（18 位）或 ISO 日期。",
+    fmtDet: "检测到的格式", utc: "UTC (ISO 8601)", localTime: "本地时间（浏览器）",
+    kSec: "Unix 时间戳（秒）", kMs: "Unix 时间戳（毫秒）", kFt: "Windows FILETIME (AD/Entra)",
+    done: "转换完成。", dateLoc: "zh-CN",
+  },
+  en: {
+    ft: "Windows FILETIME / AD Timestamp (100ns)",
+    us: "Unix Epoch (Microseconds)", ms: "Unix Epoch (Milliseconds)", sec: "Unix Epoch (Seconds)",
+    isoStr: "Date String / ISO 8601",
+    invalid: "Unrecognized format. Use numeric Epoch, FILETIME (18 digits), or ISO date.",
+    fmtDet: "Detected Format", utc: "UTC (ISO 8601)", localTime: "Local Time (Browser)",
+    kSec: "Unix Epoch (Seconds)", kMs: "Unix Epoch (Milliseconds)", kFt: "Windows FILETIME (AD/Entra)",
+    done: "Conversion completed.", dateLoc: "en-US",
+  },
+}[locale];
 ---
 
 <ToolShell
@@ -44,7 +82,7 @@ const T = {
   </div>
 </ToolShell>
 
-<script is:inline>
+<script is:inline define:vars={{ L }}>
   (() => {
     const input = document.getElementById('ts-input');
     const btnConvert = document.getElementById('btn-convert');
@@ -79,24 +117,24 @@ const T = {
           // Windows FILETIME (100ns ticks since 1601-01-01)
           const msSince1970 = (num / 10000) - 11644473600000;
           dateObj = new Date(msSince1970);
-          detectedType = 'Windows FILETIME / AD Timestamp (100ns)';
+          detectedType = L.ft;
         } else if (val.length >= 15) {
           dateObj = new Date(num / 1000);
-          detectedType = 'Unix Epoch (Microssegundos)';
+          detectedType = L.us;
         } else if (val.length >= 12) {
           dateObj = new Date(num);
-          detectedType = 'Unix Epoch (Milissegundos)';
+          detectedType = L.ms;
         } else {
           dateObj = new Date(num * 1000);
-          detectedType = 'Unix Epoch (Segundos)';
+          detectedType = L.sec;
         }
       } else {
         dateObj = new Date(val);
-        detectedType = 'String de Data / ISO 8601';
+        detectedType = L.isoStr;
       }
 
       if (!dateObj || isNaN(dateObj.getTime())) {
-        statusEl.textContent = 'Formato não reconhecido. Use Epoch numérico, FILETIME (18 dígitos) ou data ISO.';
+        statusEl.textContent = L.invalid;
         statusEl.className = 'status-msg error';
         resultCard.style.display = 'none';
         return;
@@ -108,16 +146,16 @@ const T = {
       const iso = dateObj.toISOString();
 
       grid.innerHTML = '';
-      addKv('Formato Detectado', detectedType);
-      addKv('UTC (ISO 8601)', iso);
-      addKv('Horário Local (Navegador)', dateObj.toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'medium' }));
-      addKv('Unix Epoch (Segundos)', String(sec));
-      addKv('Unix Epoch (Milissegundos)', String(ms));
-      addKv('Windows FILETIME (AD/Entra)', String(filetime));
+      addKv(L.fmtDet, detectedType);
+      addKv(L.utc, iso);
+      addKv(L.localTime, dateObj.toLocaleString(L.dateLoc, { dateStyle: 'short', timeStyle: 'medium' }));
+      addKv(L.kSec, String(sec));
+      addKv(L.kMs, String(ms));
+      addKv(L.kFt, String(filetime));
       addKv('KQL datetime()', `datetime(${iso})`);
 
       resultCard.style.display = '';
-      statusEl.textContent = 'Conversão realizada.';
+      statusEl.textContent = L.done;
       statusEl.className = 'status-msg ok';
     }
 

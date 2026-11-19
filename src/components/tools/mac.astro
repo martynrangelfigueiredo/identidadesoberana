@@ -11,6 +11,36 @@ const T = {
   zh: { h2: "解析或生成 MAC 地址", btnAn: "解析 MAC", btnGen: "生成随机 MAC", h2Res: "格式转换与属性" },
   en: { h2: "Analyze or Generate MAC Address", btnAn: "Analyze MAC", btnGen: "Generate Random MAC", h2Res: "Formats & Properties" },
 }[locale];
+const L = {
+  pt: {
+    invalid: "MAC Address inválido. Informe 12 dígitos hexadecimais.",
+    std: "Formato Padrão (:)", win: "Formato Windows (-)", cisco: "Formato Cisco (.)",
+    oui: "OUI (Prefixo Fabricante)", tx: "Transmissão", adm: "Administração",
+    laa: "LAA — Localmente Administrado / Randomizado", uaa: "UAA — Universal (Fábrica)",
+    done: "MAC Address analisado com sucesso.",
+  },
+  de: {
+    invalid: "Ungültige MAC-Adresse. Geben Sie 12 Hex-Zeichen ein.",
+    std: "Standardformat (:)", win: "Windows-Format (-)", cisco: "Cisco-Format (.)",
+    oui: "OUI (Herstellerpräfix)", tx: "Übertragung", adm: "Verwaltung",
+    laa: "LAA — Lokal verwaltet / Randomisiert", uaa: "UAA — Universal (Werk)",
+    done: "MAC-Adresse erfolgreich analysiert.",
+  },
+  zh: {
+    invalid: "MAC 地址无效，请输入 12 位十六进制字符。",
+    std: "标准格式 (:)", win: "Windows 格式 (-)", cisco: "Cisco 格式 (.)",
+    oui: "OUI（厂商前缀）", tx: "传输类型", adm: "管理方式",
+    laa: "LAA — 本地管理 / 随机化地址", uaa: "UAA — 全球唯一（出厂）",
+    done: "MAC 地址解析成功。",
+  },
+  en: {
+    invalid: "Invalid MAC Address. Enter 12 hexadecimal digits.",
+    std: "Standard Format (:)", win: "Windows Format (-)", cisco: "Cisco Format (.)",
+    oui: "OUI (Vendor Prefix)", tx: "Transmission", adm: "Administration",
+    laa: "LAA — Locally Administered / Randomized", uaa: "UAA — Universal (Factory)",
+    done: "MAC Address analyzed successfully.",
+  },
+}[locale];
 ---
 
 <ToolShell
@@ -36,7 +66,7 @@ const T = {
   </div>
 </ToolShell>
 
-<script is:inline>
+<script is:inline define:vars={{ L }}>
   (() => {
     const input = document.getElementById('mac-in');
     const grid = document.getElementById('mac-grid');
@@ -53,7 +83,7 @@ const T = {
       const clean = input.value.replace(/[^0-9a-fA-F]/g, '').toUpperCase();
       grid.innerHTML = '';
       if (clean.length !== 12) {
-        statusEl.textContent = 'MAC Address inválido. Informe 12 dígitos hexadecimais.';
+        statusEl.textContent = L.invalid;
         statusEl.className = 'status-msg error';
         return;
       }
@@ -68,15 +98,15 @@ const T = {
       const euiB0 = (b0 ^ 2).toString(16).padStart(2, '0').toLowerCase();
       const eui64 = `fe80::${euiB0}${bytes[1].toLowerCase()}:${bytes[2].toLowerCase()}ff:fe${bytes[3].toLowerCase()}:${bytes[4].toLowerCase()}${bytes[5].toLowerCase()}`;
 
-      addKv('Formato Padrão (:)', bytes.join(':'));
-      addKv('Formato Windows (-)', bytes.join('-'));
-      addKv('Formato Cisco (.)', `${bytes[0]}${bytes[1]}.${bytes[2]}${bytes[3]}.${bytes[4]}${bytes[5]}`.toLowerCase());
-      addKv('OUI (Prefixo Fabricante)', oui);
-      addKv('Transmissão', isMulticast ? 'Multicast (Bit 0 = 1)' : 'Unicast (Bit 0 = 0)');
-      addKv('Administração', isLocal ? 'LAA — Localmente Administrado / Randomizado' : 'UAA — Universal (Fábrica)');
+      addKv(L.std, bytes.join(':'));
+      addKv(L.win, bytes.join('-'));
+      addKv(L.cisco, `${bytes[0]}${bytes[1]}.${bytes[2]}${bytes[3]}.${bytes[4]}${bytes[5]}`.toLowerCase());
+      addKv(L.oui, oui);
+      addKv(L.tx, isMulticast ? 'Multicast (Bit 0 = 1)' : 'Unicast (Bit 0 = 0)');
+      addKv(L.adm, isLocal ? L.laa : L.uaa);
       addKv('IPv6 Link-Local (EUI-64)', eui64);
 
-      statusEl.textContent = 'MAC Address analisado com sucesso.';
+      statusEl.textContent = L.done;
       statusEl.className = 'status-msg ok';
     }
 

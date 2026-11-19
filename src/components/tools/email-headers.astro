@@ -11,6 +11,28 @@ const T = {
   zh: { h2: "粘贴原始邮件头信息", btn: "解析邮件头", h2Sum: "认证状态与伪造检测摘要", h2Hops: "传输路径（Received 跳数）与提取 IP" },
   en: { h2: "Paste Raw Email Headers", btn: "Analyze Headers", h2Sum: "Authentication & Spoofing Summary", h2Hops: "Delivery Route (Received Hops) & Extracted IPs" },
 }[locale];
+const L = {
+  pt: {
+    subj: "Assunto (Subject)", from: "Remetente (From)", ret: "Return-Path (Envelope)",
+    sameFrom: "Mesmo que From", notFound: "Não encontrado", origIp: "IP de Origem (Header)",
+    totalHops: "Total de saltos (Received):", ipsExt: "IPs IPv4 extraídos:", none: "Nenhum", hop: "Salto",
+  },
+  de: {
+    subj: "Betreff (Subject)", from: "Absender (From)", ret: "Return-Path (Envelope)",
+    sameFrom: "Wie From", notFound: "Nicht gefunden", origIp: "Quell-IP (Header)",
+    totalHops: "Gesamte Hops (Received):", ipsExt: "Extrahierte IPv4-Adressen:", none: "Keine", hop: "Hop",
+  },
+  zh: {
+    subj: "主题 (Subject)", from: "发件人 (From)", ret: "Return-Path (信封地址)",
+    sameFrom: "与 From 相同", notFound: "未找到", origIp: "源 IP (Header)",
+    totalHops: "总跳数 (Received):", ipsExt: "提取的 IPv4 地址:", none: "无", hop: "跳",
+  },
+  en: {
+    subj: "Subject", from: "Sender (From)", ret: "Return-Path (Envelope)",
+    sameFrom: "Same as From", notFound: "Not found", origIp: "Originating IP (Header)",
+    totalHops: "Total hops (Received):", ipsExt: "Extracted IPv4 IPs:", none: "None", hop: "Hop",
+  },
+}[locale];
 ---
 
 <ToolShell
@@ -45,7 +67,7 @@ const T = {
   </div>
 </ToolShell>
 
-<script is:inline>
+<script is:inline define:vars={{ L }}>
   (() => {
     const input = document.getElementById('hdr-input');
     const summaryCard = document.getElementById('hdr-summary-card');
@@ -94,21 +116,21 @@ const T = {
       const ips = [...new Set(unfolded.match(/\b(?:(?:25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(?:25[0-5]|2[0-4]\d|[01]?\d\d?)\b/g) || [])];
 
       grid.innerHTML = '';
-      addKv('Assunto (Subject)', subject || '—');
-      addKv('Remetente (From)', from || '—');
-      addKv('Return-Path (Envelope)', returnPath || '—');
-      addKv('Reply-To', replyTo || 'Mesmo que From');
-      addKv('SPF', spfMatch ? spfMatch[1].toUpperCase() : 'Não encontrado');
-      addKv('DKIM', dkimMatch ? dkimMatch[1].toUpperCase() : 'Não encontrado');
-      addKv('DMARC', dmarcMatch ? dmarcMatch[1].toUpperCase() : 'Não encontrado');
-      addKv('IP de Origem (Header)', origIp || (ips[0] || '—'));
+      addKv(L.subj, subject || '—');
+      addKv(L.from, from || '—');
+      addKv(L.ret, returnPath || '—');
+      addKv('Reply-To', replyTo || L.sameFrom);
+      addKv('SPF', spfMatch ? spfMatch[1].toUpperCase() : L.notFound);
+      addKv('DKIM', dkimMatch ? dkimMatch[1].toUpperCase() : L.notFound);
+      addKv('DMARC', dmarcMatch ? dmarcMatch[1].toUpperCase() : L.notFound);
+      addKv(L.origIp, origIp || (ips[0] || '—'));
 
       summaryCard.style.display = '';
       hopsCard.style.display = '';
       hopsOut.textContent =
-        `Total de saltos (Received): ${receivedLines.length}\n` +
-        `IPs IPv4 extraídos: ${ips.join(', ') || 'Nenhum'}\n\n` +
-        receivedLines.map((line, i) => `[Salto ${i + 1}] ${line}`).join('\n\n');
+        `${L.totalHops} ${receivedLines.length}\n` +
+        `${L.ipsExt} ${ips.join(', ') || L.none}\n\n` +
+        receivedLines.map((line, i) => `[${L.hop} ${i + 1}] ${line}`).join('\n\n');
     }
 
     document.getElementById('btn-hdr')?.addEventListener('click', analyze);

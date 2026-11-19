@@ -11,6 +11,32 @@ const T = {
   zh: { h2: "地理坐标与登录时间间隔", orig: "起点（纬度, 经度）", dest: "终点（纬度, 经度）", delta: "两次登录间隔（分钟）", btn: "计算合理性", h2Res: "地理分析结果" },
   en: { h2: "Coordinates & Time Interval", orig: "Origin (Lat, Lon)", dest: "Destination (Lat, Lon)", delta: "Time Between Logins (Minutes)", btn: "Calculate Plausibility", h2Res: "Geographic Analysis Result" },
 }[locale];
+const L = {
+  pt: {
+    plausible: "Plausível (Deslocamento Terrestre / Aéreo Normal)",
+    impossible: "VIAGEM IMPOSSÍVEL (> 950 km/h) — Suspeita de VPN, Proxy ou Credencial Comprometida",
+    highSpeed: "Alta Velocidade (Possível Voo Comercial ou Troca de Torre/IP de Operadora)",
+    dist: "Distância Geodésica", speed: "Velocidade Necessária", verdict: "Veredito SOC",
+  },
+  de: {
+    plausible: "Plausibel (Normale Land- / Flugreise)",
+    impossible: "UNMÖGLICHE REISE (> 950 km/h) — Verdacht auf VPN, Proxy oder kompromittierte Zugangsdaten",
+    highSpeed: "Hohe Geschwindigkeit (Möglicher Linienflug oder Mobilfunk-/IP-Wechsel)",
+    dist: "Geodätische Entfernung", speed: "Erforderliche Geschwindigkeit", verdict: "SOC-Urteil",
+  },
+  zh: {
+    plausible: "合理（正常地面或航空出行）",
+    impossible: "不可能的旅行（> 950 km/h）— 疑似 VPN、代理或凭据泄露",
+    highSpeed: "高速移动（可能为商业航班或运营商基站/IP 切换）",
+    dist: "地理测地距离", speed: "所需平均速度", verdict: "SOC 判定结果",
+  },
+  en: {
+    plausible: "Plausible (Normal Ground / Air Travel)",
+    impossible: "IMPOSSIBLE TRAVEL (> 950 km/h) — Suspected VPN, Proxy, or Compromised Credential",
+    highSpeed: "High Speed (Possible Commercial Flight or Carrier Tower/IP Switch)",
+    dist: "Geodesic Distance", speed: "Required Speed", verdict: "SOC Verdict",
+  },
+}[locale];
 ---
 
 <ToolShell
@@ -58,7 +84,7 @@ const T = {
   </div>
 </ToolShell>
 
-<script is:inline>
+<script is:inline define:vars={{ L }}>
   (() => {
     const lat1El = document.getElementById('lat1');
     const lon1El = document.getElementById('lon1');
@@ -109,14 +135,14 @@ const T = {
       const hours = mins / 60;
       const speed = km / hours;
 
-      let verdict = 'Plausível (Deslocamento Terrestre / Aéreo Normal)';
-      if (speed > 950) verdict = 'VIAGEM IMPOSSÍVEL (> 950 km/h) — Suspeita de VPN, Proxy ou Credencial Comprometida';
-      else if (speed > 250) verdict = 'Alta Velocidade (Possível Voo Comercial ou Troca de Torre/IP de Operadora)';
+      let verdict = L.plausible;
+      if (speed > 950) verdict = L.impossible;
+      else if (speed > 250) verdict = L.highSpeed;
 
       grid.innerHTML = '';
-      addKv('Distância Geodésica', `${km.toFixed(1)} km (${(km * 0.621371).toFixed(1)} mi)`);
-      addKv('Velocidade Necessária', `${speed.toFixed(1)} km/h`);
-      addKv('Veredito SOC', verdict);
+      addKv(L.dist, `${km.toFixed(1)} km (${(km * 0.621371).toFixed(1)} mi)`);
+      addKv(L.speed, `${speed.toFixed(1)} km/h`);
+      addKv(L.verdict, verdict);
     }
 
     document.getElementById('btn-calc')?.addEventListener('click', calculate);
