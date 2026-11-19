@@ -1,37 +1,49 @@
 ---
-import ToolShell from "../../components/ToolShell.astro";
+import ToolShell from "../ToolShell.astro";
+import type { Locale } from "../../lib/i18n";
+import { UTIL_TOOLS } from "../../lib/tools";
+interface Props { locale?: Locale; }
+const { locale = "pt" } = Astro.props;
+const meta = UTIL_TOOLS.find((t) => t.id === "ip-extract")!;
+const T = {
+  pt: { h2: "1. Extrair IPs de Logs / Texto Bruto & Bulk Lookup", btnExt: "Extrair IPs Únicos", btnBulk: "Consultar Geo/ASN em Lote (até 10)", btnGen: "Gerar 5 IPs Aleatórios", h2Res: "Resultado da Consulta em Lote" },
+  de: { h2: "1. IPs aus Logs extrahieren & Bulk Lookup", btnExt: "Eindeutige IPs extrahieren", btnBulk: "Bulk-Geo/ASN-Lookup (bis 10)", btnGen: "5 Zufalls-IPs generieren", h2Res: "Bulk-Lookup-Ergebnis" },
+  zh: { h2: "1. 从原始日志提取 IP 与批量查询", btnExt: "提取去重 IP", btnBulk: "批量 Geo/ASN 查询（最多 10 个）", btnGen: "生成 5 个随机测试 IP", h2Res: "批量查询结果" },
+  en: { h2: "1. Extract IPs from Logs & Bulk Lookup", btnExt: "Extract Unique IPs", btnBulk: "Bulk Geo/ASN Lookup (up to 10)", btnGen: "Generate 5 Random IPs", h2Res: "Bulk Lookup Results" },
+}[locale];
 ---
 
 <ToolShell
-  title="Extrator de IPs, Bulk Lookup & Gerador Aleatório"
-  description="Extraia todos os IPs únicos de logs brutos ou e-mails, consulte geolocalização/ASN em lote ou gere IPs aleatórios para testes de firewall e SIEM."
-  badge="Rede & IP"
+  locale={locale}
+  title={meta.title[locale]}
+  description={meta.description[locale]}
+  badge="Bulk & Logs"
   icon="📦"
 >
   <div class="tool-card">
-    <h2>1. Extrair IPs de Logs / Texto Bruto & Bulk Lookup</h2>
+    <h2>{T.h2}</h2>
     <textarea
       id="bulk-input"
       class="tool-textarea"
       rows="5"
-      placeholder="Cole um trecho de log, cabeçalho de e-mail ou lista de IPs..."
-      aria-label="Texto para extração de IPs"
+      placeholder="..."
+      aria-label={T.h2}
     ></textarea>
     <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.75rem;">
-      <button id="btn-extract" type="button" class="tool-btn">Extrair IPs Únicos</button>
-      <button id="btn-bulk-geo" type="button" class="tool-btn secondary">Consultar Geo/ASN em Lote (até 10)</button>
-      <button id="btn-gen-ip" type="button" class="tool-btn outline">Gerar 5 IPs Aleatórios</button>
+      <button id="btn-extract" type="button" class="tool-btn">{T.btnExt}</button>
+      <button id="btn-bulk-geo" type="button" class="tool-btn secondary">{T.btnBulk}</button>
+      <button id="btn-gen-ip" type="button" class="tool-btn outline">{T.btnGen}</button>
     </div>
     <p id="bulk-status" class="status-msg"></p>
   </div>
 
   <div id="extracted-card" class="tool-card" style="display:none;">
-    <h2>IPs Extraídos (<span id="ip-count">0</span> únicos)</h2>
+    <h2>IPs (<span id="ip-count">0</span>)</h2>
     <pre id="extracted-out" class="code-out"></pre>
   </div>
 
   <div id="bulk-results-card" class="tool-card" style="display:none;overflow-x:auto;">
-    <h2>Resultado da Consulta em Lote</h2>
+    <h2>{T.h2Res}</h2>
     <table style="width:100%;border-collapse:collapse;font-size:.9rem;">
       <thead>
         <tr style="border-bottom:2px solid var(--is-borda);text-align:left;">
@@ -117,3 +129,4 @@ import ToolShell from "../../components/ToolShell.astro";
     });
   })();
 </script>
+

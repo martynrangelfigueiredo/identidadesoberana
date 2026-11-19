@@ -1,25 +1,37 @@
 ---
-import ToolShell from "../../components/ToolShell.astro";
+import ToolShell from "../ToolShell.astro";
+import type { Locale } from "../../lib/i18n";
+import { UTIL_TOOLS } from "../../lib/tools";
+interface Props { locale?: Locale; }
+const { locale = "pt" } = Astro.props;
+const meta = UTIL_TOOLS.find((t) => t.id === "mac")!;
+const T = {
+  pt: { h2: "Analisar ou Gerar MAC Address", btnAn: "Analisar MAC", btnGen: "Gerar MAC Aleatório", h2Res: "Formatos & Propriedades" },
+  de: { h2: "MAC-Adresse analysieren oder generieren", btnAn: "MAC analysieren", btnGen: "Zufalls-MAC generieren", h2Res: "Formate & Eigenschaften" },
+  zh: { h2: "解析或生成 MAC 地址", btnAn: "解析 MAC", btnGen: "生成随机 MAC", h2Res: "格式转换与属性" },
+  en: { h2: "Analyze or Generate MAC Address", btnAn: "Analyze MAC", btnGen: "Generate Random MAC", h2Res: "Formats & Properties" },
+}[locale];
 ---
 
 <ToolShell
-  title="Analisador & Gerador de MAC Address"
-  description="Converta MAC Addresses entre formatos (dois-pontos, hífen, Cisco), verifique bits Unicast/Multicast e UAA/LAA, calcule EUI-64 IPv6 e gere MACs aleatórios."
-  badge="Rede & Sec"
+  locale={locale}
+  title={meta.title[locale]}
+  description={meta.description[locale]}
+  badge="MAC & EUI-64"
   icon="🔌"
 >
   <div class="tool-card">
-    <h2>Analisar ou Gerar MAC Address</h2>
+    <h2>{T.h2}</h2>
     <div class="tool-form-row">
-      <input id="mac-in" type="text" class="tool-input" value="00:1A:2B:3C:4D:5E" placeholder="Ex: 00:1A:2B:3C:4D:5E ou 001a.2b3c.4d5e" aria-label="Endereço MAC" />
-      <button id="btn-mac" type="button" class="tool-btn">Analisar MAC</button>
-      <button id="btn-mac-gen" type="button" class="tool-btn secondary">Gerar MAC Aleatório</button>
+      <input id="mac-in" type="text" class="tool-input" value="00:1A:2B:3C:4D:5E" placeholder="00:1A:2B:3C:4D:5E" aria-label="MAC" />
+      <button id="btn-mac" type="button" class="tool-btn">{T.btnAn}</button>
+      <button id="btn-mac-gen" type="button" class="tool-btn secondary">{T.btnGen}</button>
     </div>
     <p id="mac-status" class="status-msg"></p>
   </div>
 
   <div class="tool-card">
-    <h2>Formatos & Propriedades</h2>
+    <h2>{T.h2Res}</h2>
     <div id="mac-grid" class="tool-grid"></div>
   </div>
 </ToolShell>
@@ -81,3 +93,4 @@ import ToolShell from "../../components/ToolShell.astro";
     analyze();
   })();
 </script>
+

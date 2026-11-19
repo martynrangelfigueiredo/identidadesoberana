@@ -1,35 +1,47 @@
 ---
-import ToolShell from "../../components/ToolShell.astro";
+import ToolShell from "../ToolShell.astro";
+import type { Locale } from "../../lib/i18n";
+import { UTIL_TOOLS } from "../../lib/tools";
+interface Props { locale?: Locale; }
+const { locale = "pt" } = Astro.props;
+const meta = UTIL_TOOLS.find((t) => t.id === "passgen")!;
+const T = {
+  pt: { h2: "Configuração da Senha", btnPwd: "Gerar Senha", btnPhr: "Gerar Passphrase (5 palavras)", h2Res: "Resultado" },
+  de: { h2: "Passwort-Konfiguration", btnPwd: "Passwort generieren", btnPhr: "Passphrase generieren (5 Wörter)", h2Res: "Ergebnis" },
+  zh: { h2: "密码生成选项", btnPwd: "生成强密码", btnPhr: "生成口令短语（5个词）", h2Res: "生成结果" },
+  en: { h2: "Password Configuration", btnPwd: "Generate Password", btnPhr: "Generate Passphrase (5 words)", h2Res: "Result" },
+}[locale];
 ---
 
 <ToolShell
-  title="Gerador de Senhas & Passphrases Seguras"
-  description="Gere senhas criptograficamente aleatórias (Web Crypto API) no seu navegador, com cálculo de entropia em bits e opção de passphrase."
+  locale={locale}
+  title={meta.title[locale]}
+  description={meta.description[locale]}
   badge="100% Local"
   icon="🔐"
 >
   <div class="tool-card">
-    <h2>Configuração da Senha</h2>
+    <h2>{T.h2}</h2>
     <div class="tool-grid" style="margin-bottom:1rem;">
       <div>
-        <div class="kv-label">Comprimento (<span id="len-val">20</span> caracteres)</div>
-        <input id="pwd-len" type="range" min="8" max="64" value="20" style="width:100%;" aria-label="Comprimento da senha" />
+        <div class="kv-label"><span id="len-val">20</span> chars</div>
+        <input id="pwd-len" type="range" min="8" max="64" value="20" style="width:100%;" aria-label="Length" />
       </div>
       <div style="display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;">
-        <label><input id="opt-upper" type="checkbox" checked /> Maiúsculas (A-Z)</label>
-        <label><input id="opt-lower" type="checkbox" checked /> Minúsculas (a-z)</label>
-        <label><input id="opt-num" type="checkbox" checked /> Números (0-9)</label>
-        <label><input id="opt-sym" type="checkbox" checked /> Símbolos (!@#$...)</label>
+        <label><input id="opt-upper" type="checkbox" checked /> A-Z</label>
+        <label><input id="opt-lower" type="checkbox" checked /> a-z</label>
+        <label><input id="opt-num" type="checkbox" checked /> 0-9</label>
+        <label><input id="opt-sym" type="checkbox" checked /> !@#$...</label>
       </div>
     </div>
     <div style="display:flex;gap:.5rem;flex-wrap:wrap;">
-      <button id="btn-gen-pwd" type="button" class="tool-btn">Gerar Senha</button>
-      <button id="btn-gen-phrase" type="button" class="tool-btn secondary">Gerar Passphrase (5 palavras)</button>
+      <button id="btn-gen-pwd" type="button" class="tool-btn">{T.btnPwd}</button>
+      <button id="btn-gen-phrase" type="button" class="tool-btn secondary">{T.btnPhr}</button>
     </div>
   </div>
 
   <div class="tool-card">
-    <h2>Resultado</h2>
+    <h2>{T.h2Res}</h2>
     <div id="pwd-grid" class="tool-grid"></div>
   </div>
 </ToolShell>
@@ -99,3 +111,4 @@ import ToolShell from "../../components/ToolShell.astro";
     genPassword();
   })();
 </script>
+

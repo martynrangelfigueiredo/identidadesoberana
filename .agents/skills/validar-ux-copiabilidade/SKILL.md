@@ -24,3 +24,4 @@ Esta skill garante que todo o conteúdo técnico do **Identidade Soberana** (art
 
 ## Execução
 Integrada ao pipeline `npm run validate` via `scripts/validators/ux-copiabilidade.mjs`.
+

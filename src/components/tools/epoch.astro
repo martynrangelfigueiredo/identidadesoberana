@@ -1,33 +1,45 @@
 ---
-import ToolShell from "../../components/ToolShell.astro";
+import ToolShell from "../ToolShell.astro";
+import type { Locale } from "../../lib/i18n";
+import { UTIL_TOOLS } from "../../lib/tools";
+interface Props { locale?: Locale; }
+const { locale = "pt" } = Astro.props;
+const meta = UTIL_TOOLS.find((t) => t.id === "epoch")!;
+const T = {
+  pt: { h2: "Inserir Timestamp ou Data ISO", btnNow: "Agora (Tempo Real)", btnConv: "Converter", h2Res: "Formatos Convertidos" },
+  de: { h2: "Zeitstempel oder ISO-Datum eingeben", btnNow: "Jetzt (Echtzeit)", btnConv: "Konvertieren", h2Res: "Konvertierte Formate" },
+  zh: { h2: "输入时间戳或 ISO 日期", btnNow: "当前时间", btnConv: "转换", h2Res: "转换结果" },
+  en: { h2: "Enter Timestamp or ISO Date", btnNow: "Now (Real-Time)", btnConv: "Convert", h2Res: "Converted Formats" },
+}[locale];
 ---
 
 <ToolShell
-  title="Conversor Epoch, FILETIME & Timeline DFIR"
-  description="Converta instantaneamente Unix Epoch (segundos/ms/µs), Windows FILETIME (18 dígitos do AD/Entra), UTC, horário local (BRT) e formato datetime() do KQL."
+  locale={locale}
+  title={meta.title[locale]}
+  description={meta.description[locale]}
   badge="DFIR & KQL"
   icon="⏱️"
 >
   <div class="tool-card">
     <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem;margin-bottom:.75rem;">
-      <h2 style="margin:0;">Inserir Timestamp ou Data ISO</h2>
-      <button id="btn-now" type="button" class="tool-btn secondary">Agora (Tempo Real)</button>
+      <h2 style="margin:0;">{T.h2}</h2>
+      <button id="btn-now" type="button" class="tool-btn secondary">{T.btnNow}</button>
     </div>
     <div class="tool-form-row">
       <input
         id="ts-input"
         type="text"
         class="tool-input"
-        placeholder="Ex: 1795000000, 134131200000000000 ou 2026-11-18T12:00:00Z"
-        aria-label="Timestamp ou data ISO"
+        placeholder="Ex: 1795000000, 134131200000000000, 2026-11-18T12:00:00Z"
+        aria-label={T.h2}
       />
-      <button id="btn-convert" type="button" class="tool-btn">Converter</button>
+      <button id="btn-convert" type="button" class="tool-btn">{T.btnConv}</button>
     </div>
     <p id="ts-status" class="status-msg"></p>
   </div>
 
   <div id="ts-result-card" class="tool-card" style="display:none;">
-    <h2>Formatos Convertidos</h2>
+    <h2>{T.h2Res}</h2>
     <div id="ts-grid" class="tool-grid"></div>
   </div>
 </ToolShell>

@@ -1,32 +1,44 @@
 ---
-import ToolShell from "../../components/ToolShell.astro";
+import ToolShell from "../ToolShell.astro";
+import type { Locale } from "../../lib/i18n";
+import { UTIL_TOOLS } from "../../lib/tools";
+interface Props { locale?: Locale; }
+const { locale = "pt" } = Astro.props;
+const meta = UTIL_TOOLS.find((t) => t.id === "ua")!;
+const T = {
+  pt: { h2: "Inserir User-Agent", btnMy: "Usar Meu User-Agent", btnParse: "Analisar User-Agent", h2Res: "Classificação & Sinais" },
+  de: { h2: "User-Agent eingeben", btnMy: "Meinen User-Agent nutzen", btnParse: "User-Agent analysieren", h2Res: "Klassifizierung & Signale" },
+  zh: { h2: "输入 User-Agent 字符串", btnMy: "使用当前浏览器 UA", btnParse: "解析 User-Agent", h2Res: "分类与风险信号" },
+  en: { h2: "Enter User-Agent String", btnMy: "Use My User-Agent", btnParse: "Parse User-Agent", h2Res: "Classification & Signals" },
+}[locale];
 ---
 
 <ToolShell
-  title="User-Agent Parser & Detector"
-  description="Analise strings de User-Agent extraídas de logs de autenticação (SigninLogs) e proxy, identificando SO, navegador e clientes automatizados suspeitos."
+  locale={locale}
+  title={meta.title[locale]}
+  description={meta.description[locale]}
   badge="Logs & Web"
   icon="🕵️"
 >
   <div class="tool-card">
     <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem;margin-bottom:.75rem;">
-      <h2 style="margin:0;">Inserir User-Agent</h2>
-      <button id="btn-myua" type="button" class="tool-btn secondary">Usar Meu User-Agent</button>
+      <h2 style="margin:0;">{T.h2}</h2>
+      <button id="btn-myua" type="button" class="tool-btn secondary">{T.btnMy}</button>
     </div>
     <textarea
       id="ua-input"
       class="tool-textarea"
       rows="3"
-      placeholder="Cole o User-Agent do log..."
-      aria-label="String User-Agent"
+      placeholder="Mozilla/5.0 ..."
+      aria-label={T.h2}
     ></textarea>
     <div style="margin-top:.75rem;">
-      <button id="btn-parse-ua" type="button" class="tool-btn">Analisar User-Agent</button>
+      <button id="btn-parse-ua" type="button" class="tool-btn">{T.btnParse}</button>
     </div>
   </div>
 
   <div id="ua-result-card" class="tool-card" style="display:none;">
-    <h2>Classificação & Sinais</h2>
+    <h2>{T.h2Res}</h2>
     <div id="ua-grid" class="tool-grid"></div>
   </div>
 </ToolShell>

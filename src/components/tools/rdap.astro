@@ -1,35 +1,41 @@
 ---
-import ToolShell from "../../components/ToolShell.astro";
+import ToolShell from "../ToolShell.astro";
+import type { Locale } from "../../lib/i18n";
+import { UTIL_TOOLS } from "../../lib/tools";
+interface Props { locale?: Locale; }
+const { locale = "pt" } = Astro.props;
+const meta = UTIL_TOOLS.find((t) => t.id === "rdap")!;
+const T = {
+  pt: { h2: "Consultar IP ou Domínio via RDAP", ph: "Ex: 8.8.8.8 ou microsoft.com", btn: "Consultar RDAP", h2Sum: "Resumo de Registro", h2Raw: "Resposta JSON Bruta (RDAP)" },
+  de: { h2: "IP oder Domain via RDAP abfragen", ph: "z. B. 8.8.8.8 oder microsoft.com", btn: "RDAP abfragen", h2Sum: "Registrierungs-Zusammenfassung", h2Raw: "Rohe JSON-Antwort (RDAP)" },
+  zh: { h2: "通过 RDAP 查询 IP 或域名", ph: "例如：8.8.8.8 或 microsoft.com", btn: "查询 RDAP", h2Sum: "注册摘要信息", h2Raw: "原始 JSON 响应 (RDAP)" },
+  en: { h2: "Lookup IP or Domain via RDAP", ph: "e.g., 8.8.8.8 or microsoft.com", btn: "Lookup RDAP", h2Sum: "Registry Summary", h2Raw: "Raw JSON Response (RDAP)" },
+}[locale];
 ---
 
 <ToolShell
-  title="RDAP / WHOIS Aberto"
-  description="Consulte informações oficiais de titularidade, registrador, datas e contato de abuso de IPs e domínios usando o protocolo aberto IETF RDAP."
+  locale={locale}
+  title={meta.title[locale]}
+  description={meta.description[locale]}
   badge="IETF RDAP"
   icon="📋"
 >
   <div class="tool-card">
-    <h2>Consultar IP ou Domínio via RDAP</h2>
+    <h2>{T.h2}</h2>
     <div class="tool-form-row">
-      <input
-        id="rdap-input"
-        type="text"
-        class="tool-input"
-        placeholder="Ex: 8.8.8.8 ou microsoft.com"
-        aria-label="IP ou domínio para consulta RDAP"
-      />
-      <button id="btn-rdap" type="button" class="tool-btn">Consultar RDAP</button>
+      <input id="rdap-input" type="text" class="tool-input" placeholder={T.ph} aria-label={T.h2} />
+      <button id="btn-rdap" type="button" class="tool-btn">{T.btn}</button>
     </div>
     <p id="rdap-status" class="status-msg"></p>
   </div>
 
   <div id="rdap-summary-card" class="tool-card" style="display:none;">
-    <h2>Resumo de Registro</h2>
+    <h2>{T.h2Sum}</h2>
     <div id="rdap-grid" class="tool-grid"></div>
   </div>
 
   <div id="rdap-raw-card" class="tool-card" style="display:none;">
-    <h2>Resposta JSON Bruta (RDAP)</h2>
+    <h2>{T.h2Raw}</h2>
     <pre id="rdap-raw" class="code-out"></pre>
   </div>
 </ToolShell>

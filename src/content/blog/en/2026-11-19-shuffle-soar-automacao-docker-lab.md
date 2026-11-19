@@ -134,3 +134,4 @@ When operating automated SOAR playbooks in a lab or production environment:
 - **Protect Secrets:** Never hardcode API keys in plaintext inside code blocks or raw HTTP requests; always use Shuffle's native encrypted secret store.
 - **Loop & Deduplication Control:** Before creating a new TheHive case, add a conditional branch checking whether an open case already exists for the same IP or user within the last 24 hours to prevent ticket floods.
 - **Workflow Expansion:** Chain the **Cortex** app immediately after observable creation to trigger threat intelligence analyzers automatically and alert the SOC team only when high risk is confirmed.
+

@@ -1,5 +1,16 @@
 ---
-import ToolShell from "../../components/ToolShell.astro";
+import ToolShell from "../ToolShell.astro";
+import type { Locale } from "../../lib/i18n";
+import { UTIL_TOOLS } from "../../lib/tools";
+interface Props { locale?: Locale; }
+const { locale = "pt" } = Astro.props;
+const meta = UTIL_TOOLS.find((t) => t.id === "portals")!;
+const T = {
+  pt: { badge: "Diretório", h2Cve: "Consulta Rápida de CVE (Base Aberta CIRCL)", btnCve: "Buscar CVE" },
+  de: { badge: "Verzeichnis", h2Cve: "Schnelle CVE-Abfrage (Offene CIRCL-Datenbank)", btnCve: "CVE suchen" },
+  zh: { badge: "权威导航", h2Cve: "CVE 漏洞快速查询（CIRCL 开源库）", btnCve: "查询 CVE" },
+  en: { badge: "Directory", h2Cve: "Quick CVE Lookup (Open CIRCL Database)", btnCve: "Lookup CVE" },
+}[locale];
 
 const SECTIONS = [
   {
@@ -36,23 +47,24 @@ const SECTIONS = [
 ---
 
 <ToolShell
-  title="Hub de Portais Security, CVE & OSINT"
-  description="Atalhos rápidos para portais do Microsoft Security, Entra ID, plataformas abertas de CVE/OSV e inteligência de ameaças para o dia a dia do SOC."
-  badge="Diretório"
+  locale={locale}
+  title={meta.title[locale]}
+  description={meta.description[locale]}
+  badge={T.badge}
   icon="🧭"
 >
   <!-- Consulta Rápida de CVE Aberta (CIRCL / OSV) -->
   <div class="tool-card">
-    <h2>Consulta Rápida de CVE (Base Aberta CIRCL)</h2>
+    <h2>{T.h2Cve}</h2>
     <div class="tool-form-row">
       <input
         id="cve-input"
         type="text"
         class="tool-input"
-        placeholder="Ex: CVE-2024-3094 ou CVE-2021-44228"
-        aria-label="Código CVE"
+        placeholder="CVE-2024-3094"
+        aria-label="CVE"
       />
-      <button id="btn-cve" type="button" class="tool-btn">Buscar CVE</button>
+      <button id="btn-cve" type="button" class="tool-btn">{T.btnCve}</button>
     </div>
     <p id="cve-status" class="status-msg"></p>
     <pre id="cve-out" class="code-out" style="display:none;margin-top:.75rem;"></pre>

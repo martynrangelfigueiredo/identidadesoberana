@@ -1,0 +1,49 @@
+---
+import type { Locale } from "../lib/i18n";
+import Aadsts from "./tools/aadsts.astro";
+import CalcOps from "./tools/calc-ops.astro";
+import Defang from "./tools/defang.astro";
+import Distance from "./tools/distance.astro";
+import Dns from "./tools/dns.astro";
+import EmailHeaders from "./tools/email-headers.astro";
+import Epoch from "./tools/epoch.astro";
+import IpExtract from "./tools/ip-extract.astro";
+import Ipinfo from "./tools/ipinfo.astro";
+import Ipv4Ipv6 from "./tools/ipv4-ipv6.astro";
+import Jwt from "./tools/jwt.astro";
+import Mac from "./tools/mac.astro";
+import Passgen from "./tools/passgen.astro";
+import Portals from "./tools/portals.astro";
+import Rdap from "./tools/rdap.astro";
+import SeoWeb from "./tools/seo-web.astro";
+import Subnet from "./tools/subnet.astro";
+import TextDev from "./tools/text-dev.astro";
+import Ua from "./tools/ua.astro";
+
+interface Props {
+  toolId: string;
+  locale: Locale;
+}
+
+const { toolId, locale } = Astro.props;
+---
+
+{toolId === "aadsts" && <Aadsts locale={locale} />}
+{toolId === "calc-ops" && <CalcOps locale={locale} />}
+{toolId === "defang" && <Defang locale={locale} />}
+{toolId === "distance" && <Distance locale={locale} />}
+{toolId === "dns" && <Dns locale={locale} />}
+{toolId === "email-headers" && <EmailHeaders locale={locale} />}
+{toolId === "epoch" && <Epoch locale={locale} />}
+{toolId === "ip-extract" && <IpExtract locale={locale} />}
+{toolId === "ipinfo" && <Ipinfo locale={locale} />}
+{toolId === "ipv4-ipv6" && <Ipv4Ipv6 locale={locale} />}
+{toolId === "jwt" && <Jwt locale={locale} />}
+{toolId === "mac" && <Mac locale={locale} />}
+{toolId === "passgen" && <Passgen locale={locale} />}
+{toolId === "portals" && <Portals locale={locale} />}
+{toolId === "rdap" && <Rdap locale={locale} />}
+{toolId === "seo-web" && <SeoWeb locale={locale} />}
+{toolId === "subnet" && <Subnet locale={locale} />}
+{toolId === "text-dev" && <TextDev locale={locale} />}
+{toolId === "ua" && <Ua locale={locale} />}

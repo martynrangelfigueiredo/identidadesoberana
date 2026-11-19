@@ -28,10 +28,11 @@ const localePosts = allPosts
     };
   });
 
+const toolTypeLabel = locale === "de" ? "Tool" : locale === "zh" ? "工具" : locale === "en" ? "Tool" : "Ferramenta";
 const toolItems = UTIL_TOOLS.map((t) => ({
   title: `${t.icon} ${t.title[locale]}`,
-  type: "Ferramenta",
-  href: t.slug,
+  type: toolTypeLabel,
+  href: locale === "pt" ? t.slug : `/${locale}${t.slug}`,
   keywords: `${t.id} ${t.title[locale]} ${t.description[locale]}`.toLowerCase(),
 }));
 
@@ -235,3 +236,4 @@ const COPY = {
     color: var(--is-cinza);
   }
 </style>
+

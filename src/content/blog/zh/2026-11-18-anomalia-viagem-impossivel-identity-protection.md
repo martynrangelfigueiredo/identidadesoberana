@@ -112,3 +112,4 @@ AADUserRiskEvents
 | 同一台 Intune 受管 `DeviceId`，仅 IP 切换至企业授权 SASE 网关 | **虚假阳性 (FP)** | 记录合规网关 ASN，按正常办公流量关闭工单。 |
 | 新增境外 VPS/Tor IP、非受管设备（`IsManaged == false`）、异常 `UserAgent` | **真实阳性 (严重)** | 吊销会话（`Revoke-MgUserSignSession`）、重置密码、标记账号失陷并全面审计 MFA 与邮箱。 |
 | ITSM 工单已确认跨国差旅，且使用受管企业移动设备登录 | **预期合规行为** | 核验条件访问策略执行状态，关联工单号后结案。 |
+

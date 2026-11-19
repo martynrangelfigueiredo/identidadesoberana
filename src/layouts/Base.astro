@@ -26,6 +26,12 @@ const { title, description = ui.tagline } = Astro.props;
 const fullTitle = title ? `${title} · ${ui.siteName}` : `${ui.siteName} — ${ui.tagline}`;
 const htmlLang = currentLocale === "pt" ? "pt-BR" : currentLocale === "zh" ? "zh-CN" : currentLocale;
 const homeUrl = currentLocale === "pt" ? "/" : `/${currentLocale}/`;
+const madeInBrazil = {
+  pt: "🇧🇷 Feito no Brasil · 0 Trackers · Código Aberto",
+  de: "🇧🇷 Hergestellt in Brasilien · 0 Tracker · Open Source",
+  zh: "🇧🇷 巴西制造 · 零追踪 · 开源架构",
+  en: "🇧🇷 Made in Brazil · 0 Trackers · Open Source",
+}[currentLocale];
 ---
 <!doctype html>
 <html lang={htmlLang}>
@@ -39,7 +45,6 @@ const homeUrl = currentLocale === "pt" ? "/" : `/${currentLocale}/`;
         if(localStorage.getItem('is_lang_pref')||sessionStorage.getItem('is_lang_auto'))return;
         var p=location.pathname;
         if(/^\/(de|zh|en)(\/|$)/.test(p))return;
-        if(p.indexOf('/util/')===0&&p!=='/util/'&&p!=='/util')return;
         var tz=(Intl.DateTimeFormat().resolvedOptions().timeZone||'');
         var target='';
         if(/^(America\/(Sao_Paulo|Fortaleza|Recife|Bahia|Belem|Manaus|Cuiaba|Porto_Velho|Boa_Vista|Rio_Branco|Campo_Grande|Maceio|Araguaina|Noronha|Santarem|Eirunepe)|Brazil\/|Europe\/Lisbon|Atlantic\/(Madeira|Azores|Cape_Verde)|Africa\/(Luanda|Maputo|Bissau|Sao_Tome)|Asia\/Dili)/.test(tz)){target='pt';}
@@ -207,7 +212,7 @@ const homeUrl = currentLocale === "pt" ? "/" : `/${currentLocale}/`;
         </a>
         <div style="display:flex;flex-direction:column;gap:.2rem;">
           <span>{ui.footerText}</span>
-          <span style="font-size:.82rem;opacity:.92;">🇧🇷 Feito no Brasil · 0 Trackers · Código Aberto</span>
+          <span style="font-size:.82rem;opacity:.92;">{madeInBrazil}</span>
         </div>
         <div style="display:flex;gap:1rem;align-items:center;">
           <a href="/rss.xml" title="Assinar via RSS">Feed RSS</a>

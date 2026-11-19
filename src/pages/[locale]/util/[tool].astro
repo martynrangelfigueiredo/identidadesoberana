@@ -1,0 +1,21 @@
+---
+import ToolRouter from "../../../components/ToolRouter.astro";
+import { NON_DEFAULT_LOCALES, type Locale } from "../../../lib/i18n";
+import { UTIL_TOOLS } from "../../../lib/tools";
+
+export function getStaticPaths() {
+  const paths = [];
+  for (const locale of NON_DEFAULT_LOCALES) {
+    for (const t of UTIL_TOOLS) {
+      paths.push({
+        params: { locale, tool: t.id },
+      });
+    }
+  }
+  return paths;
+}
+
+const { locale, tool } = Astro.params as { locale: Locale; tool: string };
+---
+
+<ToolRouter toolId={tool} locale={locale} />

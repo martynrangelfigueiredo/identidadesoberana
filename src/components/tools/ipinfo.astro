@@ -1,48 +1,120 @@
 ---
-import ToolShell from "../../components/ToolShell.astro";
+import ToolShell from "../ToolShell.astro";
+import type { Locale } from "../../lib/i18n";
+import { UTIL_TOOLS } from "../../lib/tools";
+interface Props { locale?: Locale; }
+const { locale = "pt" } = Astro.props;
+const meta = UTIL_TOOLS.find((t) => t.id === "ipinfo")!;
+const T = {
+  pt: {
+    badge: "Rede & IP",
+    h2Search: "Consultar IP, IPv6 ou Bloco CIDR",
+    ph: "Digite um IPv4, IPv6 ou CIDR (ex: 8.8.8.8, 200.160.2.3, 2001:4860:4860::8888)",
+    btnLookup: "Consultar IP",
+    btnMyIp: "Detectar Meu IP",
+    hint: "Informe um IP acima ou clique em \"Detectar Meu IP\" para iniciar a consulta paralela.",
+    h2Local: "1. Análise Técnica Local (IPv4 / IPv6 / CIDR)",
+    h2Geo: "2. Geolocalização, Rede & ASN",
+    btnMap: "🗺️ Carregar Mapa Interativo",
+    h2Multi: "3. Comparação Multi-Provedor (Tempo Real)",
+    thSource: "Fonte", thLoc: "País / Cidade", thOrg: "ASN / ISP / Organização", thSig: "Sinais",
+    h2Rdap: "4. Registro Oficial de Rede & Abuso (RDAP / RIR)",
+    h2Pivot: "5. Queries Prontas para SOC & Fontes Externas",
+    lblPivot: "Consultar em Fontes Globais, América do Sul & Ásia (1 clique)",
+  },
+  de: {
+    badge: "Netzwerk & IP",
+    h2Search: "IP, IPv6 oder CIDR-Block abfragen",
+    ph: "IPv4, IPv6 oder CIDR eingeben (z. B. 8.8.8.8, 2001:4860:4860::8888)",
+    btnLookup: "IP abfragen",
+    btnMyIp: "Meine IP erkennen",
+    hint: "Geben Sie oben eine IP ein oder klicken Sie auf \"Meine IP erkennen\".",
+    h2Local: "1. Lokale technische Analyse (IPv4 / IPv6 / CIDR)",
+    h2Geo: "2. Geolokalisierung, Netzwerk & ASN",
+    btnMap: "🗺️ Interaktive Karte laden",
+    h2Multi: "3. Multi-Provider-Vergleich (Echtzeit)",
+    thSource: "Quelle", thLoc: "Land / Stadt", thOrg: "ASN / ISP / Organisation", thSig: "Signale",
+    h2Rdap: "4. Offizielle Netzwerk- & Abuse-Daten (RDAP / RIR)",
+    h2Pivot: "5. SOC-Abfragen (KQL/Wazuh) & OSINT-Pivots",
+    lblPivot: "In globalen, südamerikanischen & asiatischen Quellen prüfen",
+  },
+  zh: {
+    badge: "网络与 IP",
+    h2Search: "查询 IP、IPv6 或 CIDR 网段",
+    ph: "输入 IPv4、IPv6 或 CIDR（例如：8.8.8.8, 2001:4860:4860::8888）",
+    btnLookup: "查询 IP",
+    btnMyIp: "检测我的 IP",
+    hint: "在上方输入 IP 地址或点击「检测我的 IP」发起多源并发查询。",
+    h2Local: "1. 本地技术解析（IPv4 / IPv6 / CIDR）",
+    h2Geo: "2. 地理位置、网络与 ASN",
+    btnMap: "🗺️ 加载交互式地图",
+    h2Multi: "3. 多源实时对比（Multi-Provider）",
+    thSource: "数据源", thLoc: "国家 / 城市", thOrg: "ASN / ISP / 组织", thSig: "风险信号",
+    h2Rdap: "4. 官方网络注册与滥用联系（RDAP / RIR）",
+    h2Pivot: "5. SOC 查询语句（KQL/Wazuh）与外部情报关联",
+    lblPivot: "一键跳转全球、南美与亚洲威胁情报平台",
+  },
+  en: {
+    badge: "Network & IP",
+    h2Search: "Lookup IP, IPv6, or CIDR Block",
+    ph: "Enter an IPv4, IPv6, or CIDR (e.g., 8.8.8.8, 200.160.2.3, 2001:4860:4860::8888)",
+    btnLookup: "Lookup IP",
+    btnMyIp: "Detect My IP",
+    hint: "Enter an IP above or click \"Detect My IP\" to run parallel multi-source lookups.",
+    h2Local: "1. Local Technical Analysis (IPv4 / IPv6 / CIDR)",
+    h2Geo: "2. Geolocation, Network & ASN",
+    btnMap: "🗺️ Load Interactive Map",
+    h2Multi: "3. Multi-Provider Comparison (Real-Time)",
+    thSource: "Source", thLoc: "Country / City", thOrg: "ASN / ISP / Organization", thSig: "Signals",
+    h2Rdap: "4. Official Network & Abuse Registry (RDAP / RIR)",
+    h2Pivot: "5. Ready-to-Run SOC Queries & External OSINT Pivots",
+    lblPivot: "Pivot to Global, South America & Asia Sources (1 click)",
+  },
+}[locale];
 ---
 
 <ToolShell
-  title="IP, IPv6, CIDR & Multi-Source Lookup"
-  description="Consulta rápida e paralela em múltiplas fontes (ipwho.is, ipinfo.io, ipapi.co, FreeIPAPI, rDNS e RDAP), expansor IPv6, CIDR, queries KQL/Wazuh e links regionais (Ásia, América do Sul e Global)."
-  badge="Rede & IP"
+  locale={locale}
+  title={meta.title[locale]}
+  description={meta.description[locale]}
+  badge={T.badge}
   icon="🌐"
 >
   <div class="tool-card">
-    <h2>Consultar IP, IPv6 ou Bloco CIDR</h2>
+    <h2>{T.h2Search}</h2>
     <div class="tool-form-row">
       <input
         id="ip-input"
         type="text"
         class="tool-input"
-        placeholder="Digite um IPv4, IPv6 ou CIDR (ex: 8.8.8.8, 200.160.2.3, 2001:4860:4860::8888)"
-        aria-label="Endereço IP, IPv6 ou CIDR"
+        placeholder={T.ph}
+        aria-label={T.h2Search}
       />
-      <button id="btn-lookup" type="button" class="tool-btn">Consultar IP</button>
-      <button id="btn-myip" type="button" class="tool-btn secondary">Detectar Meu IP</button>
+      <button id="btn-lookup" type="button" class="tool-btn">{T.btnLookup}</button>
+      <button id="btn-myip" type="button" class="tool-btn secondary">{T.btnMyIp}</button>
     </div>
     <p id="ip-status" class="status-msg" style="color:var(--is-cinza);">
-      Informe um IP acima ou clique em "Detectar Meu IP" para iniciar a consulta paralela.
+      {T.hint}
     </p>
   </div>
 
   <!-- Bloco 1: Análise Técnica Local (Instantânea, 0ms) -->
   <div id="local-analysis-card" class="tool-card" style="display:none;">
-    <h2>1. Análise Técnica Local (IPv4 / IPv6 / CIDR)</h2>
+    <h2>{T.h2Local}</h2>
     <div id="local-grid" class="tool-grid"></div>
   </div>
 
   <!-- Bloco 2: Resumo Consolidado + Mapa Sob Demanda -->
   <div id="geo-card" class="tool-card" style="display:none;">
     <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem;margin-bottom:.85rem;">
-      <h2 style="margin:0;">2. Geolocalização, Rede & ASN</h2>
-      <button id="btn-load-map" type="button" class="tool-btn outline" style="display:none;">🗺️ Carregar Mapa Interativo</button>
+      <h2 style="margin:0;">{T.h2Geo}</h2>
+      <button id="btn-load-map" type="button" class="tool-btn outline" style="display:none;">{T.btnMap}</button>
     </div>
     <div id="geo-grid" class="tool-grid"></div>
     <div id="map-container" style="display:none;margin-top:1rem;border-radius:12px;overflow:hidden;border:1px solid var(--is-borda);">
       <iframe
         id="osm-frame"
-        title="Mapa OpenStreetMap do endereço IP"
+        title="OpenStreetMap"
         width="100%"
         height="300"
         style="border:0;display:block;"
@@ -53,14 +125,14 @@ import ToolShell from "../../components/ToolShell.astro";
 
   <!-- Bloco 3: Comparação Multi-Provedor -->
   <div id="multi-card" class="tool-card" style="display:none;overflow-x:auto;">
-    <h2>3. Comparação Multi-Provedor (Tempo Real)</h2>
+    <h2>{T.h2Multi}</h2>
     <table style="width:100%;border-collapse:collapse;font-size:.9rem;">
       <thead>
         <tr style="border-bottom:2px solid var(--is-borda);text-align:left;">
-          <th style="padding:.55rem;">Fonte</th>
-          <th style="padding:.55rem;">País / Cidade</th>
-          <th style="padding:.55rem;">ASN / ISP / Organização</th>
-          <th style="padding:.55rem;">Sinais</th>
+          <th style="padding:.55rem;">{T.thSource}</th>
+          <th style="padding:.55rem;">{T.thLoc}</th>
+          <th style="padding:.55rem;">{T.thOrg}</th>
+          <th style="padding:.55rem;">{T.thSig}</th>
         </tr>
       </thead>
       <tbody id="multi-tbody"></tbody>
@@ -69,13 +141,13 @@ import ToolShell from "../../components/ToolShell.astro";
 
   <!-- Bloco 4: Registro RDAP (RIR Regional: LACNIC, APNIC, ARIN, RIPE) -->
   <div id="rdap-card" class="tool-card" style="display:none;">
-    <h2>4. Registro Oficial de Rede & Abuso (RDAP / RIR)</h2>
+    <h2>{T.h2Rdap}</h2>
     <div id="rdap-grid" class="tool-grid"></div>
   </div>
 
   <!-- Bloco 5: Queries SOC (Empilhadas) & Pivot Regional/Global -->
   <div id="pivot-card" class="tool-card" style="display:none;">
-    <h2>5. Queries Prontas para SOC & Fontes Externas</h2>
+    <h2>{T.h2Pivot}</h2>
 
     <div style="display:flex;flex-direction:column;gap:1rem;margin-bottom:1.25rem;">
       <div>
@@ -88,7 +160,7 @@ import ToolShell from "../../components/ToolShell.astro";
       </div>
     </div>
 
-    <div class="kv-label">Consultar em Fontes Globais, América do Sul & Ásia (1 clique)</div>
+    <div class="kv-label">{T.lblPivot}</div>
     <div id="pivot-links" class="pivot-bar"></div>
   </div>
 </ToolShell>

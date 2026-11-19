@@ -12,6 +12,7 @@ Esta skill assegura a consistência e paridade das traduções entre todos os 4 
   - `src/content/blog/de/<slug>.md` (Alemão)
   - `src/content/blog/zh/<slug>.md` (Mandarim da China continental)
   - `src/content/blog/en/<slug>.md` (Inglês)
+- **Paridade 1:1 de Ferramentas (`/util/`):** Toda ferramenta em `src/components/tools/*.astro` e `src/lib/tools.ts` deve possuir metadados e interface nos 4 idiomas (`pt`, `de`, `zh`, `en`), servida pelas rotas `src/pages/util/[tool].astro` e `src/pages/[locale]/util/[tool].astro`.
 - **Integridade Absoluta da Marca:** O nome **Identidade Soberana** NUNCA deve ser traduzido (proibido "Souveräne Identität", "主权身份" ou "Sovereign Identity").
 - **Ordem Oficial do Seletor:**
   - 1º 🇩🇪 **Alemão** (`/de/...`, DE de)

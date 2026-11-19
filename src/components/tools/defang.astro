@@ -1,65 +1,101 @@
 ---
-import ToolShell from "../../components/ToolShell.astro";
+import ToolShell from "../ToolShell.astro";
+import type { Locale } from "../../lib/i18n";
+import { UTIL_TOOLS } from "../../lib/tools";
+interface Props { locale?: Locale; }
+const { locale = "pt" } = Astro.props;
+const meta = UTIL_TOOLS.find((t) => t.id === "defang")!;
+const T = {
+  pt: {
+    h2Def: "1. IoC Defang & Refang",
+    btnDef: "Defang (Sanitizar)", btnRef: "Refang (Restaurar)",
+    h2B64: "2. Base64 & PowerShell (-EncodedCommand) Decoder",
+    btnU8: "Decodificar UTF-8", btnPs: "Decodificar PowerShell (UTF-16LE)", btnEnc: "Codificar Base64",
+    h2Hash: "3. Gerador de Hash Local (Web Crypto API · Zero Upload)",
+    btnHash: "Calcular Hash do Texto",
+  },
+  de: {
+    h2Def: "1. IoC Defang & Refang",
+    btnDef: "Defang (Entschärfen)", btnRef: "Refang (Wiederherstellen)",
+    h2B64: "2. Base64 & PowerShell (-EncodedCommand) Decoder",
+    btnU8: "UTF-8 dekodieren", btnPs: "PowerShell (UTF-16LE) dekodieren", btnEnc: "Base64 kodieren",
+    h2Hash: "3. Lokaler Hash-Generator (Web Crypto API · Kein Upload)",
+    btnHash: "Text-Hash berechnen",
+  },
+  zh: {
+    h2Def: "1. IoC 安全脱敏（Defang & Refang）",
+    btnDef: "Defang（脱敏）", btnRef: "Refang（还原）",
+    h2B64: "2. Base64 与 PowerShell (-EncodedCommand) 解码",
+    btnU8: "解码 UTF-8", btnPs: "解码 PowerShell (UTF-16LE)", btnEnc: "编码为 Base64",
+    h2Hash: "3. 本地哈希计算（Web Crypto API · 零上传）",
+    btnHash: "计算文本哈希",
+  },
+  en: {
+    h2Def: "1. IoC Defang & Refang",
+    btnDef: "Defang (Sanitize)", btnRef: "Refang (Restore)",
+    h2B64: "2. Base64 & PowerShell (-EncodedCommand) Decoder",
+    btnU8: "Decode UTF-8", btnPs: "Decode PowerShell (UTF-16LE)", btnEnc: "Encode Base64",
+    h2Hash: "3. Local Hash Generator (Web Crypto API · Zero Upload)",
+    btnHash: "Compute Text Hash",
+  },
+}[locale];
 ---
 
 <ToolShell
-  title="IoC Defang, Base64/PowerShell & Hash Local"
-  description="Sanitize URLs e IPs maliciosos (defang/refang), decodifique comandos PowerShell -EncodedCommand (UTF-16LE) e calcule SHA-256 localmente."
+  locale={locale}
+  title={meta.title[locale]}
+  description={meta.description[locale]}
   badge="100% Local"
   icon="🛡️"
 >
   <!-- 1. Defang / Refang -->
   <div class="tool-card">
-    <h2>1. IoC Defang & Refang</h2>
-    <p style="font-size:.9rem;color:var(--is-cinza);margin-top:0;">
-      Torne URLs, domínios e IPs seguros para compartilhamento em chamados e relatórios sem risco de clique acidental.
-    </p>
+    <h2>{T.h2Def}</h2>
     <textarea
       id="defang-input"
       class="tool-textarea"
       rows="3"
       placeholder="Ex: https://login-malicioso.example.com/auth?ip=198.51.100.45"
-      aria-label="IoC para defang ou refang"
+      aria-label={T.h2Def}
     ></textarea>
     <div style="display:flex;gap:.5rem;margin-top:.75rem;flex-wrap:wrap;">
-      <button id="btn-defang" type="button" class="tool-btn">Defang (Sanitizar)</button>
-      <button id="btn-refang" type="button" class="tool-btn secondary">Refang (Restaurar)</button>
-      <button id="btn-copy-defang" type="button" class="tool-btn outline">Copiar Saída</button>
+      <button id="btn-defang" type="button" class="tool-btn">{T.btnDef}</button>
+      <button id="btn-refang" type="button" class="tool-btn secondary">{T.btnRef}</button>
     </div>
     <pre id="defang-out" class="code-out" style="margin-top:.85rem;display:none;"></pre>
   </div>
 
   <!-- 2. Base64 & PowerShell UTF-16LE -->
   <div class="tool-card">
-    <h2>2. Base64 & PowerShell (-EncodedCommand) Decoder</h2>
+    <h2>{T.h2B64}</h2>
     <textarea
       id="b64-input"
       class="tool-textarea"
       rows="3"
-      placeholder="Cole a string Base64 (UTF-8 ou UTF-16LE do PowerShell)..."
-      aria-label="Entrada Base64"
+      placeholder="Base64 (UTF-8 / PowerShell UTF-16LE)..."
+      aria-label={T.h2B64}
     ></textarea>
     <div style="display:flex;gap:.5rem;margin-top:.75rem;flex-wrap:wrap;">
-      <button id="btn-b64-utf8" type="button" class="tool-btn">Decodificar UTF-8</button>
-      <button id="btn-b64-ps" type="button" class="tool-btn secondary">Decodificar PowerShell (UTF-16LE)</button>
-      <button id="btn-b64-enc" type="button" class="tool-btn outline">Codificar para Base64</button>
+      <button id="btn-b64-utf8" type="button" class="tool-btn">{T.btnU8}</button>
+      <button id="btn-b64-ps" type="button" class="tool-btn secondary">{T.btnPs}</button>
+      <button id="btn-b64-enc" type="button" class="tool-btn outline">{T.btnEnc}</button>
     </div>
     <pre id="b64-out" class="code-out" style="margin-top:.85rem;display:none;"></pre>
   </div>
 
   <!-- 3. Hash Local (SHA-256 / SHA-512) -->
   <div class="tool-card">
-    <h2>3. Gerador de Hash Local (Web Crypto API · Zero Upload)</h2>
+    <h2>{T.h2Hash}</h2>
     <textarea
       id="hash-input"
       class="tool-textarea"
       rows="2"
-      placeholder="Digite um texto ou selecione um arquivo abaixo..."
-      aria-label="Texto para cálculo de hash"
+      placeholder="..."
+      aria-label={T.h2Hash}
     ></textarea>
     <div style="display:flex;gap:.75rem;align-items:center;flex-wrap:wrap;margin-top:.75rem;">
-      <input id="hash-file" type="file" aria-label="Selecionar arquivo para hash local" />
-      <button id="btn-hash-text" type="button" class="tool-btn">Calcular Hash do Texto</button>
+      <input id="hash-file" type="file" aria-label="File" />
+      <button id="btn-hash-text" type="button" class="tool-btn">{T.btnHash}</button>
     </div>
     <div id="hash-grid" class="tool-grid" style="margin-top:.85rem;"></div>
   </div>

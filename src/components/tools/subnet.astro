@@ -1,25 +1,37 @@
 ---
-import ToolShell from "../../components/ToolShell.astro";
+import ToolShell from "../ToolShell.astro";
+import type { Locale } from "../../lib/i18n";
+import { UTIL_TOOLS } from "../../lib/tools";
+interface Props { locale?: Locale; }
+const { locale = "pt" } = Astro.props;
+const meta = UTIL_TOOLS.find((t) => t.id === "subnet")!;
+const T = {
+  pt: { h2: "Calcular Bloco IPv4 / CIDR", btn: "Calcular", h2Det: "Detalhes da Sub-rede" },
+  de: { h2: "IPv4- / CIDR-Block berechnen", btn: "Berechnen", h2Det: "Subnetz-Details" },
+  zh: { h2: "计算 IPv4 / CIDR 网段", btn: "计算", h2Det: "子网详细信息" },
+  en: { h2: "Calculate IPv4 / CIDR Block", btn: "Calculate", h2Det: "Subnet Details" },
+}[locale];
 ---
 
 <ToolShell
-  title="Calculadora de Sub-rede & CIDR"
-  description="Calcule máscara de sub-rede, wildcard, endereço de rede, broadcast, primeiro/último host utilizável e representação binária a partir de um bloco CIDR."
-  badge="Rede & IP"
+  locale={locale}
+  title={meta.title[locale]}
+  description={meta.description[locale]}
+  badge="CIDR"
   icon="🧮"
 >
   <div class="tool-card">
-    <h2>Calcular Bloco IPv4 / CIDR</h2>
+    <h2>{T.h2}</h2>
     <div class="tool-form-row">
-      <input id="sub-ip" type="text" class="tool-input" value="10.20.30.45" placeholder="Endereço IP (ex: 10.20.30.45)" aria-label="Endereço IPv4" />
-      <select id="sub-cidr" class="tool-select" style="max-width:190px;" aria-label="Prefixo CIDR"></select>
-      <button id="btn-subnet" type="button" class="tool-btn">Calcular</button>
+      <input id="sub-ip" type="text" class="tool-input" value="10.20.30.45" placeholder="10.20.30.45" aria-label="IPv4" />
+      <select id="sub-cidr" class="tool-select" style="max-width:190px;" aria-label="CIDR"></select>
+      <button id="btn-subnet" type="button" class="tool-btn">{T.btn}</button>
     </div>
     <p id="sub-status" class="status-msg"></p>
   </div>
 
   <div class="tool-card">
-    <h2>Detalhes da Sub-rede</h2>
+    <h2>{T.h2Det}</h2>
     <div id="sub-grid" class="tool-grid"></div>
   </div>
 </ToolShell>
@@ -99,3 +111,4 @@ import ToolShell from "../../components/ToolShell.astro";
     calc();
   })();
 </script>
+

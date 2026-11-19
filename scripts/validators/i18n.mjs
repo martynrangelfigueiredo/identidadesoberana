@@ -7,7 +7,7 @@
  * - Valida a ordem obrigatória do seletor de idiomas: 1º Alemão, 2º Mandarim, 3º Inglês, 4º Português.
  * - Valida que os títulos da seção KQL sigam o padrão localizado de cada idioma.
  */
-import { readdir, readFile } from "node:fs/promises";
+import { access, readdir, readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -88,12 +88,38 @@ async function validateI18n() {
     errors++;
   }
 
+  // 4. Valida paridade multilíngue de todas as ferramentas (/util/ e /[locale]/util/)
+  const ptToolRoute = path.join(ROOT, "src", "pages", "util", "[tool].astro");
+  const locToolRoute = path.join(ROOT, "src", "pages", "[locale]", "util", "[tool].astro");
+  try {
+    await access(ptToolRoute);
+    await access(locToolRoute);
+  } catch {
+    console.error("❌ [i18n] Rotas dinâmicas multilíngues das ferramentas ([tool].astro em pt e [locale]) ausentes.");
+    errors++;
+  }
+
+  const toolsDir = path.join(ROOT, "src", "components", "tools");
+  try {
+    const toolFiles = (await readdir(toolsDir)).filter((f) => f.endsWith(".astro"));
+    for (const tf of toolFiles) {
+      const content = await readFile(path.join(toolsDir, tf), "utf-8");
+      if (!content.includes("locale={locale}") || !content.includes("meta.title[locale]")) {
+        console.error(`❌ [i18n] Ferramenta ${tf} não está usando metadados/locale multilíngue (locale={locale} / meta.title[locale]).`);
+        errors++;
+      }
+    }
+  } catch {
+    console.error("❌ [i18n] Diretório src/components/tools não encontrado.");
+    errors++;
+  }
+
   if (errors > 0) {
     console.error(`\n❌ Falha na validação de i18n: ${errors} erro(s) encontrado(s).\n`);
     process.exit(1);
   }
 
-  console.log("✔ [i18n] Paridade total de 4 idiomas, preservação da marca e seletor 100% validados.");
+  console.log("✔ [i18n] Paridade total de 4 idiomas (artigos + 19 ferramentas), marca e seletor 100% validados.");
 }
 
 validateI18n().catch((err) => {

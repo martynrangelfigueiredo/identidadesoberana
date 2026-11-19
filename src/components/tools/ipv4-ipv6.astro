@@ -1,29 +1,41 @@
 ---
-import ToolShell from "../../components/ToolShell.astro";
+import ToolShell from "../ToolShell.astro";
+import type { Locale } from "../../lib/i18n";
+import { UTIL_TOOLS } from "../../lib/tools";
+interface Props { locale?: Locale; }
+const { locale = "pt" } = Astro.props;
+const meta = UTIL_TOOLS.find((t) => t.id === "ipv4-ipv6")!;
+const T = {
+  pt: { h2v4: "1. Conversor IPv4 ↔ Decimal / Binário / IPv6", btnV4: "Converter", h2v6: "2. Expansor, Compressor & Gerador Local IPv6 (ULA)", btnV6: "Analisar IPv6", btnGen: "Gerar IPv6 Local (ULA fd00::/8)" },
+  de: { h2v4: "1. IPv4 ↔ Dezimal / Binär / IPv6 Konverter", btnV4: "Konvertieren", h2v6: "2. IPv6 Expander, Kompressor & ULA-Generator", btnV6: "IPv6 analysieren", btnGen: "Lokale IPv6 (ULA fd00::/8) generieren" },
+  zh: { h2v4: "1. IPv4 ↔ 十进制 / 二进制 / IPv6 转换器", btnV4: "转换", h2v6: "2. IPv6 展开、压缩与本地 ULA 生成器", btnV6: "解析 IPv6", btnGen: "生成本地 IPv6 (ULA fd00::/8)" },
+  en: { h2v4: "1. IPv4 ↔ Decimal / Binary / IPv6 Converter", btnV4: "Convert", h2v6: "2. IPv6 Expander, Compressor & ULA Generator", btnV6: "Analyze IPv6", btnGen: "Generate Local IPv6 (ULA fd00::/8)" },
+}[locale];
 ---
 
 <ToolShell
-  title="Conversor IPv4 ↔ IPv6, Decimal & Gerador ULA"
-  description="Converta IPv4 para IPv6 (IPv4-mapped e 6to4), expanda e comprima endereços IPv6, converta IPs para Decimal/Hex/Binário e gere endereços IPv6 locais (ULA)."
-  badge="Rede & IP"
+  locale={locale}
+  title={meta.title[locale]}
+  description={meta.description[locale]}
+  badge="IPv4 / IPv6"
   icon="🔄"
 >
   <div class="tool-card">
-    <h2>1. Conversor IPv4 ↔ Decimal / Binário / IPv6</h2>
+    <h2>{T.h2v4}</h2>
     <div class="tool-form-row">
-      <input id="v4-in" type="text" class="tool-input" value="192.0.2.10" placeholder="Ex: 192.0.2.10 ou 3221225994" aria-label="IPv4 ou Decimal" />
-      <button id="btn-v4" type="button" class="tool-btn">Converter</button>
+      <input id="v4-in" type="text" class="tool-input" value="192.0.2.10" placeholder="192.0.2.10" aria-label="IPv4" />
+      <button id="btn-v4" type="button" class="tool-btn">{T.btnV4}</button>
     </div>
     <p id="v4-status" class="status-msg"></p>
     <div id="v4-grid" class="tool-grid" style="margin-top:.85rem;"></div>
   </div>
 
   <div class="tool-card">
-    <h2>2. Expansor, Compressor & Gerador Local IPv6 (ULA)</h2>
+    <h2>{T.h2v6}</h2>
     <div class="tool-form-row">
-      <input id="v6-in" type="text" class="tool-input" value="2001:db8::1" placeholder="Ex: 2001:db8::1" aria-label="Endereço IPv6" />
-      <button id="btn-v6" type="button" class="tool-btn">Analisar IPv6</button>
-      <button id="btn-v6-gen" type="button" class="tool-btn secondary">Gerar IPv6 Local (ULA fd00::/8)</button>
+      <input id="v6-in" type="text" class="tool-input" value="2001:db8::1" placeholder="2001:db8::1" aria-label="IPv6" />
+      <button id="btn-v6" type="button" class="tool-btn">{T.btnV6}</button>
+      <button id="btn-v6-gen" type="button" class="tool-btn secondary">{T.btnGen}</button>
     </div>
     <p id="v6-status" class="status-msg"></p>
     <div id="v6-grid" class="tool-grid" style="margin-top:.85rem;"></div>
@@ -153,3 +165,4 @@ import ToolShell from "../../components/ToolShell.astro";
     analyzeV6();
   })();
 </script>
+

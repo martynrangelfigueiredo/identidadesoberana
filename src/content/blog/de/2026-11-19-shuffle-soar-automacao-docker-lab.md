@@ -134,3 +134,4 @@ Beim Betrieb automatisierter SOAR-Playbooks im Labor oder Produktivbetrieb:
 - **Schutz von Secrets:** Speichern Sie API-Keys niemals im Klartext in Code-Blöcken oder manuellen HTTP-Requests; nutzen Sie stets den integrierten Secret-Speicher von Shuffle.
 - **Deduplizierung (Loop-Kontrolle):** Prüfen Sie vor dem Anlegen eines neuen TheHive-Falls per Bedingung (`Branch / Condition`), ob innerhalb der letzten 24 Stunden bereits ein offener Fall für dieselbe IP existiert.
 - **Erweiterung:** Verknüpfen Sie direkt nach der Observable-Erstellung die **Cortex**-App, um automatisch Threat-Intel-Analyzer auszuführen und das SOC-Team erst bei bestätigtem Risiko zu benachrichtigen.
+

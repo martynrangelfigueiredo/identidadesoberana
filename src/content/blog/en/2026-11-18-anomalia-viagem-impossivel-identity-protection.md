@@ -112,3 +112,4 @@ If triage confirms an actual compromise (True Positive):
 | Identical managed `DeviceId` (Intune), IP change solely to approved corporate SASE gateway | **False Positive (FP)** | Document approved gateway ASN and close incident as benign. |
 | New VPS/Tor IP, unmanaged device (`IsManaged == false`), anomalous `UserAgent` | **True Positive (Critical)** | Revoke sessions (`Revoke-MgUserSignSession`), reset password, confirm user compromised, and audit MFA/mailbox rules. |
 | Confirmed international travel in ITSM ticket using managed corporate mobile device | **Expected Benign** | Confirm Conditional Access compliance and close with ticket reference. |
+

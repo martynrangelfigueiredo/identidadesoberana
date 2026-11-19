@@ -134,3 +134,4 @@ Ao operar playbooks automatizados de SOAR em laboratório ou produção:
 - **Proteção de Secrets:** Nunca deixe chaves de API em texto puro dentro de blocos de código ou requisições HTTP manuais no workflow; utilize sempre o cofre de autenticação nativo do Shuffle.
 - **Controle de Loop (Deduplicação):** Antes de criar um novo caso no TheHive, adicione uma condição (`Branch / Condition`) verificando se já existe um caso aberto nas últimas 24 horas para o mesmo IP ou usuário, evitando enxurradas de tickets duplicados.
 - **Evolução do Fluxo:** Conecte o nó do **Cortex** logo após a criação do observável para disparar analisadores de reputação automaticamente e notificar o time de SOC via webhook interno (Mattermost, Teams ou Slack) apenas quando o risco for confirmado.
+

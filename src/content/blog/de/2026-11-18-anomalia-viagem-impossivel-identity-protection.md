@@ -112,3 +112,4 @@ Bestätigt sich eine Kompromittierung (True Positive):
 | Identische verwaltete `DeviceId` (Intune), IP-Wechsel nur auf Unternehmens-SASE-Gateway | **False Positive (FP)** | Zugelassenes Gateway-ASN dokumentieren und Vorfall als harmlos schließen. |
 | Neue IP in VPS/Tor, nicht verwaltetes Gerät (`IsManaged == false`), anomaler `UserAgent` | **True Positive (Kritisch)** | Sitzungen widerrufen (`Revoke-MgUserSignSession`), Passwort zurücksetzen, Benutzer als kompromittiert markieren und MFA/Postfach auditieren. |
 | Bestätigte Auslandsreise im ITSM-Ticket mit verwaltetem Firmengerät | **Erwartetes Verhalten** | Conditional-Access-Compliance prüfen und mit Ticket-Referenz abschließen. |
+

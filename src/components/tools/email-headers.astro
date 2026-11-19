@@ -1,34 +1,46 @@
 ---
-import ToolShell from "../../components/ToolShell.astro";
+import ToolShell from "../ToolShell.astro";
+import type { Locale } from "../../lib/i18n";
+import { UTIL_TOOLS } from "../../lib/tools";
+interface Props { locale?: Locale; }
+const { locale = "pt" } = Astro.props;
+const meta = UTIL_TOOLS.find((t) => t.id === "email-headers")!;
+const T = {
+  pt: { h2: "Cole os Cabeçalhos Brutos do E-mail", btn: "Analisar Cabeçalhos", h2Sum: "Resumo de Autenticação & Spoofing", h2Hops: "Rota de Entrega (Saltos Received) & IPs Encontrados" },
+  de: { h2: "Rohe E-Mail-Header einfügen", btn: "Header analysieren", h2Sum: "Authentifizierungs- & Spoofing-Zusammenfassung", h2Hops: "Zustellroute (Received-Hops) & gefundene IPs" },
+  zh: { h2: "粘贴原始邮件头信息", btn: "解析邮件头", h2Sum: "认证状态与伪造检测摘要", h2Hops: "传输路径（Received 跳数）与提取 IP" },
+  en: { h2: "Paste Raw Email Headers", btn: "Analyze Headers", h2Sum: "Authentication & Spoofing Summary", h2Hops: "Delivery Route (Received Hops) & Extracted IPs" },
+}[locale];
 ---
 
 <ToolShell
-  title="Analisador de Cabeçalhos de E-mail (Phishing Triage)"
-  description="Cole cabeçalhos brutos de e-mail para extrair saltos (Received), validar SPF/DKIM/DMARC, detectar discrepâncias entre From e Return-Path e listar IPs de origem."
-  badge="E-mail & SOC"
+  locale={locale}
+  title={meta.title[locale]}
+  description={meta.description[locale]}
+  badge="Email & SOC"
   icon="✉️"
 >
   <div class="tool-card">
-    <h2>Cole os Cabeçalhos Brutos do E-mail</h2>
+    <h2>{T.h2}</h2>
     <textarea
       id="hdr-input"
       class="tool-textarea"
       rows="6"
-      placeholder="Cole aqui o cabeçalho completo (From:, Return-Path:, Authentication-Results:, Received:, Message-ID:)..."
-      aria-label="Cabeçalhos brutos de e-mail"
+      placeholder="From:, Return-Path:, Authentication-Results:, Received:, Message-ID:..."
+      aria-label={T.h2}
     ></textarea>
     <div style="margin-top:.75rem;">
-      <button id="btn-hdr" type="button" class="tool-btn">Analisar Cabeçalhos</button>
+      <button id="btn-hdr" type="button" class="tool-btn">{T.btn}</button>
     </div>
   </div>
 
   <div id="hdr-summary-card" class="tool-card" style="display:none;">
-    <h2>Resumo de Autenticação & Spoofing</h2>
+    <h2>{T.h2Sum}</h2>
     <div id="hdr-grid" class="tool-grid"></div>
   </div>
 
   <div id="hdr-hops-card" class="tool-card" style="display:none;">
-    <h2>Rota de Entrega (Saltos Received) & IPs Encontrados</h2>
+    <h2>{T.h2Hops}</h2>
     <pre id="hdr-hops" class="code-out"></pre>
   </div>
 </ToolShell>
@@ -102,3 +114,4 @@ import ToolShell from "../../components/ToolShell.astro";
     document.getElementById('btn-hdr')?.addEventListener('click', analyze);
   })();
 </script>
+

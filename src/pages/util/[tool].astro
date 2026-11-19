@@ -1,0 +1,14 @@
+---
+import ToolRouter from "../../components/ToolRouter.astro";
+import { UTIL_TOOLS } from "../../lib/tools";
+
+export function getStaticPaths() {
+  return UTIL_TOOLS.map((t) => ({
+    params: { tool: t.id },
+  }));
+}
+
+const { tool } = Astro.params;
+---
+
+<ToolRouter toolId={tool!} locale="pt" />

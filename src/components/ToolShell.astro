@@ -1,20 +1,65 @@
 ---
 import Base from "../layouts/Base.astro";
+import { getLocaleFromPath, type Locale } from "../lib/i18n";
 
 interface Props {
   title: string;
   description: string;
   badge: string;
   icon: string;
+  locale?: Locale;
 }
 
 const { title, description, badge, icon } = Astro.props;
+const currentLocale = Astro.props.locale || getLocaleFromPath(Astro.url.pathname);
+const utilHome = currentLocale === "pt" ? "/util/" : `/${currentLocale}/util/`;
+
+const SHELL_COPY: Record<Locale, { suffix: string; back: string; privacy: string; copy: string; copied: string; dark: string; light: string }> = {
+  pt: {
+    suffix: "Ferramentas",
+    back: "← Voltar para todas as Ferramentas",
+    privacy: "Arquitetura privativa · Zero cookies · Sem rastreamento",
+    copy: "Copiar",
+    copied: "Copiado!",
+    dark: "🌙 Terminal",
+    light: "☀️ Claro",
+  },
+  de: {
+    suffix: "Tools",
+    back: "← Zurück zu allen Tools",
+    privacy: "Datenschutzfreundliche Architektur · Keine Cookies · Kein Tracking",
+    copy: "Kopieren",
+    copied: "Kopiert!",
+    dark: "🌙 Terminal",
+    light: "☀️ Hell",
+  },
+  zh: {
+    suffix: "实用工具",
+    back: "← 返回全部工具",
+    privacy: "隐私优先架构 · 零 Cookie · 无追踪",
+    copy: "复制",
+    copied: "已复制!",
+    dark: "🌙 终端暗色",
+    light: "☀️ 浅色",
+  },
+  en: {
+    suffix: "Tools",
+    back: "← Back to all tools",
+    privacy: "Privacy-first architecture · Zero cookies · No tracking",
+    copy: "Copy",
+    copied: "Copied!",
+    dark: "🌙 Terminal",
+    light: "☀️ Light",
+  },
+};
+
+const t = SHELL_COPY[currentLocale];
 ---
 
-<Base title={`${title} — Utilidades`} description={description}>
+<Base title={`${title} — ${t.suffix}`} description={description} locale={currentLocale}>
   <section class="tool-page container">
     <div class="tool-breadcrumb">
-      <a href="/util/" class="back-link">← Voltar para todas as Ferramentas</a>
+      <a href={utilHome} class="back-link">{t.back}</a>
       <span class="tool-badge">{badge}</span>
     </div>
 
@@ -25,11 +70,11 @@ const { title, description, badge, icon } = Astro.props;
       <p class="tool-desc">{description}</p>
       <div class="privacy-pill">
         <span class="dot" aria-hidden="true"></span>
-        <span>Arquitetura privativa · Zero cookies · Sem rastreamento</span>
+        <span>{t.privacy}</span>
       </div>
     </header>
 
-    <div class="tool-workspace">
+    <div class="tool-workspace" data-copy={t.copy} data-copied={t.copied} data-dark={t.dark} data-light={t.light}>
       <slot />
     </div>
   </section>
@@ -39,6 +84,11 @@ const { title, description, badge, icon } = Astro.props;
   (() => {
     const workspace = document.querySelector('.tool-workspace');
     if (!workspace) return;
+
+    const lblCopy = workspace.getAttribute('data-copy') || 'Copiar';
+    const lblCopied = workspace.getAttribute('data-copied') || 'Copiado!';
+    const lblDark = workspace.getAttribute('data-dark') || '🌙 Terminal';
+    const lblLight = workspace.getAttribute('data-light') || '☀️ Claro';
 
     const copySvg = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>`;
 
@@ -85,22 +135,22 @@ const { title, description, badge, icon } = Astro.props;
         themeBtn.type = 'button';
         themeBtn.className = 'code-theme-btn';
         themeBtn.setAttribute('aria-label', 'Alternar tema do bloco');
-        themeBtn.textContent = document.documentElement.dataset.codeTheme === 'dark' ? '☀️ Claro' : '🌙 Terminal';
+        themeBtn.textContent = document.documentElement.dataset.codeTheme === 'dark' ? lblLight : lblDark;
         themeBtn.addEventListener('click', () => {
           const next = document.documentElement.dataset.codeTheme === 'dark' ? '' : 'dark';
           if (next) document.documentElement.dataset.codeTheme = 'dark';
           else delete document.documentElement.dataset.codeTheme;
           try { localStorage.setItem('is_code_theme', next || 'light'); } catch {}
           document.querySelectorAll('.code-theme-btn').forEach((b) => {
-            b.textContent = next ? '☀️ Claro' : '🌙 Terminal';
+            b.textContent = next ? lblLight : lblDark;
           });
         });
 
         const btn = document.createElement('button');
         btn.type = 'button';
         btn.className = 'out-copy-btn';
-        btn.setAttribute('aria-label', 'Copiar saída');
-        btn.innerHTML = `${copySvg} Copiar`;
+        btn.setAttribute('aria-label', lblCopy);
+        btn.innerHTML = `${copySvg} ${lblCopy}`;
 
         btn.addEventListener('click', async () => {
           const text = Array.from(pre.childNodes)
@@ -111,10 +161,10 @@ const { title, description, badge, icon } = Astro.props;
           if (!text) return;
           try {
             await navigator.clipboard.writeText(text);
-            btn.innerHTML = '✔ Copiado!';
+            btn.innerHTML = `✔ ${lblCopied}`;
             btn.classList.add('copied');
             setTimeout(() => {
-              btn.innerHTML = `${copySvg} Copiar`;
+              btn.innerHTML = `${copySvg} ${lblCopy}`;
               btn.classList.remove('copied');
             }, 1800);
           } catch (err) {

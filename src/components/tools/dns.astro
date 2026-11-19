@@ -1,40 +1,52 @@
 ---
-import ToolShell from "../../components/ToolShell.astro";
+import ToolShell from "../ToolShell.astro";
+import type { Locale } from "../../lib/i18n";
+import { UTIL_TOOLS } from "../../lib/tools";
+interface Props { locale?: Locale; }
+const { locale = "pt" } = Astro.props;
+const meta = UTIL_TOOLS.find((t) => t.id === "dns")!;
+const T = {
+  pt: { badge: "DoH Aberto", h2Search: "Consultar Domínio", ph: "Ex: microsoft.com ou contoso.com", btn: "Inspecionar DNS", h2Auth: "Auditoria de E-mail (SPF & DMARC)", h2Rec: "Registros DNS Retornados (Cloudflare DoH)", h2Piv: "Pivot OSINT para o Domínio" },
+  de: { badge: "Offenes DoH", h2Search: "Domain abfragen", ph: "z. B. microsoft.com oder contoso.com", btn: "DNS prüfen", h2Auth: "E-Mail-Audit (SPF & DMARC)", h2Rec: "DNS-Einträge (Cloudflare DoH)", h2Piv: "OSINT-Pivot für Domain" },
+  zh: { badge: "开放 DoH", h2Search: "查询域名", ph: "例如：microsoft.com 或 contoso.com", btn: "检测 DNS", h2Auth: "邮件安全审计（SPF 与 DMARC）", h2Rec: "DNS 解析记录（Cloudflare DoH）", h2Piv: "域名 OSINT 关联分析" },
+  en: { badge: "Open DoH", h2Search: "Lookup Domain", ph: "e.g., microsoft.com or contoso.com", btn: "Inspect DNS", h2Auth: "Email Security Audit (SPF & DMARC)", h2Rec: "DNS Records Returned (Cloudflare DoH)", h2Piv: "Domain OSINT Pivots" },
+}[locale];
 ---
 
 <ToolShell
-  title="DNS, MX, SPF & DMARC Inspector"
-  description="Consulte registros DNS (A, AAAA, MX, NS, TXT) via DNS-over-HTTPS (DoH) aberto e audite políticas SPF e DMARC contra phishing e spoofing."
-  badge="DoH Aberto"
+  locale={locale}
+  title={meta.title[locale]}
+  description={meta.description[locale]}
+  badge={T.badge}
   icon="📡"
 >
   <div class="tool-card">
-    <h2>Consultar Domínio</h2>
+    <h2>{T.h2Search}</h2>
     <div class="tool-form-row">
       <input
         id="dns-input"
         type="text"
         class="tool-input"
-        placeholder="Ex: microsoft.com ou contoso.com"
-        aria-label="Domínio para consulta DNS"
+        placeholder={T.ph}
+        aria-label={T.h2Search}
       />
-      <button id="btn-dns" type="button" class="tool-btn">Inspecionar DNS</button>
+      <button id="btn-dns" type="button" class="tool-btn">{T.btn}</button>
     </div>
     <p id="dns-status" class="status-msg"></p>
   </div>
 
   <div id="auth-audit-card" class="tool-card" style="display:none;">
-    <h2>Auditoria de E-mail (SPF & DMARC)</h2>
+    <h2>{T.h2Auth}</h2>
     <div id="auth-audit-grid" class="tool-grid"></div>
   </div>
 
   <div id="dns-records-card" class="tool-card" style="display:none;">
-    <h2>Registros DNS Retornados (Cloudflare DoH)</h2>
+    <h2>{T.h2Rec}</h2>
     <div id="dns-records-list"></div>
   </div>
 
   <div id="dns-pivot-card" class="tool-card" style="display:none;">
-    <h2>Pivot OSINT para o Domínio</h2>
+    <h2>{T.h2Piv}</h2>
     <div id="dns-pivots" class="pivot-bar"></div>
   </div>
 </ToolShell>

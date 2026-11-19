@@ -1,21 +1,33 @@
 ---
-import ToolShell from "../../components/ToolShell.astro";
+import ToolShell from "../ToolShell.astro";
+import type { Locale } from "../../lib/i18n";
+import { UTIL_TOOLS } from "../../lib/tools";
+interface Props { locale?: Locale; }
+const { locale = "pt" } = Astro.props;
+const meta = UTIL_TOOLS.find((t) => t.id === "aadsts")!;
+const T = {
+  pt: { h2: "Pesquisar Código AADSTS ou Descrição", ph: "Digite o código (ex: 50076, 50126, 53003) ou palavra-chave (MFA, bloqueada, consent)...", thCode: "Código", thMean: "Significado", thAct: "Ação / Triagem no SOC" },
+  de: { h2: "AADSTS-Code oder Beschreibung suchen", ph: "Code (z. B. 50076, 50126, 53003) oder Stichwort eingeben...", thCode: "Code", thMean: "Bedeutung", thAct: "SOC-Maßnahme / Triage" },
+  zh: { h2: "搜索 AADSTS 错误代码或描述", ph: "输入代码（如 50076、50126、53003）或关键词（MFA、锁定、同意）...", thCode: "代码", thMean: "含义", thAct: "SOC 排查建议" },
+  en: { h2: "Search AADSTS Error Code or Description", ph: "Enter code (e.g., 50076, 50126, 53003) or keyword (MFA, locked, consent)...", thCode: "Code", thMean: "Meaning", thAct: "SOC Triage Action" },
+}[locale];
 ---
 
 <ToolShell
-  title="Consulta Rápida de Erros AADSTS (Microsoft Entra ID)"
-  description="Pesquise códigos de erro AADSTS / ResultType encontrados nos logs do Microsoft Entra ID (SigninLogs) com causa provável e ação recomendada para o SOC."
+  locale={locale}
+  title={meta.title[locale]}
+  description={meta.description[locale]}
   badge="Entra ID"
   icon="📘"
 >
   <div class="tool-card">
-    <h2>Pesquisar Código AADSTS ou Descrição</h2>
+    <h2>{T.h2}</h2>
     <input
       id="aadsts-search"
       type="search"
       class="tool-input"
-      placeholder="Digite o código (ex: 50076, 50126, 53003) ou palavra-chave (MFA, bloqueada, consent)..."
-      aria-label="Pesquisar código AADSTS"
+      placeholder={T.ph}
+      aria-label={T.h2}
     />
   </div>
 
@@ -23,9 +35,9 @@ import ToolShell from "../../components/ToolShell.astro";
     <table style="width:100%;border-collapse:collapse;font-size:.92rem;">
       <thead>
         <tr style="border-bottom:2px solid var(--is-borda);text-align:left;">
-          <th style="padding:.65rem;">Código</th>
-          <th style="padding:.65rem;">Significado</th>
-          <th style="padding:.65rem;">Ação / Triagem no SOC</th>
+          <th style="padding:.65rem;">{T.thCode}</th>
+          <th style="padding:.65rem;">{T.thMean}</th>
+          <th style="padding:.65rem;">{T.thAct}</th>
         </tr>
       </thead>
       <tbody id="aadsts-tbody"></tbody>

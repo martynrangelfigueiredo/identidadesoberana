@@ -112,3 +112,4 @@ Se a triagem confirmar comprometimento real (Verdadeiro Positivo):
 | Mesmo `DeviceId` gerenciado (Intune), mudança apenas de IP para gateway corporativo/SASE | **Falso Positivo (FP)** | Documentar ASN do gateway homologado e encerrar incidente como benigno. |
 | Novo IP em VPS/Tor, dispositivo não gerenciado (`IsManaged == false`), `UserAgent` anômalo | **Verdadeiro Positivo (Crítico)** | Revogar sessões (`Revoke-MgUserSignSession`), redefinir senha, marcar usuário comprometido e auditar MFA/e-mails. |
 | Usuário em viagem internacional confirmada em ticket de ITSM utilizando celular corporativo | **Benigno Esperado** | Validar conformidade da política de Acesso Condicional e encerrar com registro do ticket. |
+

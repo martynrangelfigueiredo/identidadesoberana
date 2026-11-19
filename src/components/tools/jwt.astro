@@ -1,19 +1,31 @@
 ---
-import ToolShell from "../../components/ToolShell.astro";
+import ToolShell from "../ToolShell.astro";
+import type { Locale } from "../../lib/i18n";
+import { UTIL_TOOLS } from "../../lib/tools";
+interface Props { locale?: Locale; }
+const { locale = "pt" } = Astro.props;
+const meta = UTIL_TOOLS.find((t) => t.id === "jwt")!;
+const T = {
+  pt: { badge: "100% Local", h2In: "Cole o Token JWT", btnEx: "Carregar Exemplo", btnClr: "Limpar", h2Hi: "Destaques de Segurança & IAM", h3Hdr: "Header (Cabeçalho)", h3Pay: "Payload (Claims)" },
+  de: { badge: "100% Lokal", h2In: "JWT-Token einfügen", btnEx: "Beispiel laden", btnClr: "Leeren", h2Hi: "Sicherheits- & IAM-Highlights", h3Hdr: "Header", h3Pay: "Payload (Claims)" },
+  zh: { badge: "100% 本地", h2In: "粘贴 JWT 令牌", btnEx: "加载示例", btnClr: "清空", h2Hi: "安全与 IAM 关键声明", h3Hdr: "Header（头部）", h3Pay: "Payload（载荷）" },
+  en: { badge: "100% Local", h2In: "Paste JWT Token", btnEx: "Load Sample", btnClr: "Clear", h2Hi: "Security & IAM Highlights", h3Hdr: "Header", h3Pay: "Payload (Claims)" },
+}[locale];
 ---
 
 <ToolShell
-  title="Inspetor de JWT & Tokens OAuth"
-  description="Decodifique tokens JWT e OIDC 100% no navegador sem enviar dados pela rede. Ideal para auditar claims do Microsoft Entra ID e Keycloak."
-  badge="100% Local"
+  locale={locale}
+  title={meta.title[locale]}
+  description={meta.description[locale]}
+  badge={T.badge}
   icon="🔑"
 >
   <div class="tool-card">
     <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem;margin-bottom:.75rem;">
-      <h2 style="margin:0;">Cole o Token JWT</h2>
+      <h2 style="margin:0;">{T.h2In}</h2>
       <div style="display:flex;gap:.5rem;">
-        <button id="btn-sample" type="button" class="tool-btn secondary">Carregar Exemplo</button>
-        <button id="btn-clear" type="button" class="tool-btn outline">Limpar</button>
+        <button id="btn-sample" type="button" class="tool-btn secondary">{T.btnEx}</button>
+        <button id="btn-clear" type="button" class="tool-btn outline">{T.btnClr}</button>
       </div>
     </div>
     <textarea
@@ -27,17 +39,17 @@ import ToolShell from "../../components/ToolShell.astro";
   </div>
 
   <div id="jwt-highlights-card" class="tool-card" style="display:none;">
-    <h2>Destaques de Segurança & IAM</h2>
+    <h2>{T.h2Hi}</h2>
     <div id="jwt-highlights" class="tool-grid"></div>
   </div>
 
   <div id="jwt-output-card" class="tool-grid" style="display:none;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));">
     <div class="tool-card">
-      <h3>Header (Cabeçalho)</h3>
+      <h3>{T.h3Hdr}</h3>
       <pre id="jwt-header" class="code-out"></pre>
     </div>
     <div class="tool-card">
-      <h3>Payload (Claims)</h3>
+      <h3>{T.h3Pay}</h3>
       <pre id="jwt-payload" class="code-out"></pre>
     </div>
   </div>

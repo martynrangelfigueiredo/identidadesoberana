@@ -1,53 +1,65 @@
 ---
-import ToolShell from "../../components/ToolShell.astro";
+import ToolShell from "../ToolShell.astro";
+import type { Locale } from "../../lib/i18n";
+import { UTIL_TOOLS } from "../../lib/tools";
+interface Props { locale?: Locale; }
+const { locale = "pt" } = Astro.props;
+const meta = UTIL_TOOLS.find((t) => t.id === "calc-ops")!;
+const T = {
+  pt: { h2Sla: "1. Calculadora de SLA Uptime (Downtime Permitido)", btnSla: "Calcular Downtime", h2Bb: "2. Conversor de Bytes, Bits & Banda", btnBb: "Converter", h2Raid: "3. Calculadora de Capacidade RAID", btnRaid: "Calcular RAID" },
+  de: { h2Sla: "1. SLA-Uptime-Rechner (Erlaubte Downtime)", btnSla: "Downtime berechnen", h2Bb: "2. Bytes-, Bits- & Bandbreiten-Konverter", btnBb: "Konvertieren", h2Raid: "3. RAID-Kapazitätsrechner", btnRaid: "RAID berechnen" },
+  zh: { h2Sla: "1. SLA 可用性停机预算计算器", btnSla: "计算停机窗口", h2Bb: "2. 存储单位与带宽换算", btnBb: "换算", h2Raid: "3. RAID 容量规划计算器", btnRaid: "计算 RAID" },
+  en: { h2Sla: "1. SLA Uptime Calculator (Allowed Downtime)", btnSla: "Calculate Downtime", h2Bb: "2. Bytes, Bits & Bandwidth Converter", btnBb: "Convert", h2Raid: "3. RAID Capacity Calculator", btnRaid: "Calculate RAID" },
+}[locale];
 ---
 
 <ToolShell
-  title="Calculadoras de SLA, Bytes/Bits & RAID"
-  description="Calcule janelas de indisponibilidade (SLA Uptime), converta unidades de armazenamento/rede (Bits, Bytes, GiB, Mbps) e dimensione arranjos RAID."
+  locale={locale}
+  title={meta.title[locale]}
+  description={meta.description[locale]}
   badge="Infra & Ops"
   icon="📊"
 >
   <!-- 1. SLA Uptime -->
   <div class="tool-card">
-    <h2>1. Calculadora de SLA Uptime (Downtime Permitido)</h2>
+    <h2>{T.h2Sla}</h2>
     <div class="tool-form-row" style="margin-bottom:.85rem;">
-      <input id="sla-pct" type="number" step="0.001" min="0" max="100" value="99.95" class="tool-input" aria-label="Percentual de SLA" />
-      <button id="btn-sla" type="button" class="tool-btn">Calcular Downtime</button>
+      <input id="sla-pct" type="number" step="0.001" min="0" max="100" value="99.95" class="tool-input" aria-label="SLA %" />
+      <button id="btn-sla" type="button" class="tool-btn">{T.btnSla}</button>
     </div>
     <div id="sla-grid" class="tool-grid"></div>
   </div>
 
   <!-- 2. Bytes & Bits -->
   <div class="tool-card">
-    <h2>2. Conversor de Bytes, Bits & Banda</h2>
+    <h2>{T.h2Bb}</h2>
     <div class="tool-form-row" style="margin-bottom:.85rem;">
-      <input id="bb-val" type="number" step="any" value="100" class="tool-input" aria-label="Valor" />
-      <select id="bb-unit" class="tool-select" style="max-width:160px;" aria-label="Unidade">
+      <input id="bb-val" type="number" step="any" value="100" class="tool-input" aria-label="Value" />
+      <select id="bb-unit" class="tool-select" style="max-width:160px;" aria-label="Unit">
         <option value="MB">Megabytes (MB)</option>
         <option value="GB" selected>Gigabytes (GB)</option>
         <option value="TB">Terabytes (TB)</option>
         <option value="Mbps">Megabits/s (Mbps)</option>
       </select>
-      <button id="btn-bb" type="button" class="tool-btn">Converter</button>
+      <button id="btn-bb" type="button" class="tool-btn">{T.btnBb}</button>
     </div>
     <div id="bb-grid" class="tool-grid"></div>
   </div>
 
   <!-- 3. RAID Calculator -->
   <div class="tool-card">
-    <h2>3. Calculadora de Capacidade RAID</h2>
+    <h2>{T.h2Raid}</h2>
     <div class="tool-form-row" style="margin-bottom:.85rem;">
-      <select id="raid-level" class="tool-select" style="max-width:160px;" aria-label="Nível RAID">
-        <option value="0">RAID 0 (Stripe)</option>
-        <option value="1">RAID 1 (Mirror)</option>
-        <option value="5" selected>RAID 5 (Paridade Simples)</option>
-        <option value="6">RAID 6 (Paridade Dupla)</option>
-        <option value="10">RAID 10 (Mirror + Stripe)</option>
+      <select id="raid-level" class="tool-select" style="max-width:160px;" aria-label="RAID">
+        <option value="0">RAID 0</option>
+        <option value="1">RAID 1</option>
+        <option value="5" selected>RAID 5</option>
+        <option value="6">RAID 6</option>
+        <option value="10">RAID 10</option>
       </select>
-      <input id="raid-disks" type="number" min="2" max="64" value="4" class="tool-input" placeholder="Nº de discos" aria-label="Número de discos" />
-      <input id="raid-size" type="number" min="1" value="4" class="tool-input" placeholder="TB por disco" aria-label="Capacidade por disco em TB" />
-      <button id="btn-raid" type="button" class="tool-btn">Calcular RAID</button>
+      <input id="raid-disks" type="number" min="2" max="64" value="4" class="tool-input" placeholder="Disks" aria-label="Disks" />
+      <input id="raid-size" type="number" min="1" value="4" class="tool-input" placeholder="TB" aria-label="TB" />
+      <button id="btn-raid" type="button" class="tool-btn">{T.btnRaid}</button>
     </div>
     <div id="raid-grid" class="tool-grid"></div>
   </div>
@@ -136,3 +148,4 @@ import ToolShell from "../../components/ToolShell.astro";
     calcRaid();
   })();
 </script>
+

@@ -1,35 +1,47 @@
 ---
-import ToolShell from "../../components/ToolShell.astro";
+import ToolShell from "../ToolShell.astro";
+import type { Locale } from "../../lib/i18n";
+import { UTIL_TOOLS } from "../../lib/tools";
+interface Props { locale?: Locale; }
+const { locale = "pt" } = Astro.props;
+const meta = UTIL_TOOLS.find((t) => t.id === "text-dev")!;
+const T = {
+  pt: { h2t: "1. Conversor de Case, Texto Reverso & Binário ↔ Texto", rev: "Inverter Texto", toBin: "Texto → Binário", frBin: "Binário → Texto", h2b: "2. Visualizador de Base64 para Imagem", btnImg: "Renderizar Imagem" },
+  de: { h2t: "1. Case-, Text-Umkehr- & Binär-Konverter", rev: "Text umkehren", toBin: "Text → Binär", frBin: "Binär → Text", h2b: "2. Base64-zu-Bild-Vorschau", btnImg: "Bild anzeigen" },
+  zh: { h2t: "1. 大小写、文本反转与二进制转换", rev: "反转文本", toBin: "文本 → 二进制", frBin: "二进制 → 文本", h2b: "2. Base64 转图片预览", btnImg: "渲染图片" },
+  en: { h2t: "1. Case, Reverse Text & Binary ↔ Text Converter", rev: "Reverse Text", toBin: "Text → Binary", frBin: "Binary → Text", h2b: "2. Base64 to Image Viewer", btnImg: "Render Image" },
+}[locale];
 ---
 
 <ToolShell
-  title="Conversores Dev, Binário, Case & Base64 Imagem"
-  description="Converta texto entre formatos (MAIÚSCULAS, minúsculas, Title Case, camelCase, snake_case, reverso), traduza Binário↔Texto, detecte domínios Punycode/IDN e visualize Base64 como imagem."
-  badge="Dev & Sec"
+  locale={locale}
+  title={meta.title[locale]}
+  description={meta.description[locale]}
+  badge="Dev & Encoding"
   icon="🧰"
 >
   <!-- 1. Case & Reverse Text -->
   <div class="tool-card">
-    <h2>1. Conversor de Case, Texto Reverso & Binário ↔ Texto</h2>
-    <textarea id="txt-in" class="tool-textarea" rows="3" placeholder="Digite seu texto ou sequência binária (ex: 01010011 01001111 01000011)..." aria-label="Entrada de texto"></textarea>
+    <h2>{T.h2t}</h2>
+    <textarea id="txt-in" class="tool-textarea" rows="3" placeholder="01010011 01001111 01000011..." aria-label={T.h2t}></textarea>
     <div style="display:flex;gap:.45rem;flex-wrap:wrap;margin-top:.75rem;">
-      <button type="button" class="tool-btn outline case-btn" data-mode="upper">MAIÚSCULAS</button>
-      <button type="button" class="tool-btn outline case-btn" data-mode="lower">minúsculas</button>
+      <button type="button" class="tool-btn outline case-btn" data-mode="upper">UPPER</button>
+      <button type="button" class="tool-btn outline case-btn" data-mode="lower">lower</button>
       <button type="button" class="tool-btn outline case-btn" data-mode="title">Title Case</button>
       <button type="button" class="tool-btn outline case-btn" data-mode="snake">snake_case</button>
-      <button type="button" class="tool-btn outline case-btn" data-mode="reverse">Inverter Texto</button>
-      <button type="button" class="tool-btn secondary case-btn" data-mode="to-bin">Texto → Binário</button>
-      <button type="button" class="tool-btn secondary case-btn" data-mode="from-bin">Binário → Texto</button>
+      <button type="button" class="tool-btn outline case-btn" data-mode="reverse">{T.rev}</button>
+      <button type="button" class="tool-btn secondary case-btn" data-mode="to-bin">{T.toBin}</button>
+      <button type="button" class="tool-btn secondary case-btn" data-mode="from-bin">{T.frBin}</button>
     </div>
     <pre id="txt-out" class="code-out" style="margin-top:.85rem;display:none;"></pre>
   </div>
 
   <!-- 2. Base64 para Imagem -->
   <div class="tool-card">
-    <h2>2. Visualizador de Base64 para Imagem</h2>
-    <textarea id="b64-img-in" class="tool-textarea" rows="3" placeholder="Cole uma string Base64 de imagem (com ou sem data:image/png;base64,...)..." aria-label="Base64 da imagem"></textarea>
+    <h2>{T.h2b}</h2>
+    <textarea id="b64-img-in" class="tool-textarea" rows="3" placeholder="data:image/png;base64,..." aria-label={T.h2b}></textarea>
     <div style="margin-top:.75rem;">
-      <button id="btn-b64-img" type="button" class="tool-btn">Renderizar Imagem</button>
+      <button id="btn-b64-img" type="button" class="tool-btn">{T.btnImg}</button>
     </div>
     <div id="b64-img-wrap" style="margin-top:1rem;display:none;">
       <img id="b64-img-preview" alt="Pré-visualização Base64" style="max-width:100%;border:1px solid var(--is-borda);border-radius:10px;" />
@@ -78,3 +90,4 @@ import ToolShell from "../../components/ToolShell.astro";
     });
   })();
 </script>
+

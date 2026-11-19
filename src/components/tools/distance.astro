@@ -1,47 +1,59 @@
 ---
-import ToolShell from "../../components/ToolShell.astro";
+import ToolShell from "../ToolShell.astro";
+import type { Locale } from "../../lib/i18n";
+import { UTIL_TOOLS } from "../../lib/tools";
+interface Props { locale?: Locale; }
+const { locale = "pt" } = Astro.props;
+const meta = UTIL_TOOLS.find((t) => t.id === "distance")!;
+const T = {
+  pt: { h2: "Coordenadas e Intervalo de Tempo", orig: "Origem (Lat, Lon)", dest: "Destino (Lat, Lon)", delta: "Intervalo entre Logins (Minutos)", btn: "Calcular Plausibilidade", h2Res: "Resultado da Análise Geográfica" },
+  de: { h2: "Koordinaten & Zeitintervall", orig: "Ursprung (Lat, Lon)", dest: "Ziel (Lat, Lon)", delta: "Zeitabstand zwischen Logins (Min.)", btn: "Plausibilität berechnen", h2Res: "Ergebnis der geografischen Analyse" },
+  zh: { h2: "地理坐标与登录时间间隔", orig: "起点（纬度, 经度）", dest: "终点（纬度, 经度）", delta: "两次登录间隔（分钟）", btn: "计算合理性", h2Res: "地理分析结果" },
+  en: { h2: "Coordinates & Time Interval", orig: "Origin (Lat, Lon)", dest: "Destination (Lat, Lon)", delta: "Time Between Logins (Minutes)", btn: "Calculate Plausibility", h2Res: "Geographic Analysis Result" },
+}[locale];
 ---
 
 <ToolShell
-  title="Calculadora de Viagem Impossível"
-  description="Calcule distância geodésica (Haversine) e velocidade necessária em km/h entre dois pontos geográficos para validar alertas de Viagem Impossível no SOC."
+  locale={locale}
+  title={meta.title[locale]}
+  description={meta.description[locale]}
   badge="Geo Risk"
   icon="✈️"
 >
   <div class="tool-card">
-    <h2>Coordenadas e Intervalo de Tempo</h2>
+    <h2>{T.h2}</h2>
     <div style="display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1rem;">
       <button type="button" class="tool-btn secondary preset-btn" data-p="sp-fra">São Paulo ↔ Frankfurt (15 min)</button>
       <button type="button" class="tool-btn secondary preset-btn" data-p="sp-rj">São Paulo ↔ Rio de Janeiro (45 min)</button>
-      <button type="button" class="tool-btn secondary preset-btn" data-p="ny-ldn">Nova York ↔ Londres (2h)</button>
+      <button type="button" class="tool-btn secondary preset-btn" data-p="ny-ldn">New York ↔ London (2h)</button>
     </div>
 
     <div class="tool-grid" style="margin-bottom:1rem;">
       <div>
-        <div class="kv-label">Origem (Latitude, Longitude)</div>
+        <div class="kv-label">{T.orig}</div>
         <div style="display:flex;gap:.5rem;">
-          <input id="lat1" type="number" step="any" class="tool-input" value="-23.5505" aria-label="Latitude Origem" />
-          <input id="lon1" type="number" step="any" class="tool-input" value="-46.6333" aria-label="Longitude Origem" />
+          <input id="lat1" type="number" step="any" class="tool-input" value="-23.5505" aria-label="Lat 1" />
+          <input id="lon1" type="number" step="any" class="tool-input" value="-46.6333" aria-label="Lon 1" />
         </div>
       </div>
       <div>
-        <div class="kv-label">Destino (Latitude, Longitude)</div>
+        <div class="kv-label">{T.dest}</div>
         <div style="display:flex;gap:.5rem;">
-          <input id="lat2" type="number" step="any" class="tool-input" value="50.1109" aria-label="Latitude Destino" />
-          <input id="lon2" type="number" step="any" class="tool-input" value="8.6821" aria-label="Longitude Destino" />
+          <input id="lat2" type="number" step="any" class="tool-input" value="50.1109" aria-label="Lat 2" />
+          <input id="lon2" type="number" step="any" class="tool-input" value="8.6821" aria-label="Lon 2" />
         </div>
       </div>
       <div>
-        <div class="kv-label">Intervalo entre Logins (Minutos)</div>
-        <input id="delta-min" type="number" min="1" class="tool-input" value="15" aria-label="Intervalo em minutos" />
+        <div class="kv-label">{T.delta}</div>
+        <input id="delta-min" type="number" min="1" class="tool-input" value="15" aria-label={T.delta} />
       </div>
     </div>
 
-    <button id="btn-calc" type="button" class="tool-btn">Calcular Plausibilidade</button>
+    <button id="btn-calc" type="button" class="tool-btn">{T.btn}</button>
   </div>
 
   <div id="dist-result-card" class="tool-card">
-    <h2>Resultado da Análise Geográfica</h2>
+    <h2>{T.h2Res}</h2>
     <div id="dist-grid" class="tool-grid"></div>
   </div>
 </ToolShell>

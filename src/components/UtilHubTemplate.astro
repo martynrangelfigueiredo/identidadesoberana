@@ -144,9 +144,11 @@ const CATEGORIES = ["network", "identity", "dfir", "osint"] as const;
         <div class="util-section-group" data-group-cat={catKey}>
           <h2 class="util-section-heading">{t.sectionTitles[catKey]}</h2>
           <div class="util-reading-grid">
-            {catTools.map((tool) => (
+            {catTools.map((tool) => {
+              const toolHref = locale === "pt" ? tool.slug : `/${locale}${tool.slug}`;
+              return (
               <a
-                href={tool.slug}
+                href={toolHref}
                 class="util-reading-card"
                 data-cat={tool.category}
                 data-search={`${tool.id} ${tool.title[locale]} ${tool.description[locale]} ${tool.highlights[locale].join(" ")}`.toLowerCase()}
@@ -168,7 +170,8 @@ const CATEGORIES = ["network", "identity", "dfir", "osint"] as const;
                   <span class="util-cta">{t.openBtn}</span>
                 </div>
               </a>
-            ))}
+              );
+            })}
           </div>
         </div>
       );
