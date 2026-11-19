@@ -3,13 +3,14 @@ import { render } from "astro:content";
 import Base from "../../layouts/Base.astro";
 import { getPosts } from "../../lib/posts";
 import ShareButtons from "../../components/ShareButtons.astro";
+import ArticleToc from "../../components/ArticleToc.astro";
 
 export async function getStaticPaths() {
   const posts = await getPosts("pt");
   return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
 }
 const { post } = Astro.props;
-const { Content } = await render(post);
+const { Content, headings } = await render(post);
 const data = post.data.date.toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" });
 ---
 <Base title={post.data.title} description={post.data.description}>
@@ -90,7 +91,13 @@ const data = post.data.date.toLocaleDateString("pt-BR", { day: "2-digit", month:
         </div>
       </div>
     </header>
-    <div class="estreito prosa"><Content /></div>
+    <div class="container artigo-layout has-toc">
+      <div class="prosa">
+        <ArticleToc headings={headings} locale="pt" variant="mobile" />
+        <Content />
+      </div>
+      <ArticleToc headings={headings} locale="pt" variant="desktop" />
+    </div>
     <div class="estreito">
       <ShareButtons
         title={post.data.title}

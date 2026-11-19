@@ -29,9 +29,9 @@
   --is-pele-2: #A86B43;
 
   /* ---------- Tipografia ---------- */
-  --is-fonte-titulo: "Nunito", "Quicksand", system-ui, sans-serif;  /* 800/900 */
-  --is-fonte-texto: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --is-fonte-codigo: "JetBrains Mono", ui-monospace, "Cascadia Code", monospace;
+  --is-fonte-titulo: "Nunito Variable", "Nunito", "Quicksand", system-ui, sans-serif;  /* 800/900 */
+  --is-fonte-texto: "Inter Variable", "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --is-fonte-codigo: "JetBrains Mono Variable", "JetBrains Mono", ui-monospace, "Cascadia Code", monospace;
 
   /* ---------- Forma (estilo Material/GNOME) ---------- */
   --is-raio-sm: 12px;

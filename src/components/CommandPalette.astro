@@ -1,0 +1,237 @@
+---
+import { getCollection } from "astro:content";
+import { type Locale } from "../lib/i18n";
+import { UTIL_TOOLS } from "../lib/tools";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const allPosts = await getCollection("blog");
+
+const localePosts = allPosts
+  .filter((p) => {
+    const id = p.id;
+    if (locale === "pt") return !id.startsWith("de/") && !id.startsWith("zh/") && !id.startsWith("en/");
+    return id.startsWith(`${locale}/`);
+  })
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+  .map((p) => {
+    const cleanSlug = p.id.replace(/^(de|zh|en)\//, "").replace(/\.md$/, "");
+    const href = locale === "pt" ? `/blog/${cleanSlug}/` : `/${locale}/blog/${cleanSlug}/`;
+    return {
+      title: p.data.title,
+      type: p.data.categoria,
+      href,
+      keywords: `${p.data.title} ${p.data.categoria} ${(p.data.tags || []).join(" ")}`.toLowerCase(),
+    };
+  });
+
+const toolItems = UTIL_TOOLS.map((t) => ({
+  title: `${t.icon} ${t.title[locale]}`,
+  type: "Ferramenta",
+  href: t.slug,
+  keywords: `${t.id} ${t.title[locale]} ${t.description[locale]}`.toLowerCase(),
+}));
+
+const items = [...toolItems, ...localePosts];
+
+const COPY = {
+  pt: { placeholder: "Buscar artigo, KQL, playbook ou ferramenta...", empty: "Nenhum resultado encontrado.", hint: "↑↓ navegar · Enter abrir · Esc fechar" },
+  de: { placeholder: "Artikel, KQL, Playbook oder Tool suchen...", empty: "Keine Ergebnisse gefunden.", hint: "↑↓ navigieren · Enter öffnen · Esc schließen" },
+  zh: { placeholder: "搜索文章、KQL 查询或安全工具...", empty: "未找到相关结果。", hint: "↑↓ 导航 · Enter 打开 · Esc 关闭" },
+  en: { placeholder: "Search articles, KQL, playbooks, or tools...", empty: "No results found.", hint: "↑↓ navigate · Enter open · Esc close" },
+}[locale];
+---
+
+<div id="cmd-palette-backdrop" class="cmd-backdrop" hidden>
+  <div class="cmd-dialog" role="dialog" aria-modal="true" aria-label="Busca rápida">
+    <div class="cmd-input-wrap">
+      <span aria-hidden="true">🔍</span>
+      <input id="cmd-input" type="search" placeholder={COPY.placeholder} autocomplete="off" aria-label={COPY.placeholder} />
+      <kbd class="cmd-kbd">ESC</kbd>
+    </div>
+    <ul id="cmd-list" class="cmd-list" role="listbox"></ul>
+    <div class="cmd-empty" id="cmd-empty" hidden>{COPY.empty}</div>
+    <div class="cmd-footer">{COPY.hint}</div>
+  </div>
+</div>
+
+<script is:inline define:vars={{ items }}>
+  (() => {
+    const backdrop = document.getElementById('cmd-palette-backdrop');
+    const input = document.getElementById('cmd-input');
+    const list = document.getElementById('cmd-list');
+    const emptyEl = document.getElementById('cmd-empty');
+    if (!backdrop || !input || !list) return;
+
+    let filtered = items.slice(0, 12);
+    let activeIdx = 0;
+
+    function render() {
+      list.innerHTML = '';
+      if (!filtered.length) {
+        emptyEl.hidden = false;
+        return;
+      }
+      emptyEl.hidden = true;
+      filtered.forEach((item, idx) => {
+        const li = document.createElement('li');
+        li.className = idx === activeIdx ? 'cmd-item active' : 'cmd-item';
+        li.setAttribute('role', 'option');
+        li.innerHTML = `<a href="${item.href}"><span class="cmd-type">${item.type}</span><span class="cmd-title">${item.title}</span></a>`;
+        li.addEventListener('mouseenter', () => { activeIdx = idx; updateActive(); });
+        list.appendChild(li);
+      });
+    }
+
+    function updateActive() {
+      const nodes = list.querySelectorAll('.cmd-item');
+      nodes.forEach((n, i) => n.classList.toggle('active', i === activeIdx));
+      nodes[activeIdx]?.scrollIntoView({ block: 'nearest' });
+    }
+
+    function openPalette() {
+      backdrop.hidden = false;
+      input.value = '';
+      filtered = items.slice(0, 12);
+      activeIdx = 0;
+      render();
+      requestAnimationFrame(() => input.focus());
+    }
+
+    function closePalette() {
+      backdrop.hidden = true;
+    }
+
+    window.addEventListener('open-cmd-palette', openPalette);
+
+    document.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        backdrop.hidden ? openPalette() : closePalette();
+      } else if (e.key === '/' && !['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement?.tagName)) {
+        e.preventDefault();
+        openPalette();
+      } else if (!backdrop.hidden) {
+        if (e.key === 'Escape') {
+          closePalette();
+        } else if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          if (filtered.length) { activeIdx = (activeIdx + 1) % filtered.length; updateActive(); }
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          if (filtered.length) { activeIdx = (activeIdx - 1 + filtered.length) % filtered.length; updateActive(); }
+        } else if (e.key === 'Enter' && filtered[activeIdx]) {
+          e.preventDefault();
+          window.location.href = filtered[activeIdx].href;
+        }
+      }
+    });
+
+    input.addEventListener('input', () => {
+      const q = input.value.trim().toLowerCase();
+      filtered = q
+        ? items.filter((it) => it.keywords.includes(q) || it.title.toLowerCase().includes(q)).slice(0, 15)
+        : items.slice(0, 12);
+      activeIdx = 0;
+      render();
+    });
+
+    backdrop.addEventListener('click', (e) => {
+      if (e.target === backdrop) closePalette();
+    });
+  })();
+</script>
+
+<style>
+  .cmd-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(27, 43, 34, .45);
+    backdrop-filter: blur(4px);
+    z-index: 9999;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 10vh 1rem 1rem;
+  }
+  .cmd-backdrop[hidden] { display: none; }
+  .cmd-dialog {
+    width: min(640px, 100%);
+    background: var(--is-branco);
+    border: 2px solid var(--is-verde);
+    border-radius: 16px;
+    box-shadow: var(--is-sombra-3);
+    overflow: hidden;
+  }
+  .cmd-input-wrap {
+    display: flex;
+    align-items: center;
+    gap: .65rem;
+    padding: .85rem 1rem;
+    border-bottom: 1px solid var(--is-borda);
+  }
+  .cmd-input-wrap input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font: 500 1rem var(--is-fonte-texto);
+    color: var(--is-tinta);
+    background: transparent;
+  }
+  .cmd-kbd {
+    font: 700 .72rem var(--is-fonte-codigo);
+    background: #f1f5f9;
+    border: 1px solid var(--is-borda);
+    border-radius: 6px;
+    padding: .15rem .45rem;
+    color: var(--is-cinza);
+  }
+  .cmd-list {
+    list-style: none;
+    margin: 0;
+    padding: .4rem;
+    max-height: 55vh;
+    overflow-y: auto;
+  }
+  .cmd-item a {
+    display: flex;
+    align-items: center;
+    gap: .65rem;
+    padding: .6rem .75rem;
+    border-radius: 10px;
+    text-decoration: none;
+    color: var(--is-tinta);
+  }
+  .cmd-item.active a, .cmd-item a:hover {
+    background: var(--is-verde-claro);
+    color: var(--is-verde-escuro);
+  }
+  .cmd-type {
+    font: 800 .72rem var(--is-fonte-codigo);
+    background: var(--is-amarelo);
+    color: var(--is-tinta);
+    padding: .15rem .5rem;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+  .cmd-title {
+    font: 700 .94rem var(--is-fonte-titulo);
+    line-height: 1.3;
+  }
+  .cmd-empty {
+    padding: 1.5rem;
+    text-align: center;
+    color: var(--is-cinza);
+    font-size: .95rem;
+  }
+  .cmd-footer {
+    padding: .5rem 1rem;
+    background: #f8fafc;
+    border-top: 1px solid var(--is-borda);
+    font: 600 .76rem var(--is-fonte-texto);
+    color: var(--is-cinza);
+  }
+</style>

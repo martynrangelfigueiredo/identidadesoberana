@@ -1,7 +1,11 @@
 ---
+import "@fontsource-variable/nunito";
+import "@fontsource-variable/inter";
+import "@fontsource-variable/jetbrains-mono";
 import "../../brand/tokens.css";
 import "../styles/global.css";
 import LanguageSelector from "../components/LanguageSelector.astro";
+import CommandPalette from "../components/CommandPalette.astro";
 import InstallPrompt from "../components/InstallPrompt.astro";
 import logo from "../../brand/logo/logo-icone.svg?raw";
 import logoBranco from "../../brand/logo/logo-icone-branco.svg?raw";
@@ -68,14 +72,10 @@ const homeUrl = currentLocale === "pt" ? "/" : `/${currentLocale}/`;
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
 
-    <!-- Fontes do Google (Otimizado: Preconnect + Preload + Nao-bloqueante + display=swap) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" media="print" onload="this.media='all'" />
-    <noscript>
-      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" />
-    </noscript>
+    <!-- Fontes 100% locais via @fontsource-variable (Zero requisições externas) + Tema de código -->
+    <script is:inline>
+      try{var ct=localStorage.getItem('is_code_theme');if(ct==='dark')document.documentElement.dataset.codeTheme='dark';}catch(e){}
+    </script>
 
     <!-- Links Canônicos e hreflang Internacionais para SEO -->
     <link rel="canonical" href={new URL(path, Astro.site)} />
@@ -163,6 +163,11 @@ const homeUrl = currentLocale === "pt" ? "/" : `/${currentLocale}/`;
             {ui.nav.map((i) => <a href={i.href} aria-current={path === i.href || (i.href !== homeUrl && path.startsWith(i.href)) ? "page" : undefined}>{i.label}</a>)}
           </nav>
 
+          <button id="cmd-open-btn" class="cmd-trigger-btn" type="button" aria-label="Busca rápida (Ctrl+K)" title="Busca rápida (Ctrl+K)">
+            <span aria-hidden="true">🔍</span>
+            <kbd>Ctrl+K</kbd>
+          </button>
+
           <LanguageSelector />
           
           <button id="mobile-menu-btn" class="mobile-toggle" type="button" aria-label="Abrir menu de navegação" aria-expanded="false">
@@ -178,7 +183,10 @@ const homeUrl = currentLocale === "pt" ? "/" : `/${currentLocale}/`;
 
     <main><slot /></main>
 
+    <CommandPalette locale={currentLocale} />
     <InstallPrompt />
+
+    <button id="back-to-top" class="back-to-top" type="button" aria-label="Voltar ao topo" title="Voltar ao topo" hidden>↑</button>
 
     <footer class="site-footer">
       <svg class="fita" viewBox="0 0 1440 70" preserveAspectRatio="none" aria-hidden="true">
@@ -190,7 +198,10 @@ const homeUrl = currentLocale === "pt" ? "/" : `/${currentLocale}/`;
           <Fragment set:html={logoBranco} />
           <span class="marca-nome">identidade <b>soberana</b></span>
         </a>
-        <span>{ui.footerText}</span>
+        <div style="display:flex;flex-direction:column;gap:.2rem;">
+          <span>{ui.footerText}</span>
+          <span style="font-size:.82rem;opacity:.92;">🇧🇷 Feito no Brasil · 0 Trackers · Código Aberto</span>
+        </div>
         <div style="display:flex;gap:1rem;align-items:center;">
           <a href="/rss.xml" title="Assinar via RSS">Feed RSS</a>
           <a href="https://linkedin.com/in/martynfigueiredo" rel="me noopener" target="_blank">LinkedIn</a>
@@ -209,13 +220,25 @@ const homeUrl = currentLocale === "pt" ? "/" : `/${currentLocale}/`;
         });
       }
 
-      // 2. Menu Mobile Toggle
+      // 2. Menu Mobile Toggle & Command Palette Trigger & Back-to-Top
       const menuBtn = document.getElementById('mobile-menu-btn');
       const siteNav = document.getElementById('site-nav');
       if (menuBtn && siteNav) {
         menuBtn.addEventListener('click', () => {
           const isOpen = siteNav.classList.toggle('open');
           menuBtn.setAttribute('aria-expanded', String(isOpen));
+        });
+      }
+      document.getElementById('cmd-open-btn')?.addEventListener('click', () => {
+        window.dispatchEvent(new CustomEvent('open-cmd-palette'));
+      });
+      const backTopBtn = document.getElementById('back-to-top');
+      if (backTopBtn) {
+        window.addEventListener('scroll', () => {
+          backTopBtn.hidden = window.scrollY < 420;
+        }, { passive: true });
+        backTopBtn.addEventListener('click', () => {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
         });
       }
 
@@ -303,10 +326,29 @@ const homeUrl = currentLocale === "pt" ? "/" : `/${currentLocale}/`;
           heading.appendChild(hBtn);
         });
 
-        // Adiciona proteção notranslate e botão de copiar código em pre/code
+        // Adiciona proteção notranslate, alternador Terminal Escuro e botão de copiar código
+        const syncThemeBtns = () => {
+          const isDark = document.documentElement.dataset.codeTheme === 'dark';
+          document.querySelectorAll('.code-theme-btn').forEach(b => {
+            b.textContent = isDark ? '☀️ Claro' : '🌙 Terminal';
+          });
+        };
+
         document.querySelectorAll('.prosa pre').forEach(pre => {
           pre.setAttribute('translate', 'no');
           pre.classList.add('notranslate');
+
+          const themeBtn = document.createElement('button');
+          themeBtn.type = 'button';
+          themeBtn.className = 'code-theme-btn';
+          themeBtn.setAttribute('aria-label', 'Alternar tema do bloco de código');
+          themeBtn.addEventListener('click', () => {
+            const next = document.documentElement.dataset.codeTheme === 'dark' ? '' : 'dark';
+            if (next) document.documentElement.dataset.codeTheme = 'dark';
+            else delete document.documentElement.dataset.codeTheme;
+            try { localStorage.setItem('is_code_theme', next || 'light'); } catch {}
+            syncThemeBtns();
+          });
 
           const btn = document.createElement('button');
           btn.type = 'button';
@@ -316,7 +358,7 @@ const homeUrl = currentLocale === "pt" ? "/" : `/${currentLocale}/`;
           
           btn.addEventListener('click', async () => {
             const codeEl = pre.querySelector('code');
-            const code = codeEl ? codeEl.innerText : Array.from(pre.childNodes).filter(n => n !== btn).map(n => n.textContent).join('');
+            const code = codeEl ? codeEl.innerText : Array.from(pre.childNodes).filter(n => n !== btn && n !== themeBtn).map(n => n.textContent).join('');
             try {
               await navigator.clipboard.writeText(code.trimEnd());
               btn.innerHTML = `✔ Copiado!`;
@@ -330,8 +372,10 @@ const homeUrl = currentLocale === "pt" ? "/" : `/${currentLocale}/`;
             }
           });
 
+          pre.appendChild(themeBtn);
           pre.appendChild(btn);
         });
+        syncThemeBtns();
       });
     </script>
   </body>

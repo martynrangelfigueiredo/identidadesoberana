@@ -19,10 +19,43 @@ const dateLocales: Record<Locale, string> = {
   en: "en-US",
 };
 const data = post.data.date.toLocaleDateString(dateLocales[postLocale] || "pt-BR", { day: "2-digit", month: "short", year: "numeric" });
+const tags = post.data.tags || [];
+const isMicrosoft = tags.includes("microsoft-security") || tags.includes("microsoft-sentinel") || tags.includes("entra-id");
+const isOpenSource = tags.includes("open-source") || tags.includes("keycloak") || tags.includes("wazuh") || tags.includes("thehive") || tags.includes("shuffle");
+const trackLabel = isMicrosoft ? "Microsoft Security" : isOpenSource ? "Open Source" : "";
+const mins = Math.max(3, Math.ceil((post.body || "").split(/\s+/).length / 210));
+const minLabel = postLocale === "de" ? `${mins} Min.` : postLocale === "zh" ? `${mins} 分钟` : postLocale === "en" ? `${mins} min` : `${mins} min`;
 ---
 <a class="card" href={href}>
-  <span class="chip">{post.data.categoria}</span>
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:.45rem;flex-wrap:wrap;">
+    <span class="chip">{post.data.categoria}</span>
+    {trackLabel && (
+      <span class={isMicrosoft ? "track-pill ms" : "track-pill oss"}>{trackLabel}</span>
+    )}
+  </div>
   <h3>{post.data.title}</h3>
   <p>{post.data.description}</p>
-  <span class="meta"><time datetime={post.data.date.toISOString()}>{data}</time> · {post.data.nivel}</span>
+  <span class="meta">
+    <time datetime={post.data.date.toISOString()}>{data}</time>
+    <span>· {post.data.nivel}</span>
+    <span>· {minLabel}</span>
+  </span>
 </a>
+
+<style>
+  .track-pill {
+    font: 800 .72rem var(--is-fonte-codigo);
+    padding: .18rem .55rem;
+    border-radius: var(--is-raio-pill);
+  }
+  .track-pill.ms {
+    background: #eff6ff;
+    color: #1d4ed8;
+    border: 1px solid #bfdbfe;
+  }
+  .track-pill.oss {
+    background: var(--is-amarelo-claro);
+    color: var(--is-tinta);
+    border: 1px solid #fde047;
+  }
+</style>

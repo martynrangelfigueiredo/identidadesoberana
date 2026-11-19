@@ -26,12 +26,10 @@ async function validatePerformance() {
     errors++;
   }
 
-  // Verifica se fontes possuem preconnect e display=swap
-  if (!baseContent.includes('rel="preconnect" href="https://fonts.googleapis.com"')) {
-    console.warn("⚠️ [Performance] Falta preconnect para fonts.googleapis.com no Base.astro.");
-  }
-  if (!baseContent.includes("display=swap")) {
-    console.error("❌ [Performance] Google Fonts deve utilizar display=swap para evitar FOIT.");
+  // Verifica fontes locais (self-hosted @fontsource-variable) ou Google Fonts com display=swap
+  const hasSelfHostedFonts = baseContent.includes("@fontsource-variable/nunito") && baseContent.includes("@fontsource-variable/inter");
+  if (!hasSelfHostedFonts && !baseContent.includes("display=swap")) {
+    console.error("❌ [Performance] Fontes devem ser self-hosted (@fontsource-variable) ou utilizar display=swap.");
     errors++;
   }
 

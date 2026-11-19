@@ -1,0 +1,72 @@
+---
+import type { MarkdownHeading } from "astro";
+import type { Locale } from "../lib/i18n";
+
+interface Props {
+  headings: MarkdownHeading[];
+  locale: Locale;
+  variant: "desktop" | "mobile";
+}
+
+const { headings, locale, variant } = Astro.props;
+const tocItems = headings.filter((h) => h.depth === 2 || h.depth === 3);
+
+const LABELS: Record<Locale, string> = {
+  pt: "Índice do Playbook",
+  de: "Inhaltsverzeichnis",
+  zh: "文章目录",
+  en: "Table of Contents",
+};
+const title = LABELS[locale] || LABELS.pt;
+---
+
+{tocItems.length > 0 && variant === "mobile" && (
+  <details class="artigo-toc-mobile">
+    <summary>📑 {title}</summary>
+    <ul class="artigo-toc-list">
+      {tocItems.map((h) => (
+        <li>
+          <a href={`#${h.slug}`} class={h.depth === 3 ? "toc-sub" : ""}>{h.text}</a>
+        </li>
+      ))}
+    </ul>
+  </details>
+)}
+
+{tocItems.length > 0 && variant === "desktop" && (
+  <aside class="artigo-toc" aria-label={title}>
+    <p class="artigo-toc-title">📑 {title}</p>
+    <ul class="artigo-toc-list" id="desktop-toc-list">
+      {tocItems.map((h) => (
+        <li>
+          <a href={`#${h.slug}`} data-toc-slug={h.slug} class={h.depth === 3 ? "toc-sub" : ""}>{h.text}</a>
+        </li>
+      ))}
+    </ul>
+  </aside>
+)}
+
+{tocItems.length > 0 && variant === "desktop" && (
+  <script is:inline>
+    (() => {
+      const tocLinks = document.querySelectorAll('#desktop-toc-list a[data-toc-slug]');
+      if (!tocLinks.length || !('IntersectionObserver' in window)) return;
+      const map = new Map();
+      tocLinks.forEach((a) => map.set(a.getAttribute('data-toc-slug'), a));
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              tocLinks.forEach((a) => a.classList.remove('active'));
+              map.get(entry.target.id)?.classList.add('active');
+            }
+          });
+        },
+        { rootMargin: '-80px 0px -70% 0px', threshold: 0 }
+      );
+
+      document.querySelectorAll('.prosa h2[id], .prosa h3[id]').forEach((h) => observer.observe(h));
+    })();
+  </script>
+)}

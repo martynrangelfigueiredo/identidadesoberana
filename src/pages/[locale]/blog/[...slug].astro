@@ -4,6 +4,7 @@ import Base from "../../../layouts/Base.astro";
 import { getPosts } from "../../../lib/posts";
 import { UI, type Locale } from "../../../lib/i18n";
 import ShareButtons from "../../../components/ShareButtons.astro";
+import ArticleToc from "../../../components/ArticleToc.astro";
 
 export async function getStaticPaths() {
   const locales: Locale[] = ["de", "zh", "en"];
@@ -24,7 +25,7 @@ export async function getStaticPaths() {
 }
 
 const { post, locale } = Astro.props as { post: any; locale: Locale };
-const { Content } = await render(post);
+const { Content, headings } = await render(post);
 const ui = UI[locale];
 
 const dateLocales: Record<Locale, string> = {
@@ -85,7 +86,13 @@ const catUrl = `/${locale}/categoria/${post.data.categoria.toLowerCase()}/`;
         </div>
       </div>
     </header>
-    <div class="estreito prosa"><Content /></div>
+    <div class="container artigo-layout has-toc">
+      <div class="prosa">
+        <ArticleToc headings={headings} locale={locale} variant="mobile" />
+        <Content />
+      </div>
+      <ArticleToc headings={headings} locale={locale} variant="desktop" />
+    </div>
     <div class="estreito">
       <ShareButtons
         title={post.data.title}

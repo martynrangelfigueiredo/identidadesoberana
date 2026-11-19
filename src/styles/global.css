@@ -389,3 +389,176 @@ a.card:hover { transform: translateY(-3px); box-shadow: var(--is-sombra-2); bord
 }
 .site-footer a { color: var(--is-branco); }
 .site-footer .marca-nome, .site-footer .marca-nome b { color: var(--is-branco); }
+
+/* ---------- Command Palette Trigger & Back-to-Top ---------- */
+.cmd-trigger-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  height: 36px;
+  padding: 0 .65rem;
+  background: #f8fafc;
+  border: 1px solid var(--is-borda);
+  border-radius: var(--is-raio-pill);
+  color: var(--is-cinza);
+  font: 700 .78rem var(--is-fonte-codigo);
+  cursor: pointer;
+  transition: all .15s ease;
+}
+.cmd-trigger-btn:hover {
+  border-color: var(--is-verde);
+  background: var(--is-verde-claro);
+  color: var(--is-verde-escuro);
+}
+.cmd-trigger-btn kbd {
+  font-family: inherit;
+  font-size: .72rem;
+}
+@media (max-width: 720px) {
+  .cmd-trigger-btn kbd { display: none; }
+}
+
+.back-to-top {
+  position: fixed;
+  bottom: 1.35rem;
+  right: 1.35rem;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  background: var(--is-verde);
+  color: #fff;
+  font: 900 1.15rem var(--is-fonte-titulo);
+  box-shadow: var(--is-sombra-2);
+  cursor: pointer;
+  z-index: 90;
+  transition: transform .15s ease, background .15s ease;
+}
+.back-to-top:hover { background: var(--is-verde-escuro); transform: translateY(-2px); }
+.back-to-top[hidden] { display: none; }
+
+/* ---------- Alternador Terminal Escuro nos Blocos de Código ---------- */
+.code-theme-btn {
+  position: absolute;
+  top: 8px;
+  right: 92px;
+  background: var(--is-branco);
+  border: 1px solid var(--is-borda);
+  border-radius: var(--is-raio-sm);
+  padding: 4px 9px;
+  font: 700 .74rem var(--is-fonte-titulo);
+  color: var(--is-cinza);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  transition: all .15s ease;
+  z-index: 2;
+}
+.code-theme-btn:hover {
+  background: var(--is-verde-claro);
+  color: var(--is-verde-escuro);
+  border-color: var(--is-verde);
+}
+
+html[data-code-theme="dark"] .prosa pre,
+html[data-code-theme="dark"] .code-out {
+  background: #0f172a !important;
+  border-color: #1e293b;
+  color: #e2e8f0;
+}
+html[data-code-theme="dark"] .prosa pre code,
+html[data-code-theme="dark"] .prosa pre code span {
+  color: #e2e8f0 !important;
+}
+html[data-code-theme="dark"] .copy-code-btn,
+html[data-code-theme="dark"] .code-theme-btn,
+html[data-code-theme="dark"] .out-copy-btn {
+  background: #1e293b;
+  border-color: #334155;
+  color: #cbd5e1;
+}
+html[data-code-theme="dark"] .copy-code-btn:hover,
+html[data-code-theme="dark"] .code-theme-btn:hover,
+html[data-code-theme="dark"] .out-copy-btn:hover {
+  border-color: var(--is-verde);
+  color: #4ade80;
+}
+
+/* ---------- Índice Lateral Fixo (TOC) nos Artigos ---------- */
+.artigo-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 760px);
+  justify-content: center;
+  gap: 2.5rem;
+}
+.artigo-toc {
+  display: none;
+}
+.artigo-toc-mobile {
+  background: #f8fafc;
+  border: 1px solid var(--is-borda);
+  border-radius: var(--is-raio-sm);
+  padding: .85rem 1rem;
+  margin-bottom: 1.5rem;
+}
+.artigo-toc-mobile summary {
+  font: 800 .95rem var(--is-fonte-titulo);
+  color: var(--is-verde-escuro);
+  cursor: pointer;
+}
+.artigo-toc-list {
+  list-style: none;
+  margin: .65rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: .35rem;
+}
+.artigo-toc-list a {
+  text-decoration: none;
+  font-size: .86rem;
+  line-height: 1.4;
+  color: var(--is-cinza);
+  display: block;
+  padding: .2rem .5rem;
+  border-left: 2px solid transparent;
+  transition: all .15s ease;
+}
+.artigo-toc-list a.toc-sub {
+  padding-left: 1.15rem;
+  font-size: .82rem;
+}
+.artigo-toc-list a:hover,
+.artigo-toc-list a.active {
+  color: var(--is-verde-escuro);
+  border-left-color: var(--is-verde);
+  font-weight: 700;
+}
+@media (min-width: 1120px) {
+  .artigo-layout.has-toc {
+    grid-template-columns: minmax(0, 760px) 250px;
+    align-items: start;
+  }
+  .artigo-toc {
+    display: block;
+    position: sticky;
+    top: 84px;
+    background: #f8fafc;
+    border: 1px solid var(--is-borda);
+    border-radius: var(--is-raio-sm);
+    padding: 1rem;
+    max-height: calc(100vh - 110px);
+    overflow-y: auto;
+  }
+  .artigo-toc-title {
+    font: 800 .82rem var(--is-fonte-titulo);
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    color: var(--is-verde-escuro);
+    margin: 0 0 .5rem;
+  }
+  .artigo-toc-mobile {
+    display: none;
+  }
+}

@@ -14,10 +14,12 @@
     "test:kql": "node scripts/test-kql.mjs"
   },
   "dependencies": {
+    "@fontsource-variable/inter": "^5.3.0",
+    "@fontsource-variable/jetbrains-mono": "^5.3.0",
+    "@fontsource-variable/nunito": "^5.3.0",
     "astro": "^5.0.0"
   },
   "devDependencies": {
     "puppeteer": "^23.0.0"
   }
 }
-

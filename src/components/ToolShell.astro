@@ -80,6 +80,22 @@ const { title, description, badge, icon } = Astro.props;
       workspace.querySelectorAll('.code-out').forEach((pre) => {
         if (pre.querySelector('.out-copy-btn')) return;
         pre.classList.add('has-copy');
+
+        const themeBtn = document.createElement('button');
+        themeBtn.type = 'button';
+        themeBtn.className = 'code-theme-btn';
+        themeBtn.setAttribute('aria-label', 'Alternar tema do bloco');
+        themeBtn.textContent = document.documentElement.dataset.codeTheme === 'dark' ? '☀️ Claro' : '🌙 Terminal';
+        themeBtn.addEventListener('click', () => {
+          const next = document.documentElement.dataset.codeTheme === 'dark' ? '' : 'dark';
+          if (next) document.documentElement.dataset.codeTheme = 'dark';
+          else delete document.documentElement.dataset.codeTheme;
+          try { localStorage.setItem('is_code_theme', next || 'light'); } catch {}
+          document.querySelectorAll('.code-theme-btn').forEach((b) => {
+            b.textContent = next ? '☀️ Claro' : '🌙 Terminal';
+          });
+        });
+
         const btn = document.createElement('button');
         btn.type = 'button';
         btn.className = 'out-copy-btn';
@@ -88,7 +104,7 @@ const { title, description, badge, icon } = Astro.props;
 
         btn.addEventListener('click', async () => {
           const text = Array.from(pre.childNodes)
-            .filter((n) => n !== btn)
+            .filter((n) => n !== btn && n !== themeBtn)
             .map((n) => n.textContent)
             .join('')
             .trim();
@@ -105,6 +121,7 @@ const { title, description, badge, icon } = Astro.props;
             console.error('Erro ao copiar:', err);
           }
         });
+        pre.appendChild(themeBtn);
         pre.appendChild(btn);
       });
     }
