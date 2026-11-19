@@ -26,7 +26,7 @@ const activeMeta = LOCALE_LABELS[currentLocale];
       const isActive = loc === currentLocale;
       return (
         <li role="option" aria-selected={isActive ? "true" : "false"} class={isActive ? "active" : ""}>
-          <a href={targetUrl} class="lang-item-link">
+          <a href={targetUrl} data-locale={loc} class="lang-item-link">
             <span class="flag">{meta.flag}</span>
             <strong class="menu-c">{meta.country}</strong>
             <span class="menu-l">{meta.langCode}</span>
@@ -178,6 +178,15 @@ const activeMeta = LOCALE_LABELS[currentLocale];
       e.stopPropagation();
       const isOpen = container.classList.toggle('open');
       trigger.setAttribute('aria-expanded', String(isOpen));
+    });
+
+    container.querySelectorAll('.lang-item-link').forEach((link) => {
+      link.addEventListener('click', () => {
+        const loc = link.getAttribute('data-locale');
+        if (loc) {
+          try { localStorage.setItem('is_lang_pref', loc); } catch {}
+        }
+      });
     });
 
     document.addEventListener('click', (e) => {

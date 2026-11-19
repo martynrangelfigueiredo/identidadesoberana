@@ -28,6 +28,30 @@ const homeUrl = currentLocale === "pt" ? "/" : `/${currentLocale}/`;
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <script is:inline>
+      (function(){try{
+        var ua=navigator.userAgent||'';
+        if(/bot|crawler|spider|lighthouse|googlebot|bingbot|baiduspider|yandex|slurp|duckduckbot/i.test(ua))return;
+        if(localStorage.getItem('is_lang_pref')||sessionStorage.getItem('is_lang_auto'))return;
+        var p=location.pathname;
+        if(/^\/(de|zh|en)(\/|$)/.test(p))return;
+        if(p.indexOf('/util/')===0&&p!=='/util/'&&p!=='/util')return;
+        var langs=(navigator.languages&&navigator.languages.length?navigator.languages:[navigator.language||'']).map(function(l){return l.toLowerCase();});
+        var target='en';
+        for(var i=0;i<langs.length;i++){
+          var l=langs[i];
+          if(l.indexOf('pt')===0){target='pt';break;}
+          if(l.indexOf('de')===0){target='de';break;}
+          if(l.indexOf('zh')===0){target='zh';break;}
+          if(l.indexOf('en')===0){target='en';break;}
+        }
+        sessionStorage.setItem('is_lang_auto',target);
+        if(target!=='pt'){
+          var next='/'+target+(p==='/'?'/':p);
+          location.replace(next+location.search+location.hash);
+        }
+      }catch(e){}})();
+    </script>
     <link rel="icon" type="image/svg+xml" href={favicon} />
     <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png" />
     <link rel="apple-touch-icon" href="/icons/icon-192.png" />
