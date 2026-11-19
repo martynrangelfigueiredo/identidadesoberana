@@ -3,8 +3,8 @@ import ToolShell from "../../components/ToolShell.astro";
 ---
 
 <ToolShell
-  title="IP, IPv6, CIDR & Threat Lookup"
-  description="Análise completa no estilo iplocation.io: geolocalização, rDNS (PTR), ASN, bloco de rede RDAP, contato de abuso, provedor Cloud, expansor IPv6, CIDR e queries prontas para SOC."
+  title="IP, IPv6, CIDR & Multi-Source Lookup"
+  description="Consulta rápida e paralela em múltiplas fontes (ipwho.is, ipinfo.io, ipapi.co, FreeIPAPI, rDNS e RDAP), expansor IPv6, CIDR, queries KQL/Wazuh e links regionais (Ásia, América do Sul e Global)."
   badge="Rede & IP"
   icon="🌐"
 >
@@ -15,26 +15,31 @@ import ToolShell from "../../components/ToolShell.astro";
         id="ip-input"
         type="text"
         class="tool-input"
-        placeholder="Ex: 8.8.8.8, 2001:4860:4860::8888 ou 192.168.1.0/24"
+        placeholder="Digite um IPv4, IPv6 ou CIDR (ex: 8.8.8.8, 200.160.2.3, 2001:4860:4860::8888)"
         aria-label="Endereço IP, IPv6 ou CIDR"
       />
       <button id="btn-lookup" type="button" class="tool-btn">Consultar IP</button>
-      <button id="btn-myip" type="button" class="tool-btn secondary">Meu IP Atual</button>
+      <button id="btn-myip" type="button" class="tool-btn secondary">Detectar Meu IP</button>
     </div>
-    <p id="ip-status" class="status-msg"></p>
+    <p id="ip-status" class="status-msg" style="color:var(--is-cinza);">
+      Informe um IP acima ou clique em "Detectar Meu IP" para iniciar a consulta paralela.
+    </p>
   </div>
 
-  <!-- Bloco 1: Análise Técnica Local (IPv4 / IPv6 / CIDR) -->
+  <!-- Bloco 1: Análise Técnica Local (Instantânea, 0ms) -->
   <div id="local-analysis-card" class="tool-card" style="display:none;">
-    <h2>1. Análise Técnica de Endereço & Sub-rede (Local)</h2>
+    <h2>1. Análise Técnica Local (IPv4 / IPv6 / CIDR)</h2>
     <div id="local-grid" class="tool-grid"></div>
   </div>
 
-  <!-- Bloco 2: Geolocalização Completa, Rede & ASN -->
+  <!-- Bloco 2: Resumo Consolidado + Mapa Sob Demanda -->
   <div id="geo-card" class="tool-card" style="display:none;">
-    <h2>2. Geolocalização, Rede, ASN & Contexto Completo</h2>
-    <div id="geo-grid" class="tool-grid" style="margin-bottom:1.15rem;"></div>
-    <div id="map-container" style="display:none;border-radius:12px;overflow:hidden;border:1px solid var(--is-borda);">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem;margin-bottom:.85rem;">
+      <h2 style="margin:0;">2. Geolocalização, Rede & ASN</h2>
+      <button id="btn-load-map" type="button" class="tool-btn outline" style="display:none;">🗺️ Carregar Mapa Interativo</button>
+    </div>
+    <div id="geo-grid" class="tool-grid"></div>
+    <div id="map-container" style="display:none;margin-top:1rem;border-radius:12px;overflow:hidden;border:1px solid var(--is-borda);">
       <iframe
         id="osm-frame"
         title="Mapa OpenStreetMap do endereço IP"
@@ -46,17 +51,33 @@ import ToolShell from "../../components/ToolShell.astro";
     </div>
   </div>
 
-  <!-- Bloco 3: Registro RDAP (Bloco CIDR, RIR e Contato de Abuso) -->
+  <!-- Bloco 3: Comparação Multi-Provedor -->
+  <div id="multi-card" class="tool-card" style="display:none;overflow-x:auto;">
+    <h2>3. Comparação Multi-Provedor (Tempo Real)</h2>
+    <table style="width:100%;border-collapse:collapse;font-size:.9rem;">
+      <thead>
+        <tr style="border-bottom:2px solid var(--is-borda);text-align:left;">
+          <th style="padding:.55rem;">Fonte</th>
+          <th style="padding:.55rem;">País / Cidade</th>
+          <th style="padding:.55rem;">ASN / ISP / Organização</th>
+          <th style="padding:.55rem;">Sinais</th>
+        </tr>
+      </thead>
+      <tbody id="multi-tbody"></tbody>
+    </table>
+  </div>
+
+  <!-- Bloco 4: Registro RDAP (RIR Regional: LACNIC, APNIC, ARIN, RIPE) -->
   <div id="rdap-card" class="tool-card" style="display:none;">
-    <h2>3. Registro de Rede & Abuso (RDAP / RIR)</h2>
+    <h2>4. Registro Oficial de Rede & Abuso (RDAP / RIR)</h2>
     <div id="rdap-grid" class="tool-grid"></div>
   </div>
 
-  <!-- Bloco 4: Exportação KQL / Wazuh (Empilhados) e Pivot OSINT -->
+  <!-- Bloco 5: Queries SOC (Empilhadas) & Pivot Regional/Global -->
   <div id="pivot-card" class="tool-card" style="display:none;">
-    <h2>4. Queries Prontas para SOC & Pivot OSINT</h2>
+    <h2>5. Queries Prontas para SOC & Fontes Externas</h2>
 
-    <div style="display:flex;flex-direction:column;gap:1rem;margin-bottom:1.15rem;">
+    <div style="display:flex;flex-direction:column;gap:1rem;margin-bottom:1.25rem;">
       <div>
         <div class="kv-label" style="margin-bottom:.35rem;">KQL — Microsoft Sentinel / Entra ID (SigninLogs)</div>
         <pre id="kql-out" class="code-out"></pre>
@@ -67,7 +88,7 @@ import ToolShell from "../../components/ToolShell.astro";
       </div>
     </div>
 
-    <div class="kv-label">Pivotar investigação em 1 clique</div>
+    <div class="kv-label">Consultar em Fontes Globais, América do Sul & Ásia (1 clique)</div>
     <div id="pivot-links" class="pivot-bar"></div>
   </div>
 </ToolShell>
@@ -83,8 +104,12 @@ import ToolShell from "../../components/ToolShell.astro";
     const localGrid = document.getElementById('local-grid');
     const geoCard = document.getElementById('geo-card');
     const geoGrid = document.getElementById('geo-grid');
+    const btnLoadMap = document.getElementById('btn-load-map');
     const mapContainer = document.getElementById('map-container');
     const osmFrame = document.getElementById('osm-frame');
+
+    const multiCard = document.getElementById('multi-card');
+    const multiTbody = document.getElementById('multi-tbody');
 
     const rdapCard = document.getElementById('rdap-card');
     const rdapGrid = document.getElementById('rdap-grid');
@@ -93,6 +118,10 @@ import ToolShell from "../../components/ToolShell.astro";
     const kqlOut = document.getElementById('kql-out');
     const wazuhOut = document.getElementById('wazuh-out');
     const pivotLinks = document.getElementById('pivot-links');
+
+    let activeReqId = 0;
+    let activeAbort = null;
+    let pendingCoords = null;
 
     function addKv(container, label, value) {
       const box = document.createElement('div');
@@ -106,6 +135,18 @@ import ToolShell from "../../components/ToolShell.astro";
       box.appendChild(l);
       box.appendChild(v);
       container.appendChild(box);
+    }
+
+    function addMultiRow(source, location, org, signal) {
+      const tr = document.createElement('tr');
+      tr.style.borderBottom = '1px solid var(--is-borda)';
+      tr.innerHTML = `
+        <td style="padding:.55rem;font-weight:700;color:var(--is-verde-escuro);">${source}</td>
+        <td style="padding:.55rem;">${location || '—'}</td>
+        <td style="padding:.55rem;">${org || '—'}</td>
+        <td style="padding:.55rem;font-family:var(--is-fonte-mono);font-size:.82rem;">${signal || '—'}</td>
+      `;
+      multiTbody.appendChild(tr);
     }
 
     function isIPv4(ip) {
@@ -182,95 +223,24 @@ import ToolShell from "../../components/ToolShell.astro";
 
     function detectCloud(org) {
       const s = (org || '').toLowerCase();
-      if (s.includes('microsoft') || s.includes('azure')) return 'Microsoft Azure / Corporate';
+      if (s.includes('microsoft') || s.includes('azure')) return 'Microsoft Azure';
       if (s.includes('amazon') || s.includes('aws')) return 'Amazon AWS';
       if (s.includes('google')) return 'Google Cloud';
       if (s.includes('cloudflare')) return 'Cloudflare';
       if (s.includes('digitalocean')) return 'DigitalOcean';
       if (s.includes('oracle')) return 'Oracle Cloud';
-      if (s.includes('akamai') || s.includes('linode')) return 'Akamai / Linode';
-      if (s.includes('ovh')) return 'OVHcloud';
-      if (s.includes('hetzner')) return 'Hetzner';
-      return 'ISP Residencial / Corporativo / Outro';
+      if (s.includes('alibaba') || s.includes('tencent')) return 'Alibaba / Tencent Cloud (Ásia)';
+      if (s.includes('ovh') || s.includes('hetzner')) return 'OVH / Hetzner';
+      return 'ISP / Corporativo / Outro';
     }
 
-    async function fetchReverseDns(ip) {
-      try {
-        let ptrName = '';
-        if (isIPv4(ip)) {
-          ptrName = ip.split('.').reverse().join('.') + '.in-addr.arpa';
-        } else if (isIPv6(ip)) {
-          const nibbles = expandIPv6(ip).replace(/:/g, '').split('').reverse().join('.');
-          ptrName = `${nibbles}.ip6.arpa`;
-        } else {
-          return '—';
-        }
-        const res = await fetch(`https://cloudflare-dns.com/dns-query?name=${ptrName}&type=PTR`, {
-          headers: { Accept: 'application/dns-json' },
-        });
-        const data = await res.json();
-        const ans = data.Answer?.[0]?.data;
-        return ans ? ans.replace(/\.$/, '') : 'Sem registro PTR';
-      } catch {
-        return 'Indisponível';
+    function fetchWithTimeout(url, opts = {}, signal, ms = 4500) {
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), ms);
+      if (signal) {
+        signal.addEventListener('abort', () => ctrl.abort(), { once: true });
       }
-    }
-
-    async function fetchRdapInfo(ip) {
-      try {
-        const res = await fetch(`https://rdap.org/ip/${encodeURIComponent(ip)}`);
-        if (!res.ok) return null;
-        const data = await res.json();
-        const emails = [];
-        const walk = (ents) => {
-          (ents || []).forEach((e) => {
-            (e.vcardArray?.[1] || []).forEach((f) => {
-              if (f[0] === 'email' && f[3]) emails.push(f[3]);
-            });
-            if (e.entities) walk(e.entities);
-          });
-        };
-        walk(data.entities);
-        const cidr = data.cidr0_cidrs?.[0]
-          ? `${data.cidr0_cidrs[0].v4prefix || data.cidr0_cidrs[0].v6prefix}/${data.cidr0_cidrs[0].length}`
-          : data.handle;
-        return {
-          name: data.name || '—',
-          handle: data.handle || '—',
-          cidr: cidr || '—',
-          type: data.type || '—',
-          country: data.country || '—',
-          rir: data.port43 || '—',
-          abuse: [...new Set(emails)].join(', ') || 'Não exposto via RDAP',
-        };
-      } catch {
-        return null;
-      }
-    }
-
-    function renderPivots(targetIp) {
-      pivotCard.style.display = '';
-      kqlOut.textContent = `SigninLogs\n| where IPAddress == "${targetIp}"\n| project TimeGenerated, UserPrincipalName, AppDisplayName, Location, ResultType`;
-      wazuhOut.textContent = `data.srcip: "${targetIp}" OR data.win.eventdata.ipAddress: "${targetIp}"`;
-
-      const links = [
-        { name: 'iplocation.io', url: `https://iplocation.io/ip/${encodeURIComponent(targetIp)}` },
-        { name: 'AbuseIPDB', url: `https://www.abuseipdb.com/check/${encodeURIComponent(targetIp)}` },
-        { name: 'Shodan', url: `https://www.shodan.io/host/${encodeURIComponent(targetIp)}` },
-        { name: 'Cisco Talos', url: `https://talosintelligence.com/reputation_center/lookup?search=${encodeURIComponent(targetIp)}` },
-        { name: 'AlienVault OTX', url: `https://otx.alienvault.com/indicator/ip/${encodeURIComponent(targetIp)}` },
-        { name: 'Spamhaus', url: `https://check.spamhaus.org/results/?query=${encodeURIComponent(targetIp)}` },
-      ];
-      pivotLinks.innerHTML = '';
-      links.forEach((l) => {
-        const a = document.createElement('a');
-        a.href = l.url;
-        a.target = '_blank';
-        a.rel = 'noopener noreferrer';
-        a.className = 'pivot-link';
-        a.textContent = `${l.name} ↗`;
-        pivotLinks.appendChild(a);
-      });
+      return fetch(url, { ...opts, signal: ctrl.signal }).finally(() => clearTimeout(timer));
     }
 
     function renderLocalAnalysis(baseIp, cidrPrefix) {
@@ -294,108 +264,226 @@ import ToolShell from "../../components/ToolShell.astro";
         addKv(localGrid, 'Forma Expandida (128-bit)', exp);
         addKv(localGrid, 'Forma Comprimida', compressIPv6(exp));
         addKv(localGrid, 'Escopo / Classificação', classifyIPv6(exp));
-      } else {
-        addKv(localGrid, 'Entrada', baseIp);
-        addKv(localGrid, 'Nota', 'Consultando resolução externa...');
       }
     }
 
-    async function runLookup(rawInput) {
-      const input = (rawInput || '').trim();
-      const [baseIp, cidrPrefix] = input.split('/');
-      statusEl.textContent = 'Consultando geolocalização, rDNS e RDAP...';
-      statusEl.className = 'status-msg';
+    function renderPivots(targetIp) {
+      pivotCard.style.display = '';
+      kqlOut.textContent = `SigninLogs\n| where IPAddress == "${targetIp}"\n| project TimeGenerated, UserPrincipalName, AppDisplayName, Location, ResultType`;
+      wazuhOut.textContent = `data.srcip: "${targetIp}" OR data.win.eventdata.ipAddress: "${targetIp}"`;
 
+      const links = [
+        { name: 'IP2Location', url: `https://www.ip2location.com/demo/${encodeURIComponent(targetIp)}` },
+        { name: 'DB-IP', url: `https://db-ip.com/${encodeURIComponent(targetIp)}` },
+        { name: 'CriminalIP', url: `https://www.criminalip.io/asset/report/${encodeURIComponent(targetIp)}` },
+        { name: 'IPinfo.io', url: `https://ipinfo.io/${encodeURIComponent(targetIp)}` },
+        { name: 'iplocation.io', url: `https://iplocation.io/ip/${encodeURIComponent(targetIp)}` },
+        { name: 'LACNIC (América do Sul)', url: `https://rdap.lacnic.net/rdap/ip/${encodeURIComponent(targetIp)}` },
+        { name: 'Registro.br (Brasil)', url: `https://registro.br/tecnologia/ferramentas/whois/?search=${encodeURIComponent(targetIp)}` },
+        { name: 'APNIC (Ásia-Pacífico)', url: `https://wq.apnic.net/static/search.html?query=${encodeURIComponent(targetIp)}` },
+        { name: 'ThreatBook (Ásia CTI)', url: `https://threatbook.io/ip/${encodeURIComponent(targetIp)}` },
+        { name: 'AbuseIPDB', url: `https://www.abuseipdb.com/check/${encodeURIComponent(targetIp)}` },
+        { name: 'Shodan', url: `https://www.shodan.io/host/${encodeURIComponent(targetIp)}` },
+        { name: 'Cisco Talos', url: `https://talosintelligence.com/reputation_center/lookup?search=${encodeURIComponent(targetIp)}` },
+        { name: 'AlienVault OTX', url: `https://otx.alienvault.com/indicator/ip/${encodeURIComponent(targetIp)}` },
+        { name: 'Spamhaus', url: `https://check.spamhaus.org/results/?query=${encodeURIComponent(targetIp)}` },
+      ];
+      pivotLinks.innerHTML = '';
+      links.forEach((l) => {
+        const a = document.createElement('a');
+        a.href = l.url;
+        a.target = '_blank';
+        a.rel = 'noopener noreferrer';
+        a.className = 'pivot-link';
+        a.textContent = `${l.name} ↗`;
+        pivotLinks.appendChild(a);
+      });
+    }
+
+    async function runLookup(targetIpRaw) {
+      const input = (targetIpRaw || '').trim();
+      const [baseIp, cidrPrefix] = input.split('/');
+
+      if (!baseIp || (!isIPv4(baseIp) && !isIPv6(baseIp))) {
+        statusEl.textContent = 'Informe um endereço IPv4 ou IPv6 válido.';
+        statusEl.className = 'status-msg error';
+        return;
+      }
+
+      if (activeAbort) activeAbort.abort();
+      activeAbort = new AbortController();
+      const signal = activeAbort.signal;
+      const reqId = ++activeReqId;
+
+      // Limpar estado anterior imediatamente
       localGrid.innerHTML = '';
       geoGrid.innerHTML = '';
+      multiTbody.innerHTML = '';
       rdapGrid.innerHTML = '';
-      rdapCard.style.display = 'none';
       mapContainer.style.display = 'none';
+      osmFrame.src = 'about:blank';
+      btnLoadMap.style.display = 'none';
+      pendingCoords = null;
 
-      let targetIp = baseIp;
-      if (input) {
-        renderLocalAnalysis(baseIp, cidrPrefix);
-      } else {
-        localCard.style.display = 'none';
-      }
+      geoCard.style.display = 'none';
+      multiCard.style.display = '';
+      rdapCard.style.display = 'none';
 
-      try {
-        const endpoint = targetIp ? `https://ipwho.is/${encodeURIComponent(targetIp)}` : 'https://ipwho.is/';
-        const res = await fetch(endpoint);
-        const data = await res.json();
+      statusEl.textContent = `Consultando ${baseIp} em múltiplos provedores em paralelo...`;
+      statusEl.className = 'status-msg';
 
-        if (!data.success) {
-          throw new Error(data.message || 'Falha ao consultar IP');
-        }
+      // Análise local e Pivots aparecem em 0ms
+      renderLocalAnalysis(baseIp, cidrPrefix);
+      renderPivots(baseIp);
 
-        if (!targetIp && data.ip) {
-          ipInput.value = data.ip;
-          targetIp = data.ip;
-          renderLocalAnalysis(targetIp, undefined);
-        }
+      let geoPopulated = false;
 
-        const resolvedIp = data.ip;
-        const [rdns, rdap] = await Promise.all([
-          fetchReverseDns(resolvedIp),
-          fetchRdapInfo(resolvedIp),
-        ]);
+      // 1. Provedor A: ipwho.is
+      const p1 = fetchWithTimeout(`https://ipwho.is/${encodeURIComponent(baseIp)}`, {}, signal)
+        .then((r) => r.json())
+        .then((d) => {
+          if (reqId !== activeReqId || !d.success) return;
+          addMultiRow('ipwho.is', `${d.country || '—'} · ${d.city || '—'}`, `AS${d.connection?.asn || '?'} · ${d.connection?.isp || d.connection?.org || '—'}`, d.timezone?.id || 'OK');
+          if (!geoPopulated) {
+            geoPopulated = true;
+            geoCard.style.display = '';
+            addKv(geoGrid, 'Endereço IP', d.ip);
+            addKv(geoGrid, 'Continente / País', `${d.continent || ''} · ${d.flag?.emoji || ''} ${d.country || ''} (${d.country_code || ''})`.trim());
+            addKv(geoGrid, 'Estado / Cidade', `${d.region || '—'} · ${d.city || '—'}`);
+            addKv(geoGrid, 'CEP / Postal', d.postal || '—');
+            addKv(geoGrid, 'ASN / ISP', `AS${d.connection?.asn || '—'} · ${d.connection?.isp || '—'}`);
+            addKv(geoGrid, 'Organização / Cloud', `${d.connection?.org || '—'} (${detectCloud(d.connection?.org || d.connection?.isp)})`);
+            addKv(geoGrid, 'Fuso Horário', d.timezone?.id ? `${d.timezone.id} (UTC ${d.timezone.utc})` : '—');
+            addKv(geoGrid, 'Coordenadas', `${d.latitude}, ${d.longitude}`);
+            if (typeof d.latitude === 'number' && typeof d.longitude === 'number') {
+              pendingCoords = { lat: d.latitude, lon: d.longitude };
+              btnLoadMap.style.display = '';
+            }
+          }
+        })
+        .catch(() => {});
 
-        geoCard.style.display = '';
-        addKv(geoGrid, 'Endereço IP', resolvedIp);
-        addKv(geoGrid, 'Hostname / rDNS (PTR)', rdns);
-        addKv(geoGrid, 'Continente', `${data.continent} (${data.continent_code})`);
-        addKv(geoGrid, 'País', `${data.flag?.emoji || ''} ${data.country} (${data.country_code})`.trim());
-        addKv(geoGrid, 'Estado / Região', `${data.region} (${data.region_code || '—'})`);
-        addKv(geoGrid, 'Cidade', data.city);
-        addKv(geoGrid, 'Código Postal (CEP/ZIP)', data.postal || '—');
-        addKv(geoGrid, 'Coordenadas (Lat, Lon)', `${data.latitude}, ${data.longitude}`);
-        addKv(geoGrid, 'ASN', data.connection?.asn ? `AS${data.connection.asn}` : '—');
-        addKv(geoGrid, 'ISP (Provedor)', data.connection?.isp || '—');
-        addKv(geoGrid, 'Organização', data.connection?.org || '—');
-        addKv(geoGrid, 'Domínio do ASN', data.connection?.domain || '—');
-        addKv(geoGrid, 'Classificação Cloud', detectCloud(data.connection?.org || data.connection?.isp));
-        addKv(geoGrid, 'Fuso Horário', data.timezone?.id ? `${data.timezone.id} (UTC ${data.timezone.utc})` : '—');
-        addKv(geoGrid, 'Hora Local no IP', data.timezone?.current_time || '—');
-        addKv(geoGrid, 'DDI / Moeda', `+${data.calling_code || '—'} · ${data.currency?.code || '—'}`);
+      // 2. Provedor B: ipinfo.io
+      const p2 = fetchWithTimeout(`https://ipinfo.io/${encodeURIComponent(baseIp)}/json`, {}, signal)
+        .then((r) => r.json())
+        .then((d) => {
+          if (reqId !== activeReqId || d.bogon || d.error) return;
+          addMultiRow('IPinfo.io', `${d.country || '—'} · ${d.city || '—'}`, d.org || '—', d.anycast ? 'Anycast' : (d.timezone || 'OK'));
+          if (!geoPopulated && d.loc) {
+            geoPopulated = true;
+            geoCard.style.display = '';
+            addKv(geoGrid, 'Endereço IP', d.ip);
+            addKv(geoGrid, 'País / Região / Cidade', `${d.country} · ${d.region} · ${d.city}`);
+            addKv(geoGrid, 'Organização / ASN', d.org || '—');
+            addKv(geoGrid, 'Hostname', d.hostname || '—');
+            addKv(geoGrid, 'Fuso Horário', d.timezone || '—');
+            const [lat, lon] = d.loc.split(',').map(Number);
+            if (!isNaN(lat) && !isNaN(lon)) {
+              pendingCoords = { lat, lon };
+              btnLoadMap.style.display = '';
+            }
+          }
+        })
+        .catch(() => {});
 
-        if (typeof data.latitude === 'number' && typeof data.longitude === 'number') {
-          const lat = data.latitude;
-          const lon = data.longitude;
-          const delta = 0.08;
-          osmFrame.src = `https://www.openstreetmap.org/export/embed.html?bbox=${lon - delta},${lat - delta},${lon + delta},${lat + delta}&layer=mapnik&marker=${lat},${lon}`;
-          mapContainer.style.display = '';
-        }
+      // 3. Provedor C: FreeIPAPI (com sinal de Proxy/VPN)
+      const p3 = fetchWithTimeout(`https://freeipapi.com/api/json/${encodeURIComponent(baseIp)}`, {}, signal)
+        .then((r) => r.json())
+        .then((d) => {
+          if (reqId !== activeReqId || !d.ipAddress) return;
+          const sig = d.isProxy ? '⚠️ Proxy/VPN Detectado' : 'Sem flag Proxy';
+          addMultiRow('FreeIPAPI', `${d.countryName || '—'} · ${d.cityName || '—'}`, d.asnOrganization || (d.asn ? `AS${d.asn}` : '—'), sig);
+        })
+        .catch(() => {});
 
-        if (rdap) {
+      // 4. Provedor D: ipapi.co
+      const p4 = fetchWithTimeout(`https://ipapi.co/${encodeURIComponent(baseIp)}/json/`, {}, signal)
+        .then((r) => r.json())
+        .then((d) => {
+          if (reqId !== activeReqId || d.error) return;
+          addMultiRow('ipapi.co', `${d.country_name || '—'} · ${d.city || '—'}`, `${d.asn || ''} · ${d.org || '—'}`, d.network || 'OK');
+        })
+        .catch(() => {});
+
+      // 5. Reverse DNS (Cloudflare DoH PTR)
+      let ptrName = '';
+      if (isIPv4(baseIp)) ptrName = baseIp.split('.').reverse().join('.') + '.in-addr.arpa';
+      else if (isIPv6(baseIp)) ptrName = expandIPv6(baseIp).replace(/:/g, '').split('').reverse().join('.') + '.ip6.arpa';
+
+      const p5 = ptrName
+        ? fetchWithTimeout(`https://cloudflare-dns.com/dns-query?name=${ptrName}&type=PTR`, { headers: { Accept: 'application/dns-json' } }, signal)
+            .then((r) => r.json())
+            .then((d) => {
+              if (reqId !== activeReqId) return;
+              const ptr = d.Answer?.[0]?.data?.replace(/\.$/, '') || 'Sem registro PTR';
+              addKv(localGrid, 'Hostname / rDNS (PTR)', ptr);
+            })
+            .catch(() => {})
+        : Promise.resolve();
+
+      // 6. RDAP (RIR Regional: LACNIC / APNIC / ARIN / RIPE)
+      const p6 = fetchWithTimeout(`https://rdap.org/ip/${encodeURIComponent(baseIp)}`, {}, signal, 6000)
+        .then((r) => (r.ok ? r.json() : null))
+        .then((data) => {
+          if (reqId !== activeReqId || !data) return;
+          const emails = [];
+          const walk = (ents) => {
+            (ents || []).forEach((e) => {
+              (e.vcardArray?.[1] || []).forEach((f) => {
+                if (f[0] === 'email' && f[3]) emails.push(f[3]);
+              });
+              if (e.entities) walk(e.entities);
+            });
+          };
+          walk(data.entities);
+          const cidr = data.cidr0_cidrs?.[0]
+            ? `${data.cidr0_cidrs[0].v4prefix || data.cidr0_cidrs[0].v6prefix}/${data.cidr0_cidrs[0].length}`
+            : data.handle;
+
           rdapCard.style.display = '';
-          addKv(rdapGrid, 'Nome da Rede (Netname)', rdap.name);
-          addKv(rdapGrid, 'Bloco CIDR Alocado', rdap.cidr);
-          addKv(rdapGrid, 'Handle / Registro', rdap.handle);
-          addKv(rdapGrid, 'Tipo de Alocação', rdap.type);
-          addKv(rdapGrid, 'Servidor WHOIS / RIR', rdap.rir);
-          addKv(rdapGrid, 'Contato de Abuso (Abuse)', rdap.abuse);
-        }
+          addKv(rdapGrid, 'Nome da Rede (Netname)', data.name || '—');
+          addKv(rdapGrid, 'Bloco CIDR Alocado', cidr || '—');
+          addKv(rdapGrid, 'Handle / Registro', data.handle || '—');
+          addKv(rdapGrid, 'Servidor WHOIS / RIR', data.port43 || '—');
+          addKv(rdapGrid, 'Contato de Abuso', [...new Set(emails)].join(', ') || 'Não exposto via RDAP');
+        })
+        .catch(() => {});
 
-        renderPivots(resolvedIp);
-        statusEl.textContent = 'Consulta completa concluída com sucesso.';
-        statusEl.className = 'status-msg ok';
-      } catch (err) {
-        statusEl.textContent = `Aviso: ${err.message}. Análise técnica local e links OSINT continuam disponíveis.`;
-        statusEl.className = 'status-msg error';
-        if (targetIp) renderPivots(targetIp);
-      }
+      await Promise.allSettled([p1, p2, p3, p4, p5, p6]);
+      if (reqId !== activeReqId) return;
+
+      statusEl.textContent = `Consulta concluída para ${baseIp}.`;
+      statusEl.className = 'status-msg ok';
     }
 
-    btnLookup?.addEventListener('click', () => runLookup(ipInput.value));
-    btnMyIp?.addEventListener('click', () => {
-      ipInput.value = '';
-      runLookup('');
+    btnLoadMap?.addEventListener('click', () => {
+      if (!pendingCoords) return;
+      const { lat, lon } = pendingCoords;
+      const delta = 0.08;
+      osmFrame.src = `https://www.openstreetmap.org/export/embed.html?bbox=${lon - delta},${lat - delta},${lon + delta},${lat + delta}&layer=mapnik&marker=${lat},${lon}`;
+      mapContainer.style.display = '';
+      btnLoadMap.style.display = 'none';
     });
+
+    btnLookup?.addEventListener('click', () => runLookup(ipInput.value));
     ipInput?.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') runLookup(ipInput.value);
     });
 
-    // Auto-detectar IP atual ao carregar
-    runLookup('');
+    btnMyIp?.addEventListener('click', async () => {
+      statusEl.textContent = 'Detectando seu IP público atual...';
+      statusEl.className = 'status-msg';
+      try {
+        const res = await fetch('https://api.ipify.org?format=json');
+        const d = await res.json();
+        if (d.ip) {
+          ipInput.value = d.ip;
+          runLookup(d.ip);
+        }
+      } catch {
+        statusEl.textContent = 'Não foi possível detectar o IP automaticamente.';
+        statusEl.className = 'status-msg error';
+      }
+    });
   })();
 </script>
