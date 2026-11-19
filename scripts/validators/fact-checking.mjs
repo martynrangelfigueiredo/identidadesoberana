@@ -64,7 +64,9 @@ async function validateFactChecking() {
       content.includes("strangebee.com") ||
       content.includes("thehive-project.org") ||
       content.includes("TheHive-Project") ||
-      content.includes("github.com/TheHive-Project");
+      content.includes("github.com/TheHive-Project") ||
+      content.includes("shuffler.io") ||
+      content.includes("github.com/Shuffle");
     if (!hasLearnDoc && !hasOpenSourceDoc) {
       console.error(`❌ [Fact Checking] Artigo sem referência primária oficial (Microsoft Learn ou docs oficiais): ${relPath}`);
       errors++;

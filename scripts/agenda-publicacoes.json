@@ -74,6 +74,16 @@
       "titulo": "Triagem de Viagem Impossível e IP Anônimo no Microsoft Security com Entra ID Protection e KQL",
       "categoria": "SOC",
       "idiomas": ["pt", "de", "zh", "en"]
+    },
+    {
+      "data": "2026-11-19",
+      "horario": "07:50",
+      "status": "publicado",
+      "trilha": "open-source",
+      "slug": "2026-11-19-shuffle-soar-automacao-docker-lab",
+      "titulo": "Automação de SOC com Shuffle SOAR: integrando Wazuh e TheHive no Docker",
+      "categoria": "SOC",
+      "idiomas": ["pt", "de", "zh", "en"]
     }
   ]
 }
