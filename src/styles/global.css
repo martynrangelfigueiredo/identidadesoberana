@@ -7,6 +7,7 @@
 html {
   -webkit-text-size-adjust: 100%;
   scroll-behavior: smooth;
+  overflow-x: clip;
 }
 body {
   margin: 0;
@@ -16,6 +17,7 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  overflow-x: clip;
 }
 main { flex: 1; }
 img, svg { max-width: 100%; height: auto; }
@@ -201,7 +203,7 @@ pre, code, .notranslate {
 .btn.sec { background: var(--is-branco); color: var(--is-verde-escuro); border: 2px solid var(--is-borda); }
 
 /* ---------- Cards ---------- */
-.grid { display: grid; gap: 1.25rem; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+.grid { display: grid; gap: 1.25rem; grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr)); }
 .card {
   display: flex; flex-direction: column; gap: .6rem;
   background: var(--is-branco); border: 1px solid var(--is-borda);
@@ -389,6 +391,18 @@ a.card:hover { transform: translateY(-3px); box-shadow: var(--is-sombra-2); bord
 }
 .site-footer a { color: var(--is-branco); }
 .site-footer .marca-nome, .site-footer .marca-nome b { color: var(--is-branco); }
+@media (max-width: 720px) {
+  .hero { padding: 2.5rem 0 2rem; }
+  .secao { padding: 2rem 0; }
+  .artigo-header { padding: 2rem 0 1.35rem; margin-bottom: 1.5rem; }
+  .site-footer { margin-top: 3.25rem; }
+  .site-footer .container {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.15rem;
+    padding: 1.65rem 0 2rem;
+  }
+}
 
 /* ---------- Command Palette Trigger & Back-to-Top ---------- */
 .cmd-trigger-btn {

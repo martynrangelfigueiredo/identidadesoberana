@@ -88,9 +88,9 @@ const L = {
     const rawCard = document.getElementById('rdap-raw-card');
     const rawPre = document.getElementById('rdap-raw');
 
-    function addKv(label, value) {
+    function addKv(label, value, wide = false) {
       const box = document.createElement('div');
-      box.className = 'kv-box';
+      box.className = wide ? 'kv-box wide' : 'kv-box';
       const l = document.createElement('div');
       l.className = 'kv-label';
       l.textContent = label;
@@ -157,7 +157,7 @@ const L = {
         }
 
         const emails = extractEmails(data.entities);
-        addKv(L.abuse, emails.length ? emails.join(', ') : L.noAbuse);
+        addKv(L.abuse, emails.length ? emails.join('\n') : L.noAbuse, true);
 
         rawPre.textContent = JSON.stringify(data, null, 2);
         statusEl.textContent = L.done;

@@ -358,9 +358,9 @@ const L = {
     let activeAbort = null;
     let pendingCoords = null;
 
-    function addKv(container, label, value) {
+    function addKv(container, label, value, wide = false) {
       const box = document.createElement('div');
-      box.className = 'kv-box';
+      box.className = wide ? 'kv-box wide' : 'kv-box';
       const l = document.createElement('div');
       l.className = 'kv-label';
       l.textContent = label;
@@ -699,7 +699,7 @@ const L = {
           addKv(rdapGrid, L.cidrBlock, cidr || '—');
           addKv(rdapGrid, L.handle, data.handle || '—');
           addKv(rdapGrid, L.rir, data.port43 || '—');
-          addKv(rdapGrid, L.abuse, [...new Set(emails)].join(', ') || L.noAbuse);
+          addKv(rdapGrid, L.abuse, [...new Set(emails)].join('\n') || L.noAbuse, true);
         })
         .catch(() => {});
 

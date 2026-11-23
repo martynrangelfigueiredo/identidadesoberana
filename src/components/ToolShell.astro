@@ -323,7 +323,7 @@ const t = SHELL_COPY[currentLocale];
   }
   .tool-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(230px, 100%), 1fr));
     gap: .85rem;
   }
   .kv-box {
@@ -332,6 +332,10 @@ const t = SHELL_COPY[currentLocale];
     border-radius: 10px;
     padding: .75rem .9rem;
     position: relative;
+    min-width: 0;
+  }
+  .kv-box.wide {
+    grid-column: 1 / -1;
   }
   .kv-box.has-copy {
     padding-right: 2.6rem;
@@ -365,9 +369,11 @@ const t = SHELL_COPY[currentLocale];
     margin-bottom: .25rem;
   }
   .kv-value {
-    font: 600 .95rem var(--is-fonte-mono);
+    font: 600 .95rem/1.45 var(--is-fonte-mono);
     color: var(--is-tinta);
-    word-break: break-all;
+    overflow-wrap: anywhere;
+    word-break: normal;
+    white-space: pre-line;
     user-select: text;
   }
   .code-out {
@@ -438,5 +444,11 @@ const t = SHELL_COPY[currentLocale];
   }
   .status-msg.error { color: #b91c1c; }
   .status-msg.ok { color: var(--is-verde-escuro); }
+  @media (max-width: 640px) {
+    .tool-page { padding-block: 1.25rem 2.75rem; }
+    .tool-card { padding: 1rem; border-radius: 12px; }
+    .tool-form-row > * { width: 100%; max-width: 100% !important; }
+    .tool-card table th, .tool-card table td { padding: .45rem .5rem; font-size: .82rem; }
+  }
 </style>
 
