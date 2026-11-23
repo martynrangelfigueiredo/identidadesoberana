@@ -1,5 +1,5 @@
-// Service Worker — Identidade Soberana PWA (Otimizado para Core Web Vitals)
-const CACHE_NAME = "is-cache-v3";
+// Service Worker — Identidade Soberana PWA (Otimizado para Core Web Vitals & Mobile)
+const CACHE_NAME = "is-cache-v4";
 const OFFLINE_URL = "/";
 
 const PRECACHE_ASSETS = [
@@ -38,7 +38,7 @@ self.addEventListener("fetch", (event) => {
   const url = new URL(event.request.url);
   if (url.origin !== self.location.origin) return;
 
-  // Cache-First para assets imutáveis com hash (/_astro/) e ícones
+  // Cache-First para assets imutáveis com hash (/_astro/), ícones e SVGs
   if (url.pathname.startsWith("/_astro/") || url.pathname.startsWith("/icons/") || url.pathname.endsWith(".svg")) {
     event.respondWith(
       caches.match(event.request).then((cached) => {
@@ -55,25 +55,42 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // Network-First com fallback instantâneo para páginas HTML
+  // Network-First com timeout rápido (2000ms) para páginas HTML e search JSON (melhora 3G/4G no celular)
   event.respondWith(
-    fetch(event.request)
-      .then((networkResponse) => {
-        if (networkResponse && networkResponse.status === 200) {
-          const responseToCache = networkResponse.clone();
-          caches.open(CACHE_NAME).then((cache) => {
-            cache.put(event.request, responseToCache);
-          });
+    new Promise((resolve) => {
+      let settled = false;
+      const timer = setTimeout(async () => {
+        const cached = await caches.match(event.request);
+        if (cached && !settled) {
+          settled = true;
+          resolve(cached);
         }
-        return networkResponse;
-      })
-      .catch(async () => {
-        const cachedResponse = await caches.match(event.request);
-        if (cachedResponse) return cachedResponse;
-        if (event.request.headers.get("accept")?.includes("text/html")) {
-          return caches.match(OFFLINE_URL);
-        }
-      })
+      }, 2000);
+
+      fetch(event.request)
+        .then((networkResponse) => {
+          clearTimeout(timer);
+          if (networkResponse && networkResponse.status === 200) {
+            const responseToCache = networkResponse.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseToCache));
+          }
+          if (!settled) {
+            settled = true;
+            resolve(networkResponse);
+          }
+        })
+        .catch(async () => {
+          clearTimeout(timer);
+          if (settled) return;
+          const cachedResponse = await caches.match(event.request);
+          if (cachedResponse) {
+            resolve(cachedResponse);
+          } else if (event.request.headers.get("accept")?.includes("text/html")) {
+            resolve(caches.match(OFFLINE_URL));
+          } else {
+            resolve(new Response("", { status: 504 }));
+          }
+        });
+    })
   );
 });
-

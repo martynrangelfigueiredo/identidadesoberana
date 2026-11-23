@@ -1,42 +1,12 @@
 ---
-import { getCollection } from "astro:content";
 import { type Locale } from "../lib/i18n";
-import { UTIL_TOOLS } from "../lib/tools";
 
 interface Props {
   locale: Locale;
 }
 
 const { locale } = Astro.props;
-const allPosts = await getCollection("blog");
-
-const localePosts = allPosts
-  .filter((p) => {
-    const id = p.id;
-    if (locale === "pt") return !id.startsWith("de/") && !id.startsWith("zh/") && !id.startsWith("en/");
-    return id.startsWith(`${locale}/`);
-  })
-  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
-  .map((p) => {
-    const cleanSlug = p.id.replace(/^(de|zh|en)\//, "").replace(/\.md$/, "");
-    const href = locale === "pt" ? `/blog/${cleanSlug}/` : `/${locale}/blog/${cleanSlug}/`;
-    return {
-      title: p.data.title,
-      type: p.data.categoria,
-      href,
-      keywords: `${p.data.title} ${p.data.categoria} ${(p.data.tags || []).join(" ")}`.toLowerCase(),
-    };
-  });
-
-const toolTypeLabel = locale === "de" ? "Tool" : locale === "zh" ? "工具" : locale === "en" ? "Tool" : "Ferramenta";
-const toolItems = UTIL_TOOLS.map((t) => ({
-  title: `${t.icon} ${t.title[locale]}`,
-  type: toolTypeLabel,
-  href: locale === "pt" ? t.slug : `/${locale}${t.slug}`,
-  keywords: `${t.id} ${t.title[locale]} ${t.description[locale]}`.toLowerCase(),
-}));
-
-const items = [...toolItems, ...localePosts];
+const searchUrl = `/search-${locale}.json`;
 
 const COPY = {
   pt: { placeholder: "Buscar artigo, KQL, playbook ou ferramenta...", empty: "Nenhum resultado encontrado.", hint: "↑↓ navegar · Enter abrir · Esc fechar" },
@@ -59,7 +29,7 @@ const COPY = {
   </div>
 </div>
 
-<script is:inline define:vars={{ items }}>
+<script is:inline define:vars={{ searchUrl }}>
   (() => {
     const backdrop = document.getElementById('cmd-palette-backdrop');
     const input = document.getElementById('cmd-input');
@@ -67,8 +37,32 @@ const COPY = {
     const emptyEl = document.getElementById('cmd-empty');
     if (!backdrop || !input || !list) return;
 
-    let filtered = items.slice(0, 12);
+    let items = null;
+    let loading = false;
+    let filtered = [];
     let activeIdx = 0;
+
+    async function ensureIndex() {
+      if (items || loading) return;
+      loading = true;
+      try {
+        const res = await fetch(searchUrl);
+        if (res.ok) items = await res.json();
+      } catch {}
+      loading = false;
+      if (!items) items = [];
+      applyFilter();
+    }
+
+    function applyFilter() {
+      const q = input.value.trim().toLowerCase();
+      const source = items || [];
+      filtered = q
+        ? source.filter((it) => it.keywords.includes(q) || it.title.toLowerCase().includes(q)).slice(0, 15)
+        : source.slice(0, 12);
+      activeIdx = 0;
+      render();
+    }
 
     function render() {
       list.innerHTML = '';
@@ -96,9 +90,8 @@ const COPY = {
     function openPalette() {
       backdrop.hidden = false;
       input.value = '';
-      filtered = items.slice(0, 12);
-      activeIdx = 0;
-      render();
+      if (items) applyFilter();
+      else ensureIndex();
       requestAnimationFrame(() => input.focus());
     }
 
@@ -132,12 +125,8 @@ const COPY = {
     });
 
     input.addEventListener('input', () => {
-      const q = input.value.trim().toLowerCase();
-      filtered = q
-        ? items.filter((it) => it.keywords.includes(q) || it.title.toLowerCase().includes(q)).slice(0, 15)
-        : items.slice(0, 12);
-      activeIdx = 0;
-      render();
+      if (!items) ensureIndex();
+      else applyFilter();
     });
 
     backdrop.addEventListener('click', (e) => {

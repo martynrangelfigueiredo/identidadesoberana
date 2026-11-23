@@ -132,8 +132,6 @@ const ogLocale = { pt: "pt_BR", de: "de_DE", zh: "zh_CN", en: "en_US" }[currentL
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={new URL("/icons/icon-512.png", Astro.site)} />
 
-    <link rel="canonical" href={new URL(path, Astro.site)} />
-
     <!-- Dados Estruturados (JSON-LD) para Search Engines e Robôs de IA -->
     <script type="application/ld+json" is:inline set:html={JSON.stringify({
       "@context": "https://schema.org",
