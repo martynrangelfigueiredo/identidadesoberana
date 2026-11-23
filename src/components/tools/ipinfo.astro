@@ -640,7 +640,26 @@ const L = {
         })
         .catch(() => {});
 
-      // 5. Reverse DNS (Cloudflare DoH PTR)
+      // 5. Provedor E: IP.SB (Ásia / Global)
+      const p7 = fetchWithTimeout(`https://api.ip.sb/geoip/${encodeURIComponent(baseIp)}`, {}, signal)
+        .then((r) => r.json())
+        .then((d) => {
+          if (reqId !== activeReqId || !d.ip || d.code) return;
+          const asnOrg = d.asn ? `AS${d.asn} · ${d.asn_organization || d.organization || d.isp || '—'}` : (d.organization || d.isp || '—');
+          addMultiRow('IP.SB', `${d.country || d.country_code || '—'} · ${d.city || '—'}`, asnOrg, d.timezone || 'OK');
+        })
+        .catch(() => {});
+
+      // 6. Provedor F: ipapi.is
+      const p8 = fetchWithTimeout(`https://api.ipapi.is/?q=${encodeURIComponent(baseIp)}`, {}, signal)
+        .then((r) => r.json())
+        .then((d) => {
+          if (reqId !== activeReqId || !d.ip || d.is_bogon) return;
+          addMultiRow('ipapi.is', `${d.country || '—'} · ${d.city || '—'}`, d.asn || d.company || '—', d.timezone || 'OK');
+        })
+        .catch(() => {});
+
+      // 7. Reverse DNS (Cloudflare DoH PTR)
       let ptrName = '';
       if (isIPv4(baseIp)) ptrName = baseIp.split('.').reverse().join('.') + '.in-addr.arpa';
       else if (isIPv6(baseIp)) ptrName = expandIPv6(baseIp).replace(/:/g, '').split('').reverse().join('.') + '.ip6.arpa';
@@ -684,7 +703,7 @@ const L = {
         })
         .catch(() => {});
 
-      await Promise.allSettled([p1, p2, p3, p4, p5, p6]);
+      await Promise.allSettled([p1, p2, p3, p4, p5, p6, p7, p8]);
       if (reqId !== activeReqId) return;
 
       statusEl.textContent = `${L.done} (${baseIp})`;
