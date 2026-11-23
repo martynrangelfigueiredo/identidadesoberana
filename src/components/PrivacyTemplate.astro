@@ -1,0 +1,248 @@
+---
+import Base from "../layouts/Base.astro";
+import { type Locale } from "../lib/i18n";
+
+interface Props {
+  locale: Locale;
+}
+const { locale } = Astro.props;
+
+const content = {
+  pt: {
+    title: "Privacidade, Cookies e Compliance",
+    description: "Nota de privacidade, política cookie-less, armazenamento local e conformidade com LGPD (Brasil), GDPR (UE), NIST Privacy Framework e leis chinesas (PIPL, DSL, CSL).",
+    chip: "Privacidade & Compliance",
+    h1Start: "Privacidade, Cookies e ",
+    h1Highlight: "Conformidade Global",
+    lead: "Arquitetura estática, zero cookies de rastreamento e transparência total em conformidade com a LGPD (Brasil), GDPR/DSGVO (União Europeia), NIST Privacy Framework e leis de proteção de dados da China (PIPL, DSL e CSL).",
+    updated: "Última atualização: 23 de novembro de 2026",
+    controllerTitle: "1. Controlador e Encarregado (DPO)",
+    controllerBody: "O site Identidade Soberana (identidadesoberana.com.br) é mantido e operado de forma independente por Martyn Figueiredo. Para exercício de direitos de titular, dúvidas sobre proteção de dados ou notificações regulatórias em qualquer jurisdição, utilize o canal oficial:",
+    cookiesTitle: "2. Política Cookie-less e Armazenamento Local",
+    cookiesP1: "Este site não utiliza cookies HTTP de rastreamento, publicidade, fingerprinting ou analytics de terceiros (como Google Analytics ou Meta Pixel). Não exibimos banners invasivos de consentimento de cookies porque nenhum cookie não essencial é gravado no seu dispositivo.",
+    cookiesP2: "Utilizamos exclusivamente chaves técnicas em localStorage e sessionStorage no seu navegador, estritamente necessárias para preferências de interface e idioma (isentas de consentimento prévio conforme Art. 7º da LGPD e § 25 Abs. 2 Nr. 2 da TTDSG alemã / Diretiva ePrivacy):",
+    thKey: "Chave / Mecanismo",
+    thType: "Armazenamento",
+    thPurpose: "Finalidade Estrita",
+    thRetention: "Retenção",
+    rows: [
+      ["is_lang_pref", "localStorage", "Memoriza o idioma escolhido manualmente no seletor (DE, ZH, EN, PT).", "Persistente até limpeza pelo usuário"],
+      ["is_lang_auto", "sessionStorage", "Evita redirecionamento repetido após detecção automática inicial de idioma.", "Apenas durante a sessão da aba"],
+      ["is_code_theme", "localStorage", "Salva a preferência visual Claro/Terminal Escuro nos blocos de código.", "Persistente até limpeza pelo usuário"],
+      ["is_pwa_dismissed", "localStorage", "Registra se o usuário fechou a sugestão de instalação do aplicativo PWA.", "Persistente até limpeza pelo usuário"],
+    ],
+    clearBtn: "Limpar todos os dados locais deste site agora",
+    clearOk: "✔ Dados locais (localStorage e sessionStorage) removidos do seu navegador.",
+    toolsTitle: "3. Ferramentas (/util/) e Requisições Sob Demanda",
+    toolsP1: "As ferramentas de análise offline (decodificador JWT, Epoch/FILETIME, calculadora CIDR/Sub-rede, MAC/EUI-64, gerador de senhas, analisador de cabeçalhos de e-mail, User-Agent e códigos AADSTS) executam 100% localmente no navegador, sem transmissão de dados.",
+    toolsP2: "As ferramentas de consulta de rede e OSINT sob demanda (Consulta IP/Geo, DNS DoH, RDAP, Extrator em Lote e Auditoria SEO/Headers) enviam o endereço IP ou domínio digitado diretamente do seu navegador para APIs públicas de terceiros (como ipwho.is, ipinfo.io, freeipapi.com, ipapi.co, cloudflare-dns.com, rdap.org e openstreetmap.org) somente quando você aciona a consulta. O Identidade Soberana não intercepta, registra nem armazena essas consultas.",
+    lawsTitle: "4. Conformidade por Jurisdição",
+    lgpdTitle: "🇧🇷 Brasil — LGPD (Lei nº 13.709/2018)",
+    lgpdBody: "Em conformidade com os princípios da finalidade, adequação, necessidade e transparência (Art. 6º) e direitos do titular (Art. 18): não coletamos dados pessoais em formulários, cadastros ou trackers. Logs padrão de infraestrutura HTTP (endereço IP e User-Agent) são tratados exclusivamente pelo provedor de hospedagem estática (GitHub Pages) para entrega de conteúdo e segurança de rede.",
+    gdprTitle: "🇪🇺🇩🇪 União Europeia & Alemanha — GDPR / DSGVO & TTDSG",
+    gdprBody: "Atendemos aos Arts. 5, 6, 12–21 do GDPR (DSGVO) e ao § 25 da TTDSG. O acesso ao site ocorre sem criação de perfis ou transferência de dados a redes de anúncios. Você possui direito de acesso, retificação, exclusão (o botão acima remove imediatamente qualquer chave local), limitação e reclamação perante a autoridade de proteção de dados competente.",
+    cnTitle: "🇨🇳 China Continental — PIPL (个人信息保护法), DSL (数据安全法) e CSL (网络安全法)",
+    cnBody: "Em alinhamento com os princípios de legalidade, legitimidade, necessidade e minimização da Lei de Proteção de Informações Pessoais (PIPL, Arts. 5º e 6º), Lei de Segurança de Dados (DSL) e Lei de Cibersegurança (CSL): o site não coleta, não armazena e não comercializa informações pessoais ou dados sensíveis de usuários. Quando o usuário aciona voluntariamente ferramentas OSINT em /util/, as consultas ocorrem diretamente entre o navegador do usuário e os provedores públicos consultados, cabendo ao usuário não inserir dados pessoais restritos ou regulados nessas consultas sob demanda. Titulares podem exercer os direitos previstos nos Arts. 44–50 da PIPL pelo e-mail do controlador.",
+    nistTitle: "🇺🇸 Padrões NIST (NIST Privacy Framework v1.0 & SP 800-53 Rev. 5)",
+    nistBody: "A arquitetura segue os controles de privacidade e minimização do NIST Privacy Framework (CT.DM-P1, CM.PO-P1) e da família PII/Privacy do NIST SP 800-53 Rev. 5 (PT-2 Limitação de Autoridade, PT-3 Especificação de Finalidade, TR-1 Aviso de Privacidade e SI-12 Gestão de Retenção de Informações), reduzindo a superfície de exposição por design.",
+    contactLabel: "E-mail do Controlador / Encarregado (DPO):",
+  },
+  de: {
+    title: "Datenschutz, Cookies & Compliance",
+    description: "Datenschutzhinweis, Cookie-freie Architektur, lokale Speicherung sowie Konformität mit LGPD (Brasilien), DSGVO/GDPR (EU), NIST Privacy Framework und chinesischen Gesetzen (PIPL, DSL, CSL).",
+    chip: "Datenschutz & Compliance",
+    h1Start: "Datenschutz, Cookies & ",
+    h1Highlight: "Globale Konformität",
+    lead: "Statische Architektur, null Tracking-Cookies und volle Transparenz gemäß DSGVO/GDPR (EU/Deutschland), LGPD (Brasilien), NIST Privacy Framework sowie den chinesischen Datenschutzgesetzen (PIPL, DSL, CSL).",
+    updated: "Zuletzt aktualisiert: 23. November 2026",
+    controllerTitle: "1. Verantwortlicher & Datenschutzbeauftragter (DPO)",
+    controllerBody: "Die Website Identidade Soberana (identidadesoberana.com.br) wird unabhängig von Martyn Figueiredo betrieben. Für Betroffenenrechte, Auskunftsersuchen oder regulatorische Anfragen nutzen Sie bitte den offiziellen Kontakt:",
+    cookiesTitle: "2. Cookie-freie Architektur & Lokale Speicherung",
+    cookiesP1: "Diese Website setzt keine HTTP-Cookies für Tracking, Werbung, Fingerprinting oder Drittanbieter-Analytics (wie Google Analytics oder Meta Pixel) ein. Da keine nicht essenziellen Cookies gespeichert werden, ist kein störendes Cookie-Banner erforderlich.",
+    cookiesP2: "Wir verwenden ausschließlich technisch notwendige Einträge in localStorage und sessionStorage Ihres Browsers zur Speicherung der Sprach- und Darstellungspräferenz (einwilligungsfrei gemäß § 25 Abs. 2 Nr. 2 TTDSG bzw. Art. 6 Abs. 1 lit. f DSGVO):",
+    thKey: "Schlüssel / Mechanismus",
+    thType: "Speicherort",
+    thPurpose: "Strikter Zweck",
+    thRetention: "Speicherdauer",
+    rows: [
+      ["is_lang_pref", "localStorage", "Speichert die manuell im Sprachwähler gewählte Sprache (DE, ZH, EN, PT).", "Bis zur Löschung durch den Nutzer"],
+      ["is_lang_auto", "sessionStorage", "Verhindert mehrfache Weiterleitungen nach der ersten Spracherkennung.", "Nur für die aktive Tab-Sitzung"],
+      ["is_code_theme", "localStorage", "Speichert das helle/dunkle Theme für Codeblöcke.", "Bis zur Löschung durch den Nutzer"],
+      ["is_pwa_dismissed", "localStorage", "Merkt sich das Schließen des PWA-Installationshinweises.", "Bis zur Löschung durch den Nutzer"],
+    ],
+    clearBtn: "Alle lokalen Daten dieser Website jetzt löschen",
+    clearOk: "✔ Alle lokalen Daten (localStorage und sessionStorage) wurden aus Ihrem Browser entfernt.",
+    toolsTitle: "3. Tools (/util/) & On-Demand-Abfragen",
+    toolsP1: "Offline-Analysetools (JWT-Decoder, Epoch/FILETIME, CIDR-/Subnetzrechner, MAC/EUI-64, Passwort-Generator, E-Mail-Header- und User-Agent-Analyse sowie AADSTS-Lookup) laufen zu 100 % lokal im Browser ohne Datenübertragung.",
+    toolsP2: "Netzwerk- und OSINT-Abfragetools (IP/Geo, DNS DoH, RDAP, Bulk-IP-Extraktor, SEO/Header-Check) senden die von Ihnen eingegebene IP oder Domain ausschließlich auf Ihren aktiven Klick direkt von Ihrem Browser an öffentliche Drittanbieter-APIs (z. B. ipwho.is, ipinfo.io, freeipapi.com, ipapi.co, cloudflare-dns.com, rdap.org, openstreetmap.org). Identidade Soberana protokolliert oder speichert diese Abfragen nicht.",
+    lawsTitle: "4. Konformität nach Rechtsräumen",
+    lgpdTitle: "🇧🇷 Brasilien — LGPD (Gesetz Nr. 13.709/2018)",
+    lgpdBody: "Gemäß den Grundsätzen von Zweckbindung, Erforderlichkeit und Transparenz (Art. 6) sowie den Betroffenenrechten (Art. 18 LGPD) erheben wir keine personenbezogenen Daten über Formulare oder Tracker. Standard-HTTP-Infrastrukturlogs (IP-Adresse, User-Agent) werden ausschließlich vom Hosting-Anbieter (GitHub Pages) zur Auslieferung und Netzsicherheit verarbeitet.",
+    gdprTitle: "🇪🇺🇩🇪 Europäische Union & Deutschland — DSGVO (GDPR) & TTDSG",
+    gdprBody: "Wir erfüllen Art. 5, 6, 12–21 DSGVO sowie § 25 TTDSG. Es findet kein Profiling und keine Weitergabe an Werbenetzwerke statt. Sie haben das Recht auf Auskunft, Berichtigung, Löschung (lokale Schlüssel lassen sich über die Schaltfläche oben sofort entfernen), Einschränkung und Beschwerde bei der zuständigen Datenschutzaufsichtsbehörde.",
+    cnTitle: "🇨🇳 Festlandchina — PIPL (个人信息保护法), DSL (数据安全法) & CSL (网络安全法)",
+    cnBody: "Im Einklang mit dem chinesischen Gesetz zum Schutz personenbezogener Daten (PIPL, Art. 5 und 6), dem Datensicherheitsgesetz (DSL) und dem Cybersicherheitsgesetz (CSL) erhebt, speichert oder verkauft diese Website keine personenbezogenen Daten. Bei aktiver Nutzung der OSINT-Tools unter /util/ kommuniziert Ihr Browser direkt mit öffentlichen APIs; Nutzer sollten dort keine regulierten personenbezogenen Daten eingeben. Rechte nach Art. 44–50 PIPL können über die Kontaktadresse geltend gemacht werden.",
+    nistTitle: "🇺🇸 NIST-Standards (NIST Privacy Framework v1.0 & SP 800-53 Rev. 5)",
+    nistBody: "Die Architektur folgt den Prinzipien der Datenminimierung und Transparenz des NIST Privacy Framework (CT.DM-P1, CM.PO-P1) sowie den Kontrollen PT-2, PT-3, TR-1 und SI-12 des NIST SP 800-53 Rev. 5.",
+    contactLabel: "E-Mail des Verantwortlichen / DPO:",
+  },
+  zh: {
+    title: "隐私政策、Cookie 与全球合规声明",
+    description: "无 Cookie 架构说明、本地存储清单，以及符合中国《个人信息保护法》(PIPL)、《数据安全法》(DSL)、《网络安全法》(CSL)、巴西 LGPD、欧盟 GDPR 与美国 NIST 标准的合规声明。",
+    chip: "隐私与合规",
+    h1Start: "隐私保护、Cookie 与",
+    h1Highlight: "全球合规说明",
+    lead: "纯静态架构、零追踪 Cookie，完全透明并遵循中国法律法规（PIPL、DSL、CSL）、巴西 LGPD、欧盟 GDPR 以及 NIST 隐私框架。",
+    updated: "最后更新：2026年11月23日",
+    controllerTitle: "1. 数据控制者与隐私保护负责人 (DPO)",
+    controllerBody: "Identidade Soberana（identidadesoberana.com.br）由 Martyn Figueiredo 独立维护与运营。如您需行使个人信息主体权利、提出隐私咨询或发送合规通知，请通过以下官方邮箱联系：",
+    cookiesTitle: "2. 无 Cookie 架构与本地存储说明",
+    cookiesP1: "本网站不使用任何用于追踪、广告画像、浏览器指纹或第三方统计（如 Google Analytics、Meta Pixel）的 HTTP Cookie。由于不写入任何非必要 Cookie，本网站无需弹出干扰性的 Cookie 同意横幅。",
+    cookiesP2: "本网站仅在您的浏览器 localStorage 与 sessionStorage 中保存用于界面与语言偏好的必要技术键（完全存储在本地，不向后台发送）：",
+    thKey: "键名 / 机制",
+    thType: "存储位置",
+    thPurpose: "严格用途",
+    thRetention: "保留期限",
+    rows: [
+      ["is_lang_pref", "localStorage", "记住您在语言切换器中手动选择的语言（DE、ZH、EN、PT）。", "持久保存直至用户清除"],
+      ["is_lang_auto", "sessionStorage", "防止首次自动语言跳转后在同一标签页重复重定向。", "仅限当前标签页会话"],
+      ["is_code_theme", "localStorage", "保存代码块浅色/深色终端主题偏好。", "持久保存直至用户清除"],
+      ["is_pwa_dismissed", "localStorage", "记录用户是否已关闭 PWA 安装提示横幅。", "持久保存直至用户清除"],
+    ],
+    clearBtn: "立即清除本网站在浏览器中的所有本地数据",
+    clearOk: "✔ 已从您的浏览器中清除所有本地数据（localStorage 与 sessionStorage）。",
+    toolsTitle: "3. 在线安全工具 (/util/) 与按需查询说明",
+    toolsP1: "本网站的离线分析工具（JWT 解码、时间戳转换、子网划分、MAC/EUI-64、密码生成器、邮件头分析、User-Agent 解析与 AADSTS 错误码查询）100% 在本地浏览器内运行，不会向外传输任何输入内容。",
+    toolsP2: "网络与开源情报（OSINT）按需查询工具（IP 地理查询、DNS DoH、RDAP、批量 IP 提取与 SEO/响应头检查）仅在您主动点击查询时，直接由您的浏览器向公开第三方接口（如 ipwho.is、ipinfo.io、freeipapi.com、ipapi.co、cloudflare-dns.com、rdap.org 与 openstreetmap.org）发起请求。Identidade Soberana 不会拦截、记录或存储上述查询内容。",
+    lawsTitle: "4. 各司法辖区合规声明",
+    lgpdTitle: "🇧🇷 巴西 — 《通用数据保护法》LGPD（第 13.709/2018 号法）",
+    lgpdBody: "严格遵循 LGPD 第 6 条（目的明确、适度、必要与透明原则）及第 18 条主体权利：本网站不通过表单、注册或追踪脚本收集个人数据。基础 HTTP 访问日志（IP 地址与 User-Agent）仅由静态托管服务商（GitHub Pages）用于网络传输与安全防护。",
+    gdprTitle: "🇪🇺🇩🇪 欧盟与德国 — GDPR (DSGVO) 与 TTDSG",
+    gdprBody: "符合 GDPR 第 5、6、12–21 条及德国 TTDSG 第 25 条第 2 款第 2 项规定。本网站不进行用户画像或广告数据共享，您可随时行使访问、更正、删除（点击上方按钮即可立即清除所有本地键）以及向监管机构申诉的权利。",
+    cnTitle: "🇨🇳 中国大陆 — 《个人信息保护法》(PIPL)、《数据安全法》(DSL) 与《网络安全法》(CSL)",
+    cnBody: "依据《中华人民共和国个人信息保护法》（PIPL 第 5 条、第 6 条合法、正当、必要和诚信及最小化原则）、《数据安全法》(DSL) 与《网络安全法》(CSL)：本网站不收集、不存储、亦不向任何第三方出售或提供用户的个人信息或重要数据。在 /util/ 页面主动触发网络查询时，请求由用户浏览器直接发往公开查询接口，请勿在按需查询工具中输入受法规限制的真实个人敏感信息。您可通过上述官方邮箱行使 PIPL 第 44–50 条赋予的查阅、复制、更正与删除等权利。",
+    nistTitle: "🇺🇸 美国 NIST 标准（NIST Privacy Framework v1.0 & SP 800-53 Rev. 5）",
+    nistBody: "网站架构遵循 NIST 隐私框架的数据最小化（CT.DM-P1）与透明治理（CM.PO-P1）原则，以及 NIST SP 800-53 Rev. 5 隐私控制族（PT-2、PT-3、TR-1 与 SI-12），从设计源头降低数据暴露面。",
+    contactLabel: "数据控制者 / 隐私负责人邮箱：",
+  },
+  en: {
+    title: "Privacy, Cookies & Compliance",
+    description: "Privacy notice, cookie-less architecture, local storage disclosure, and compliance with LGPD (Brazil), GDPR (EU), NIST Privacy Framework, and Chinese data laws (PIPL, DSL, CSL).",
+    chip: "Privacy & Compliance",
+    h1Start: "Privacy, Cookies & ",
+    h1Highlight: "Global Compliance",
+    lead: "Static architecture, zero tracking cookies, and full transparency aligned with LGPD (Brazil), GDPR/DSGVO (EU), NIST Privacy Framework, and Chinese data protection laws (PIPL, DSL, CSL).",
+    updated: "Last updated: November 23, 2026",
+    controllerTitle: "1. Data Controller & DPO Contact",
+    controllerBody: "Identidade Soberana (identidadesoberana.com.br) is independently operated by Martyn Figueiredo. To exercise data subject rights or submit privacy and regulatory inquiries across any jurisdiction, contact:",
+    cookiesTitle: "2. Cookie-less Policy & Local Storage",
+    cookiesP1: "This website uses zero HTTP cookies for tracking, advertising, fingerprinting, or third-party analytics (such as Google Analytics or Meta Pixel). Because no non-essential cookies are set, no intrusive cookie consent popup is required.",
+    cookiesP2: "We only use strictly necessary technical keys in your browser's localStorage and sessionStorage for UI and language preferences:",
+    thKey: "Key / Mechanism",
+    thType: "Storage",
+    thPurpose: "Strict Purpose",
+    thRetention: "Retention",
+    rows: [
+      ["is_lang_pref", "localStorage", "Remembers the language manually selected in the switcher (DE, ZH, EN, PT).", "Persistent until cleared by user"],
+      ["is_lang_auto", "sessionStorage", "Prevents repeated redirects after initial automatic language detection.", "Current tab session only"],
+      ["is_code_theme", "localStorage", "Stores light/dark terminal theme preference for code blocks.", "Persistent until cleared by user"],
+      ["is_pwa_dismissed", "localStorage", "Records whether the user dismissed the PWA install prompt.", "Persistent until cleared by user"],
+    ],
+    clearBtn: "Clear all local site data from this browser now",
+    clearOk: "✔ All local data (localStorage and sessionStorage) has been cleared from your browser.",
+    toolsTitle: "3. Security Tools (/util/) & On-Demand Queries",
+    toolsP1: "Offline analysis utilities (JWT decoder, Epoch/FILETIME, CIDR/Subnet calculator, MAC/EUI-64, password generator, email header analyzer, User-Agent parser, and AADSTS lookup) run 100% locally in your browser with zero data transmission.",
+    toolsP2: "On-demand network and OSINT utilities (IP/Geo lookup, DNS DoH, RDAP, Bulk IP extractor, and SEO/Header audit) send the IP or domain you enter directly from your browser to public third-party APIs (such as ipwho.is, ipinfo.io, freeipapi.com, ipapi.co, cloudflare-dns.com, rdap.org, and openstreetmap.org) only when triggered by you. Identidade Soberana does not intercept, log, or store these queries.",
+    lawsTitle: "4. Compliance by Jurisdiction",
+    lgpdTitle: "🇧🇷 Brazil — LGPD (Law No. 13.709/2018)",
+    lgpdBody: "In accordance with LGPD principles of purpose, adequacy, necessity, and transparency (Art. 6) and data subject rights (Art. 18): we do not collect personal data through forms, sign-ups, or trackers. Standard HTTP infrastructure logs (IP address, User-Agent) are processed solely by the static hosting provider (GitHub Pages) for content delivery and network security.",
+    gdprTitle: "🇪🇺🇩🇪 European Union & Germany — GDPR (DSGVO) & TTDSG",
+    gdprBody: "We comply with GDPR Arts. 5, 6, 12–21 and German TTDSG § 25(2) No. 2. No profiling or ad-network sharing occurs. You retain the right of access, rectification, erasure (the button above immediately clears all local keys), restriction, and the right to lodge a complaint with a supervisory authority.",
+    cnTitle: "🇨🇳 Mainland China — PIPL (个人信息保护法), DSL (数据安全法) & CSL (网络安全法)",
+    cnBody: "Aligned with China's Personal Information Protection Law (PIPL, Arts. 5 & 6 principles of lawfulness, necessity, and data minimization), Data Security Law (DSL), and Cybersecurity Law (CSL): this site does not collect, store, or sell personal information or regulated data. When using on-demand OSINT tools under /util/, requests go directly from your browser to public endpoints; users should avoid submitting restricted personal data into external lookups. Rights under PIPL Arts. 44–50 can be exercised via the controller email above.",
+    nistTitle: "🇺🇸 NIST Standards (NIST Privacy Framework v1.0 & SP 800-53 Rev. 5)",
+    nistBody: "Site architecture follows NIST Privacy Framework data minimization (CT.DM-P1) and transparency (CM.PO-P1) outcomes as well as NIST SP 800-53 Rev. 5 privacy controls (PT-2, PT-3, TR-1, and SI-12), reducing exposure by design.",
+    contactLabel: "Controller / DPO Email:",
+  },
+};
+
+const t = content[locale];
+---
+<Base title={t.title} description={t.description} locale={locale}>
+  <section class="artigo-header">
+    <div class="estreito">
+      <span class="chip">{t.chip}</span>
+      <h1>{t.h1Start}<span class="hl">{t.h1Highlight}</span></h1>
+      <p>{t.lead}</p>
+      <p style="font-size:.85rem;color:var(--is-cinza);margin-top:.5rem;">{t.updated}</p>
+    </div>
+  </section>
+
+  <div class="estreito prosa">
+    <h2>{t.controllerTitle}</h2>
+    <p>{t.controllerBody}</p>
+    <p><strong>{t.contactLabel}</strong> <a href="mailto:administrador@identidadesoberana.com.br">administrador@identidadesoberana.com.br</a></p>
+
+    <h2>{t.cookiesTitle}</h2>
+    <p>{t.cookiesP1}</p>
+    <p>{t.cookiesP2}</p>
+
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>{t.thKey}</th>
+            <th>{t.thType}</th>
+            <th>{t.thPurpose}</th>
+            <th>{t.thRetention}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {t.rows.map(([k, st, p, r]) => (
+            <tr>
+              <td><code>{k}</code></td>
+              <td><code>{st}</code></td>
+              <td>{p}</td>
+              <td>{r}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+
+    <div style="margin:1.25rem 0 2rem;">
+      <button id="btn-clear-local-storage" type="button" class="btn btn-contorno">{t.clearBtn}</button>
+      <p id="clear-local-status" style="font-size:.9rem;font-weight:600;color:var(--is-verde-escuro);margin-top:.6rem;" hidden>{t.clearOk}</p>
+    </div>
+
+    <h2>{t.toolsTitle}</h2>
+    <p>{t.toolsP1}</p>
+    <p>{t.toolsP2}</p>
+
+    <h2>{t.lawsTitle}</h2>
+
+    <h3>{t.lgpdTitle}</h3>
+    <p>{t.lgpdBody}</p>
+
+    <h3>{t.gdprTitle}</h3>
+    <p>{t.gdprBody}</p>
+
+    <h3>{t.cnTitle}</h3>
+    <p>{t.cnBody}</p>
+
+    <h3>{t.nistTitle}</h3>
+    <p>{t.nistBody}</p>
+  </div>
+</Base>
+
+<script is:inline>
+  document.getElementById('btn-clear-local-storage')?.addEventListener('click', () => {
+    try {
+      localStorage.clear();
+      sessionStorage.clear();
+    } catch {}
+    const status = document.getElementById('clear-local-status');
+    if (status) status.hidden = false;
+  });
+</script>
+

@@ -27,11 +27,18 @@ const fullTitle = title ? `${title} · ${ui.siteName}` : `${ui.siteName} — ${u
 const htmlLang = currentLocale === "pt" ? "pt-BR" : currentLocale === "zh" ? "zh-CN" : currentLocale;
 const homeUrl = currentLocale === "pt" ? "/" : `/${currentLocale}/`;
 const madeInBrazil = {
-  pt: "🇧🇷 Feito no Brasil · 0 Trackers · Código Aberto",
-  de: "🇧🇷 Hergestellt in Brasilien · 0 Tracker · Open Source",
-  zh: "🇧🇷 巴西制造 · 零追踪 · 开源架构",
-  en: "🇧🇷 Made in Brazil · 0 Trackers · Open Source",
+  pt: "🇧🇷 Feito no Brasil · 0 Cookies / 0 Trackers · LGPD · GDPR · PIPL · NIST",
+  de: "🇧🇷 Hergestellt in Brasilien · 0 Cookies / 0 Tracker · DSGVO · LGPD · PIPL · NIST",
+  zh: "🇧🇷 巴西制造 · 零 Cookie / 零追踪 · PIPL · LGPD · GDPR · NIST",
+  en: "🇧🇷 Made in Brazil · 0 Cookies / 0 Trackers · LGPD · GDPR · PIPL · NIST",
 }[currentLocale];
+const legalNav = {
+  pt: { priv: "Privacidade & Cookies", terms: "Disclaimers & Termos", privUrl: "/privacidade/", termsUrl: "/termos/" },
+  de: { priv: "Datenschutz & Cookies", terms: "Disclaimers & Bedingungen", privUrl: "/de/privacidade/", termsUrl: "/de/termos/" },
+  zh: { priv: "隐私与 Cookie 声明", terms: "免责声明与条款", privUrl: "/zh/privacidade/", termsUrl: "/zh/termos/" },
+  en: { priv: "Privacy & Cookies", terms: "Disclaimers & Terms", privUrl: "/en/privacidade/", termsUrl: "/en/termos/" },
+}[currentLocale];
+const ogLocale = { pt: "pt_BR", de: "de_DE", zh: "zh_CN", en: "en_US" }[currentLocale];
 ---
 <!doctype html>
 <html lang={htmlLang}>
@@ -117,7 +124,7 @@ const madeInBrazil = {
     <meta property="og:site_name" content="Identidade Soberana" />
     <meta property="og:image" content={new URL("/icons/icon-512.png", Astro.site)} />
     <meta property="og:url" content={new URL(path, Astro.site)} />
-    <meta property="og:locale" content="pt_BR" />
+    <meta property="og:locale" content={ogLocale} />
 
     <!-- Twitter / X Cards -->
     <meta name="twitter:card" content="summary_large_image" />
@@ -156,7 +163,7 @@ const madeInBrazil = {
           "publisher": {
             "@id": "https://identidadesoberana.com.br/#organization"
           },
-          "inLanguage": "pt-BR"
+          "inLanguage": htmlLang
         }
       ]
     })} />
@@ -214,9 +221,12 @@ const madeInBrazil = {
           <span>{ui.footerText}</span>
           <span style="font-size:.82rem;opacity:.92;">{madeInBrazil}</span>
         </div>
-        <div style="display:flex;gap:1rem;align-items:center;">
+        <div style="display:flex;gap:1rem;align-items:center;flex-wrap:wrap;">
+          <a href={legalNav.privUrl}>{legalNav.priv}</a>
+          <a href={legalNav.termsUrl}>{legalNav.terms}</a>
+          <a href="/.well-known/security.txt">security.txt</a>
           <a href="/rss.xml" title="Assinar via RSS">Feed RSS</a>
-          <a href="https://linkedin.com/in/martynfigueiredo" rel="me noopener" target="_blank">LinkedIn</a>
+          <a href="https://linkedin.com/in/martynfigueiredo" rel="me noopener noreferrer" target="_blank">LinkedIn</a>
         </div>
       </div>
     </footer>

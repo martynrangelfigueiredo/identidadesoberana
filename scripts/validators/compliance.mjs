@@ -6,7 +6,7 @@
  * - Garante conformidade de arquitetura Cookie-less e ausência de rastreadores invasivos de terceiros.
  * - Valida a presença obrigatória da data de fundação no rodapé ("Desde 2026").
  */
-import { readdir, readFile } from "node:fs/promises";
+import { access, readdir, readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -65,6 +65,23 @@ async function validateCompliance() {
   if (!i18nContent.includes("Desde 2026") || !i18nContent.includes("Since 2026")) {
     console.error("❌ [Compliance] O rodapé deve conter a referência de fundação 'Desde 2026' em todos os idiomas.");
     errors++;
+  }
+
+  // 4. Verificação de páginas obrigatórias de Privacidade, Cookies e Disclaimers (LGPD / GDPR / PIPL / NIST)
+  const requiredComplianceFiles = [
+    "src/pages/privacidade.astro",
+    "src/pages/[locale]/privacidade.astro",
+    "src/pages/termos.astro",
+    "src/pages/[locale]/termos.astro",
+    "public/.well-known/security.txt",
+  ];
+  for (const rel of requiredComplianceFiles) {
+    try {
+      await access(path.join(ROOT, rel));
+    } catch {
+      console.error(`❌ [Compliance] Arquivo de conformidade ausente: ${rel}`);
+      errors++;
+    }
   }
 
   if (errors > 0) {

@@ -1,0 +1,12 @@
+---
+import PrivacyTemplate from "../../components/PrivacyTemplate.astro";
+import { NON_DEFAULT_LOCALES, type Locale } from "../../lib/i18n";
+
+export function getStaticPaths() {
+  return NON_DEFAULT_LOCALES.map((locale) => ({ params: { locale } }));
+}
+
+const { locale } = Astro.params as { locale: Locale };
+---
+<PrivacyTemplate locale={locale} />
+

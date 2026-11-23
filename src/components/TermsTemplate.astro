@@ -1,0 +1,107 @@
+---
+import Base from "../layouts/Base.astro";
+import { type Locale } from "../lib/i18n";
+
+interface Props {
+  locale: Locale;
+}
+const { locale } = Astro.props;
+
+const content = {
+  pt: {
+    title: "Disclaimers Técnicos & Termos de Uso",
+    description: "Disclaimers de segurança defensiva, isenção de garantias, propriedade intelectual e política de divulgação responsável (security.txt) do Identidade Soberana.",
+    chip: "Disclaimers & Termos",
+    h1Start: "Disclaimers Técnicos & ",
+    h1Highlight: "Uso Defensivo",
+    lead: "Diretrizes de uso responsável, limites técnicos de playbooks, queries KQL e ferramentas de diagnóstico de rede.",
+    updated: "Última atualização: 23 de novembro de 2026",
+    s1Title: "1. Uso Estritamente Defensivo e Educacional",
+    s1Body: "Todo o conteúdo publicado no Identidade Soberana — incluindo artigos técnicos, playbooks de resposta a incidentes, consultas KQL, configurações de laboratório em Docker/WSL2 e ferramentas em /util/ — tem finalidade exclusivamente educacional, informativa e de segurança cibernética defensiva. É estritamente proibido utilizar qualquer técnica, comando ou ferramenta descrita neste site contra sistemas, redes ou tenants sem autorização prévia e formal do respectivo proprietário.",
+    s2Title: "2. Isenção de Garantias e Validação em Homologação",
+    s2Body: "Os materiais são fornecidos \"NO ESTADO EM QUE SE ENCONTRAM\" (AS IS), sem garantias de adequação a um propósito específico. Antes de aplicar qualquer regra de detecção, política de Conditional Access, comando de contenção (como Revoke sessions ou remoção de App Roles) ou configuração de firewall em ambientes de produção, valide e teste integralmente em ambiente de homologação controlado, observando os processos de gestão de mudanças (GMUD/ITSM) da sua organização.",
+    s3Title: "3. Referências Oficiais e Marcas Registradas",
+    s3Body: "Documentações e especificações técnicas citadas (como Microsoft Learn, Microsoft Sentinel, Microsoft Entra ID, MITRE ATT&CK, NIST, Linux Foundation, Keycloak, Wazuh, MISP, OpenBao, Velociraptor e Authentik) refletem o estado público conhecido na data de publicação de cada artigo. Todas as marcas registradas mencionadas pertencem aos seus respectivos titulares, sem vínculo de endosso ou patrocínio. O nome institucional \"Identidade Soberana\" e seu logotipo pertencem ao projeto.",
+    s4Title: "4. Divulgação Responsável de Vulnerabilidades (CVD)",
+    s4Body: "Seguindo boas práticas do NIST CSF / ISO/IEC 29147, caso identifique alguma vulnerabilidade de segurança ou inconsistência técnica neste site estático, reporte diretamente para administrador@identidadesoberana.com.br ou consulte /.well-known/security.txt.",
+  },
+  de: {
+    title: "Technische Disclaimers & Nutzungsbedingungen",
+    description: "Hinweise zur defensiven Nutzung, Haftungsausschluss, Markenrechte und Coordinated Vulnerability Disclosure (security.txt) für Identidade Soberana.",
+    chip: "Disclaimers & Bedingungen",
+    h1Start: "Technische Disclaimers & ",
+    h1Highlight: "Defensive Nutzung",
+    lead: "Richtlinien zur verantwortungsvollen Nutzung, Grenzen von Playbooks, KQL-Abfragen und Netzwerk-Diagnosetools.",
+    updated: "Zuletzt aktualisiert: 23. November 2026",
+    s1Title: "1. Ausschließlich defensive und schulische Nutzung",
+    s1Body: "Alle auf Identidade Soberana veröffentlichten Inhalte — einschließlich Fachartikel, Incident-Response-Playbooks, KQL-Abfragen, Docker-/WSL2-Laborkonfigurationen und Tools unter /util/ — dienen ausschließlich Bildungszwecken und der defensiven Cybersicherheit. Die Anwendung gegen fremde Systeme, Netzwerke oder Tenants ohne ausdrückliche vorherige Genehmigung ist untersagt.",
+    s2Title: "2. Haftungsausschluss & Test in Staging-Umgebungen",
+    s2Body: "Alle Materialien werden „WIE BESEHEN“ (AS IS) ohne Gewährleistung bereitgestellt. Bevor Sie Erkennungsregeln, Conditional-Access-Richtlinien, Eindämmungsschritte (z. B. Revoke sessions) oder Firewall-Konfigurationen produktiv einsetzen, prüfen Sie diese vollständig in einer isolierten Testumgebung gemäß Ihren Change-Management-Prozessen (ITSM).",
+    s3Title: "3. Offizielle Referenzen & Markenrechte",
+    s3Body: "Zitierte Dokumentationen (z. B. Microsoft Learn, Microsoft Sentinel, Microsoft Entra ID, MITRE ATT&CK, NIST, Linux Foundation, Keycloak, Wazuh, MISP, OpenBao, Velociraptor und Authentik) entsprechen dem öffentlichen Stand zum Veröffentlichungsdatum. Alle genannten Marken gehören ihren jeweiligen Eigentümern ohne Sponsoring-Verhältnis.",
+    s4Title: "4. Verantwortliche Offenlegung (CVD)",
+    s4Body: "Gemäß NIST CSF / ISO/IEC 29147 melden Sie etwaige Sicherheitsprobleme dieser statischen Website bitte direkt an administrador@identidadesoberana.com.br oder über /.well-known/security.txt.",
+  },
+  zh: {
+    title: "技术免责声明与使用条款",
+    description: "Identidade Soberana 的防御性安全使用声明、免责条款、商标说明及负责任漏洞披露政策 (security.txt)。",
+    chip: "免责声明与条款",
+    h1Start: "技术免责声明与",
+    h1Highlight: "防御性使用准则",
+    lead: "关于安全运营剧本（Playbook）、KQL 查询及在线诊断工具的合规使用边界与责任说明。",
+    updated: "最后更新：2026年11月23日",
+    s1Title: "1. 仅限防御性安全与技术教育用途",
+    s1Body: "Identidade Soberana 发布的所有内容——包括技术文章、应急响应剧本、KQL 查询语句、Docker/WSL2 实验配置及 /util/ 工具——均仅用于信息安全教育、合规建设与防御性安全运营。严禁在未获得系统所有者明确书面授权的情况下，将任何技术方案用于测试或访问第三方系统、网络或租户（Tenant）。",
+    s2Title: "2. 免责声明与测试环境验证",
+    s2Body: "本站内容按“现状”（AS IS）提供，不作任何明示或默示担保。在生产环境部署任何检测规则、条件访问策略、遏制指令（如 Revoke sessions）或防火墙规则前，请务必在隔离的测试环境中完成充分验证，并遵守所在组织的变更管理（ITSM）流程。",
+    s3Title: "3. 官方参考资料与商标声明",
+    s3Body: "文中引用的官方规范与产品文档（如 Microsoft Learn、Microsoft Sentinel、Microsoft Entra ID、MITRE ATT&CK、NIST、Linux Foundation、Keycloak、Wazuh、MISP、OpenBao、Velociraptor 与 Authentik）均反映各自发布时的公开技术状态。相关注册商标均归其各自所有者所有。",
+    s4Title: "4. 负责任的漏洞披露 (CVD)",
+    s4Body: "遵循 NIST CSF 与 ISO/IEC 29147 最佳实践，如您发现本静态网站存在任何安全隐患或技术错误，请通过 administrador@identidadesoberana.com.br 或查阅 /.well-known/security.txt 与我们联系。",
+  },
+  en: {
+    title: "Technical Disclaimers & Terms of Use",
+    description: "Defensive cybersecurity usage disclaimers, warranty notice, intellectual property, and Coordinated Vulnerability Disclosure (security.txt) for Identidade Soberana.",
+    chip: "Disclaimers & Terms",
+    h1Start: "Technical Disclaimers & ",
+    h1Highlight: "Defensive Use",
+    lead: "Responsible usage guidelines and technical boundaries for playbooks, KQL queries, and diagnostic utilities.",
+    updated: "Last updated: November 23, 2026",
+    s1Title: "1. Strictly Defensive & Educational Purpose",
+    s1Body: "All content published on Identidade Soberana — including technical articles, incident response playbooks, KQL queries, Docker/WSL2 lab configurations, and /util/ utilities — is provided strictly for educational, informational, and defensive cybersecurity purposes. Using any technique, command, or tool against third-party systems, networks, or tenants without prior formal authorization is prohibited.",
+    s2Title: "2. No Warranty & Staging Validation",
+    s2Body: "All materials are provided \"AS IS\" without warranties of any kind. Before deploying any detection rule, Conditional Access policy, containment step (such as Revoke sessions or App Role removal), or firewall configuration in production, validate it thoroughly in an isolated staging environment in accordance with your organization's change management (ITSM) processes.",
+    s3Title: "3. Official References & Trademarks",
+    s3Body: "Referenced specifications and documentation (such as Microsoft Learn, Microsoft Sentinel, Microsoft Entra ID, MITRE ATT&CK, NIST, Linux Foundation, Keycloak, Wazuh, MISP, OpenBao, Velociraptor, and Authentik) reflect public documentation available at publication time. All trademarks belong to their respective owners without endorsement.",
+    s4Title: "4. Coordinated Vulnerability Disclosure (CVD)",
+    s4Body: "Following NIST CSF and ISO/IEC 29147 best practices, please report any security issue on this static site directly to administrador@identidadesoberana.com.br or refer to /.well-known/security.txt.",
+  },
+};
+
+const t = content[locale];
+---
+<Base title={t.title} description={t.description} locale={locale}>
+  <section class="artigo-header">
+    <div class="estreito">
+      <span class="chip">{t.chip}</span>
+      <h1>{t.h1Start}<span class="hl">{t.h1Highlight}</span></h1>
+      <p>{t.lead}</p>
+      <p style="font-size:.85rem;color:var(--is-cinza);margin-top:.5rem;">{t.updated}</p>
+    </div>
+  </section>
+
+  <div class="estreito prosa">
+    <h2>{t.s1Title}</h2>
+    <p>{t.s1Body}</p>
+
+    <h2>{t.s2Title}</h2>
+    <p>{t.s2Body}</p>
+
+    <h2>{t.s3Title}</h2>
+    <p>{t.s3Body}</p>
+
+    <h2>{t.s4Title}</h2>
+    <p>{t.s4Body}</p>
+  </div>
+</Base>
+
