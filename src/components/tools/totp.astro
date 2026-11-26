@@ -1,0 +1,179 @@
+---
+import ToolShell from "../ToolShell.astro";
+import type { Locale } from "../../lib/i18n";
+import { UTIL_TOOLS } from "../../lib/tools";
+
+interface Props { locale?: Locale; }
+const { locale = "pt" } = Astro.props;
+const meta = UTIL_TOOLS.find((t) => t.id === "totp")!;
+
+const T = {
+  pt: {
+    h2Secret: "Secret Base32 (RFC 6238 · 100% Local)",
+    btnGen: "Gerar Novo Secret",
+    digitsLbl: "Dígitos",
+    periodLbl: "Período (s)",
+    codeLbl: "Código TOTP Atual",
+    remLbl: "Expira em",
+    uriLbl: "URI otpauth:// (pronta para copiar)",
+    invalidSecret: "Secret Base32 inválido (use apenas A–Z e 2–7).",
+  },
+  de: {
+    h2Secret: "Base32-Secret (RFC 6238 · 100% Lokal)",
+    btnGen: "Neues Secret erzeugen",
+    digitsLbl: "Ziffern",
+    periodLbl: "Intervall (s)",
+    codeLbl: "Aktueller TOTP-Code",
+    remLbl: "Läuft ab in",
+    uriLbl: "otpauth://-URI (kopierfertig)",
+    invalidSecret: "Ungültiges Base32-Secret (nur A–Z und 2–7 erlaubt).",
+  },
+  zh: {
+    h2Secret: "Base32 密钥 (RFC 6238 · 100% 本地计算)",
+    btnGen: "生成随机 Secret",
+    digitsLbl: "位数",
+    periodLbl: "周期（秒）",
+    codeLbl: "当前 TOTP 验证码",
+    remLbl: "剩余时间",
+    uriLbl: "otpauth:// URI（可直接复制）",
+    invalidSecret: "Base32 Secret 无效（仅支持 A–Z 和 2–7）。",
+  },
+  en: {
+    h2Secret: "Base32 Secret (RFC 6238 · 100% Local)",
+    btnGen: "Generate New Secret",
+    digitsLbl: "Digits",
+    periodLbl: "Period (s)",
+    codeLbl: "Current TOTP Code",
+    remLbl: "Expires in",
+    uriLbl: "otpauth:// URI (ready to copy)",
+    invalidSecret: "Invalid Base32 secret (only A–Z and 2–7 allowed).",
+  },
+}[locale];
+---
+
+<ToolShell
+  locale={locale}
+  title={meta.title[locale]}
+  description={meta.description[locale]}
+  badge="100% Local"
+  icon="🔢"
+>
+  <div class="tool-card">
+    <h2>{T.h2Secret}</h2>
+    <div style="display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;">
+      <input
+        id="totp-secret"
+        type="text"
+        class="tool-input"
+        value="JBSWY3DPEHPK3PXP"
+        style="flex:1;min-width:210px;font-family:var(--font-mono);"
+        aria-label={T.h2Secret}
+      />
+      <select id="totp-digits" class="tool-input" style="width:92px;" aria-label={T.digitsLbl}>
+        <option value="6" selected>6</option>
+        <option value="8">8</option>
+      </select>
+      <button id="totp-gen" type="button" class="tool-btn secondary">{T.btnGen}</button>
+    </div>
+
+    <div id="totp-err" style="display:none;margin-top:.75rem;color:#b91c1c;font-weight:600;font-size:.88rem;"></div>
+
+    <div class="tool-grid" style="margin-top:1rem;">
+      <div class="kv-box">
+        <span>{T.codeLbl}</span>
+        <strong id="totp-code" style="font-family:var(--font-mono);font-size:1.75rem;letter-spacing:.12em;color:var(--c-primary);">------</strong>
+      </div>
+      <div class="kv-box">
+        <span>{T.remLbl}</span>
+        <strong id="totp-rem" style="font-family:var(--font-mono);font-size:1.25rem;">30s</strong>
+      </div>
+    </div>
+
+    <div style="margin-top:.85rem;">
+      <span style="font-size:.8rem;color:var(--c-muted);font-weight:600;">{T.uriLbl}</span>
+      <pre id="totp-uri" class="code-out" style="margin-top:.35rem;"></pre>
+    </div>
+  </div>
+</ToolShell>
+
+<script is:inline define:vars={{ T }}>
+  (() => {
+    const secEl = document.getElementById('totp-secret');
+    const digEl = document.getElementById('totp-digits');
+    const errEl = document.getElementById('totp-err');
+    const codeEl = document.getElementById('totp-code');
+    const remEl = document.getElementById('totp-rem');
+    const uriEl = document.getElementById('totp-uri');
+
+    const B32 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+
+    function decodeBase32(str) {
+      const clean = str.toUpperCase().replace(/[\s=]+/g, '');
+      if (!clean || /[^A-Z2-7]/.test(clean)) return null;
+      let bits = 0, value = 0;
+      const out = [];
+      for (let i = 0; i < clean.length; i++) {
+        value = (value << 5) | B32.indexOf(clean[i]);
+        bits += 5;
+        if (bits >= 8) {
+          out.push((value >>> (bits - 8)) & 255);
+          bits -= 8;
+        }
+      }
+      return new Uint8Array(out);
+    }
+
+    async function computeTOTP() {
+      const rawSec = secEl.value.trim().toUpperCase().replace(/\s+/g, '');
+      const keyBytes = decodeBase32(rawSec);
+      const digits = Number(digEl.value) || 6;
+      const period = 30;
+      const nowSec = Math.floor(Date.now() / 1000);
+      const rem = period - (nowSec % period);
+      remEl.textContent = `${rem}s`;
+
+      if (!keyBytes || keyBytes.length === 0) {
+        errEl.style.display = 'block';
+        errEl.textContent = T.invalidSecret;
+        codeEl.textContent = '------';
+        uriEl.textContent = '';
+        return;
+      }
+
+      errEl.style.display = 'none';
+      const counter = Math.floor(nowSec / period);
+      const msg = new Uint8Array(8);
+      let c = counter;
+      for (let i = 7; i >= 0; i--) {
+        msg[i] = c & 0xff;
+        c = Math.floor(c / 256);
+      }
+
+      const key = await crypto.subtle.importKey('raw', keyBytes, { name: 'HMAC', hash: 'SHA-1' }, false, ['sign']);
+      const sig = new Uint8Array(await crypto.subtle.sign('HMAC', key, msg));
+      const offset = sig[sig.length - 1] & 0x0f;
+      const binCode =
+        ((sig[offset] & 0x7f) << 24) |
+        ((sig[offset + 1] & 0xff) << 16) |
+        ((sig[offset + 2] & 0xff) << 8) |
+        (sig[offset + 3] & 0xff);
+      const otp = String(binCode % (10 ** digits)).padStart(digits, '0');
+      codeEl.textContent = otp;
+      uriEl.textContent = `otpauth://totp/Lab:analyst@lab.local?secret=${rawSec}&issuer=LabIAM&digits=${digits}&period=${period}`;
+    }
+
+    document.getElementById('totp-gen')?.addEventListener('click', () => {
+      const rnd = crypto.getRandomValues(new Uint8Array(20));
+      let s = '';
+      for (let i = 0; i < rnd.length; i++) s += B32[rnd[i] & 31];
+      secEl.value = s;
+      computeTOTP();
+    });
+
+    secEl?.addEventListener('input', computeTOTP);
+    digEl?.addEventListener('change', computeTOTP);
+    computeTOTP();
+    setInterval(computeTOTP, 1000);
+  })();
+</script>
+

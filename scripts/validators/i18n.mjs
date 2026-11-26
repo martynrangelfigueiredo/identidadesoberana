@@ -99,9 +99,11 @@ async function validateI18n() {
     errors++;
   }
 
+  let toolCount = 0;
   const toolsDir = path.join(ROOT, "src", "components", "tools");
   try {
     const toolFiles = (await readdir(toolsDir)).filter((f) => f.endsWith(".astro"));
+    toolCount = toolFiles.length;
     for (const tf of toolFiles) {
       const content = await readFile(path.join(toolsDir, tf), "utf-8");
       if (!content.includes("locale={locale}") || !content.includes("meta.title[locale]")) {
@@ -119,7 +121,7 @@ async function validateI18n() {
     process.exit(1);
   }
 
-  console.log("✔ [i18n] Paridade total de 4 idiomas (artigos + 19 ferramentas), marca e seletor 100% validados.");
+  console.log(`✔ [i18n] Paridade total de 4 idiomas (artigos + ${toolCount} ferramentas), marca e seletor 100% validados.`);
 }
 
 validateI18n().catch((err) => {

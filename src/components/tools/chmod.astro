@@ -1,0 +1,228 @@
+---
+import ToolShell from "../ToolShell.astro";
+import type { Locale } from "../../lib/i18n";
+import { UTIL_TOOLS } from "../../lib/tools";
+
+interface Props { locale?: Locale; }
+const { locale = "pt" } = Astro.props;
+const meta = UTIL_TOOLS.find((t) => t.id === "chmod")!;
+
+const T = {
+  pt: {
+    h2Matrix: "Matriz de Permissões Linux (chmod)",
+    owner: "Dono (Owner)",
+    group: "Grupo (Group)",
+    others: "Outros (Others)",
+    special: "Bits Especiais",
+    read: "Leitura (r = 4)",
+    write: "Escrita (w = 2)",
+    exec: "Execução (x = 1)",
+    suid: "SUID (4000)",
+    sgid: "SGID (2000)",
+    sticky: "Sticky Bit (1000)",
+    octalLbl: "Octal",
+    symLbl: "Simbólico",
+    cmdLbl: "Comando Linux",
+    umaskLbl: "Umask sugerido (arquivos / diretórios)",
+    riskHigh: "⚠️ Atenção: permissão 777 concede leitura, escrita e execução para todos os usuários.",
+    riskSuid: "⚠️ Atenção: SUID/SGID ativo — revise necessidade para evitar escalação de privilégios.",
+    riskOk: "✔ Configuração dentro de padrões comuns de menor privilégio.",
+  },
+  de: {
+    h2Matrix: "Linux-Berechtigungsmatrix (chmod)",
+    owner: "Eigentümer (Owner)",
+    group: "Gruppe (Group)",
+    others: "Andere (Others)",
+    special: "Spezial-Bits",
+    read: "Lesen (r = 4)",
+    write: "Schreiben (w = 2)",
+    exec: "Ausführen (x = 1)",
+    suid: "SUID (4000)",
+    sgid: "SGID (2000)",
+    sticky: "Sticky Bit (1000)",
+    octalLbl: "Oktal",
+    symLbl: "Symbolisch",
+    cmdLbl: "Linux-Befehl",
+    umaskLbl: "Vorgeschlagener Umask (Dateien / Verzeichnisse)",
+    riskHigh: "⚠️ Warnung: 777 erlaubt allen Benutzern Lesen, Schreiben und Ausführen.",
+    riskSuid: "⚠️ Hinweis: SUID/SGID aktiv – prüfen Sie das Risiko für Privilege Escalation.",
+    riskOk: "✔ Konfiguration entspricht gängigen Least-Privilege-Standards.",
+  },
+  zh: {
+    h2Matrix: "Linux 权限矩阵计算器 (chmod)",
+    owner: "所有者 (Owner)",
+    group: "用户组 (Group)",
+    others: "其他用户 (Others)",
+    special: "特殊权限位",
+    read: "读取 (r = 4)",
+    write: "写入 (w = 2)",
+    exec: "执行 (x = 1)",
+    suid: "SUID (4000)",
+    sgid: "SGID (2000)",
+    sticky: "Sticky Bit (1000)",
+    octalLbl: "八进制 (Octal)",
+    symLbl: "符号表示",
+    cmdLbl: "Linux 命令",
+    umaskLbl: "建议 Umask（文件 / 目录）",
+    riskHigh: "⚠️ 警告：777 权限向所有用户开放读、写和执行权限，存在高风险。",
+    riskSuid: "⚠️ 提示：已启用 SUID/SGID，请核查是否存在本地提权风险。",
+    riskOk: "✔ 权限配置符合最小权限常规要求。",
+  },
+  en: {
+    h2Matrix: "Linux Permission Matrix (chmod)",
+    owner: "Owner",
+    group: "Group",
+    others: "Others",
+    special: "Special Bits",
+    read: "Read (r = 4)",
+    write: "Write (w = 2)",
+    exec: "Execute (x = 1)",
+    suid: "SUID (4000)",
+    sgid: "SGID (2000)",
+    sticky: "Sticky Bit (1000)",
+    octalLbl: "Octal",
+    symLbl: "Symbolic",
+    cmdLbl: "Linux Command",
+    umaskLbl: "Related Umask (files / dirs)",
+    riskHigh: "⚠️ Warning: 777 grants read, write, and execute permissions to every user.",
+    riskSuid: "⚠️ Notice: SUID/SGID enabled — audit carefully to prevent privilege escalation.",
+    riskOk: "✔ Configuration aligns with standard least-privilege practices.",
+  },
+}[locale];
+---
+
+<ToolShell
+  locale={locale}
+  title={meta.title[locale]}
+  description={meta.description[locale]}
+  badge="100% Local"
+  icon="🔐"
+>
+  <div class="tool-card">
+    <h2>{T.h2Matrix}</h2>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:.85rem;margin-top:.75rem;">
+      <div class="kv-box">
+        <span>{T.owner}</span>
+        <label style="display:flex;gap:.45rem;align-items:center;margin-top:.4rem;font-size:.88rem;"><input type="checkbox" class="ch-bit" data-grp="0" data-val="4" checked /> {T.read}</label>
+        <label style="display:flex;gap:.45rem;align-items:center;margin-top:.25rem;font-size:.88rem;"><input type="checkbox" class="ch-bit" data-grp="0" data-val="2" checked /> {T.write}</label>
+        <label style="display:flex;gap:.45rem;align-items:center;margin-top:.25rem;font-size:.88rem;"><input type="checkbox" class="ch-bit" data-grp="0" data-val="1" checked /> {T.exec}</label>
+      </div>
+      <div class="kv-box">
+        <span>{T.group}</span>
+        <label style="display:flex;gap:.45rem;align-items:center;margin-top:.4rem;font-size:.88rem;"><input type="checkbox" class="ch-bit" data-grp="1" data-val="4" checked /> {T.read}</label>
+        <label style="display:flex;gap:.45rem;align-items:center;margin-top:.25rem;font-size:.88rem;"><input type="checkbox" class="ch-bit" data-grp="1" data-val="2" /> {T.write}</label>
+        <label style="display:flex;gap:.45rem;align-items:center;margin-top:.25rem;font-size:.88rem;"><input type="checkbox" class="ch-bit" data-grp="1" data-val="1" checked /> {T.exec}</label>
+      </div>
+      <div class="kv-box">
+        <span>{T.others}</span>
+        <label style="display:flex;gap:.45rem;align-items:center;margin-top:.4rem;font-size:.88rem;"><input type="checkbox" class="ch-bit" data-grp="2" data-val="4" checked /> {T.read}</label>
+        <label style="display:flex;gap:.45rem;align-items:center;margin-top:.25rem;font-size:.88rem;"><input type="checkbox" class="ch-bit" data-grp="2" data-val="2" /> {T.write}</label>
+        <label style="display:flex;gap:.45rem;align-items:center;margin-top:.25rem;font-size:.88rem;"><input type="checkbox" class="ch-bit" data-grp="2" data-val="1" checked /> {T.exec}</label>
+      </div>
+      <div class="kv-box">
+        <span>{T.special}</span>
+        <label style="display:flex;gap:.45rem;align-items:center;margin-top:.4rem;font-size:.88rem;"><input type="checkbox" class="ch-spec" data-val="4" /> {T.suid}</label>
+        <label style="display:flex;gap:.45rem;align-items:center;margin-top:.25rem;font-size:.88rem;"><input type="checkbox" class="ch-spec" data-val="2" /> {T.sgid}</label>
+        <label style="display:flex;gap:.45rem;align-items:center;margin-top:.25rem;font-size:.88rem;"><input type="checkbox" class="ch-spec" data-val="1" /> {T.sticky}</label>
+      </div>
+    </div>
+
+    <div class="tool-grid" style="margin-top:1rem;">
+      <div class="kv-box">
+        <span>{T.octalLbl}</span>
+        <input id="ch-octal" type="text" class="tool-input" value="0755" maxlength="4" style="margin-top:.25rem;font-family:var(--font-mono);font-weight:700;" aria-label={T.octalLbl} />
+      </div>
+      <div class="kv-box">
+        <span>{T.symLbl}</span>
+        <strong id="ch-sym" style="font-family:var(--font-mono);font-size:1.05rem;">-rwxr-xr-x</strong>
+      </div>
+      <div class="kv-box">
+        <span>{T.umaskLbl}</span>
+        <strong id="ch-umask" style="font-family:var(--font-mono);">0022</strong>
+      </div>
+    </div>
+
+    <div id="ch-risk" style="margin-top:.85rem;font-size:.88rem;font-weight:600;"></div>
+
+    <pre id="ch-cmd" class="code-out" style="margin-top:.85rem;">chmod 0755 arquivo.sh</pre>
+  </div>
+</ToolShell>
+
+<script is:inline define:vars={{ T }}>
+  (() => {
+    const bits = Array.from(document.querySelectorAll('.ch-bit'));
+    const specs = Array.from(document.querySelectorAll('.ch-spec'));
+    const octInp = document.getElementById('ch-octal');
+    const symEl = document.getElementById('ch-sym');
+    const umaskEl = document.getElementById('ch-umask');
+    const riskEl = document.getElementById('ch-risk');
+    const cmdEl = document.getElementById('ch-cmd');
+
+    function updateFromChecks() {
+      const g = [0, 0, 0];
+      bits.forEach((b) => {
+        if (b.checked) g[Number(b.getAttribute('data-grp'))] += Number(b.getAttribute('data-val'));
+      });
+      let s = 0;
+      specs.forEach((sp) => {
+        if (sp.checked) s += Number(sp.getAttribute('data-val'));
+      });
+      const oct = `${s}${g[0]}${g[1]}${g[2]}`;
+      octInp.value = oct;
+      renderMeta(s, g);
+    }
+
+    function renderMeta(s, g) {
+      const symTriad = (val, specBit, charLow, charHigh) => {
+        const r = val & 4 ? 'r' : '-';
+        const w = val & 2 ? 'w' : '-';
+        let x = val & 1 ? 'x' : '-';
+        if (specBit) x = val & 1 ? charLow : charHigh;
+        return r + w + x;
+      };
+      const sym = '-' + symTriad(g[0], s & 4, 's', 'S') + symTriad(g[1], s & 2, 's', 'S') + symTriad(g[2], s & 1, 't', 'T');
+      symEl.textContent = sym;
+
+      const u = `${7 - g[0]}${7 - g[1]}${7 - g[2]}`;
+      umaskEl.textContent = `0${u}`;
+      const oct = s > 0 ? `${s}${g[0]}${g[1]}${g[2]}` : `${g[0]}${g[1]}${g[2]}`;
+      cmdEl.textContent = `chmod ${oct} arquivo.sh`;
+
+      if (g[0] === 7 && g[1] === 7 && g[2] === 7) {
+        riskEl.style.color = '#b91c1c';
+        riskEl.textContent = T.riskHigh;
+      } else if (s & 4 || s & 2) {
+        riskEl.style.color = '#b45309';
+        riskEl.textContent = T.riskSuid;
+      } else {
+        riskEl.style.color = '#15803d';
+        riskEl.textContent = T.riskOk;
+      }
+    }
+
+    octInp?.addEventListener('input', () => {
+      const clean = octInp.value.replace(/[^0-7]/g, '');
+      if (clean.length === 3 || clean.length === 4) {
+        const padded = clean.padStart(4, '0');
+        const s = Number(padded[0]);
+        const g = [Number(padded[1]), Number(padded[2]), Number(padded[3])];
+        bits.forEach((b) => {
+          const grp = Number(b.getAttribute('data-grp'));
+          const val = Number(b.getAttribute('data-val'));
+          b.checked = Boolean(g[grp] & val);
+        });
+        specs.forEach((sp) => {
+          const val = Number(sp.getAttribute('data-val'));
+          sp.checked = Boolean(s & val);
+        });
+        renderMeta(s, g);
+      }
+    });
+
+    bits.forEach((b) => b.addEventListener('change', updateFromChecks));
+    specs.forEach((sp) => sp.addEventListener('change', updateFromChecks));
+    updateFromChecks();
+  })();
+</script>
+

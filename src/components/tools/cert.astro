@@ -1,0 +1,202 @@
+---
+import ToolShell from "../ToolShell.astro";
+import type { Locale } from "../../lib/i18n";
+import { UTIL_TOOLS } from "../../lib/tools";
+
+interface Props { locale?: Locale; }
+const { locale = "pt" } = Astro.props;
+const meta = UTIL_TOOLS.find((t) => t.id === "cert")!;
+
+const T = {
+  pt: {
+    h2Pem: "Cole o Certificado PEM (-----BEGIN CERTIFICATE-----)",
+    btnParse: "Inspecionar Certificado",
+    btnSample: "Carregar Exemplo",
+    invalidPem: "Formato inválido. Cole um bloco PEM começando com -----BEGIN CERTIFICATE-----.",
+    sha256: "Fingerprint SHA-256",
+    sha1: "Fingerprint SHA-1",
+    size: "Tamanho DER (bytes)",
+    dates: "Datas extraídas (UTCTime / GeneralizedTime)",
+    names: "Strings legíveis (CN / O / SAN / DNS)",
+    status: "Status",
+    valid: "Válido / dentro da janela",
+    expired: "Expirado",
+  },
+  de: {
+    h2Pem: "PEM-Zertifikat einfügen (-----BEGIN CERTIFICATE-----)",
+    btnParse: "Zertifikat prüfen",
+    btnSample: "Beispiel laden",
+    invalidPem: "Ungültiges Format. Bitte ein PEM-Zertifikat mit -----BEGIN CERTIFICATE----- einfügen.",
+    sha256: "SHA-256-Fingerabdruck",
+    sha1: "SHA-1-Fingerabdruck",
+    size: "DER-Größe (Bytes)",
+    dates: "Extrahierte Daten (UTCTime / GeneralizedTime)",
+    names: "Lesbare Strings (CN / O / SAN / DNS)",
+    status: "Status",
+    valid: "Gültig / innerhalb des Zeitfensters",
+    expired: "Abgelaufen",
+  },
+  zh: {
+    h2Pem: "粘贴 PEM 证书 (-----BEGIN CERTIFICATE-----)",
+    btnParse: "解析证书",
+    btnSample: "加载示例",
+    invalidPem: "格式无效，请粘贴以 -----BEGIN CERTIFICATE----- 开头的 PEM 证书。",
+    sha256: "SHA-256 指纹",
+    sha1: "SHA-1 指纹",
+    size: "DER 大小（字节）",
+    dates: "提取的有效期时间（UTCTime / GeneralizedTime）",
+    names: "可读字段（CN / O / SAN / DNS）",
+    status: "状态",
+    valid: "有效（在有效期内）",
+    expired: "已过期",
+  },
+  en: {
+    h2Pem: "Paste PEM Certificate (-----BEGIN CERTIFICATE-----)",
+    btnParse: "Inspect Certificate",
+    btnSample: "Load Sample",
+    invalidPem: "Invalid format. Paste a PEM block starting with -----BEGIN CERTIFICATE-----.",
+    sha256: "SHA-256 Fingerprint",
+    sha1: "SHA-1 Fingerprint",
+    size: "DER Size (bytes)",
+    dates: "Extracted Validity Dates",
+    names: "Readable Strings (CN / O / SAN / DNS)",
+    status: "Status",
+    valid: "Valid / within window",
+    expired: "Expired",
+  },
+}[locale];
+---
+
+<ToolShell
+  locale={locale}
+  title={meta.title[locale]}
+  description={meta.description[locale]}
+  badge="100% Local"
+  icon="📜"
+>
+  <div class="tool-card">
+    <h2>{T.h2Pem}</h2>
+    <textarea
+      id="cert-input"
+      class="tool-textarea"
+      rows="7"
+      placeholder="-----BEGIN CERTIFICATE-----&#10;...&#10;-----END CERTIFICATE-----"
+      style="font-family:var(--font-mono);font-size:.82rem;"
+      aria-label={T.h2Pem}
+    ></textarea>
+    <div style="display:flex;gap:.5rem;margin-top:.75rem;flex-wrap:wrap;">
+      <button id="cert-parse" type="button" class="tool-btn">{T.btnParse}</button>
+      <button id="cert-sample" type="button" class="tool-btn secondary">{T.btnSample}</button>
+    </div>
+    <div id="cert-err" style="display:none;margin-top:.75rem;color:#b91c1c;font-weight:600;font-size:.88rem;"></div>
+  </div>
+
+  <div id="cert-results" class="tool-card" style="display:none;">
+    <div id="cert-grid" class="tool-grid"></div>
+    <pre id="cert-details" class="code-out" style="margin-top:.9rem;"></pre>
+  </div>
+</ToolShell>
+
+<script is:inline define:vars={{ T }}>
+  (() => {
+    const inp = document.getElementById('cert-input');
+    const errEl = document.getElementById('cert-err');
+    const resEl = document.getElementById('cert-results');
+    const gridEl = document.getElementById('cert-grid');
+    const detEl = document.getElementById('cert-details');
+
+    const SAMPLE_PEM = [
+      '-----BEGIN CERTIFICATE-----',
+      'MIIBkTCB+wIJAKHBfpegPc9HMAoGCCqGSM49BAMCMBExDzANBgNVBAMMBmxhYi1j',
+      'YTAeFw0yNjExMjYwMDAwMDBaFw0yNzExMjYwMDAwMDBaMBExDzANBgNVBAMMBmxh',
+      'Yi1jYTBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABK8x3v4u8W5h1qV2g2Z4v8X1',
+      'n7p4m2c9d1e0f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8',
+      'oxMwETAPBgNVHRMBAf8EBTADAQH/MAoGCCqGSM49BAMCA0gAMEUCIQDU3q7r9s0t',
+      '1u2v3w4x5y6z7a8b9c0d1e2f3g4h5i6j7AIgK8l9m0n1o2p3q4r5s6t7u8v9w0x1',
+      'y2z3a4b5c6d7e8f=',
+      '-----END CERTIFICATE-----',
+    ].join('\n');
+
+    function toHex(buf) {
+      return Array.from(new Uint8Array(buf))
+        .map((b) => b.toString(16).padStart(2, '0').toUpperCase())
+        .join(':');
+    }
+
+    function extractStrings(bytes) {
+      const text = new TextDecoder('latin1').format(bytes);
+      const dates = [...text.matchAll(/(\d{12}Z|\d{14}Z)/g)].map((m) => m[1]);
+      const parsedDates = dates.slice(0, 2).map((d) => {
+        if (d.length === 13) {
+          const yy = Number(d.slice(0, 2));
+          const year = yy >= 50 ? 1900 + yy : 2000 + yy;
+          return new Date(`${year}-${d.slice(2, 4)}-${d.slice(4, 6)}T${d.slice(6, 8)}:${d.slice(8, 10)}:${d.slice(10, 12)}Z`);
+        }
+        return new Date(`${d.slice(0, 4)}-${d.slice(4, 6)}-${d.slice(6, 8)}T${d.slice(8, 10)}:${d.slice(10, 12)}:${d.slice(12, 14)}Z`);
+      }).filter((dt) => !Number.isNaN(dt.getTime()));
+
+      const printable = [...text.matchAll(/[A-Za-z0-9][A-Za-z0-9._:@\-\/ ]{2,63}/g)]
+        .map((m) => m[0].trim())
+        .filter((s) => s.length >= 3 && !/^\d{12}Z$/.test(s));
+
+      return { parsedDates, printable: [...new Set(printable)].slice(0, 16) };
+    }
+
+    async function inspect() {
+      const raw = inp.value.trim();
+      const match = raw.match(/-----BEGIN CERTIFICATE-----([\s\S]+?)-----END CERTIFICATE-----/);
+      if (!match) {
+        errEl.style.display = 'block';
+        errEl.textContent = T.invalidPem;
+        resEl.style.display = 'none';
+        return;
+      }
+
+      try {
+        const b64 = match[1].replace(/\s+/g, '');
+        const bin = atob(b64);
+        const bytes = new Uint8Array(bin.length);
+        for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+
+        const [sha256Buf, sha1Buf] = await Promise.all([
+          crypto.subtle.digest('SHA-256', bytes),
+          crypto.subtle.digest('SHA-1', bytes),
+        ]);
+
+        const { parsedDates, printable } = extractStrings(bytes);
+        const now = Date.now();
+        const notBefore = parsedDates[0] ? parsedDates[0].toISOString() : '-';
+        const notAfter = parsedDates[1] ? parsedDates[1].toISOString() : '-';
+        const isExpired = parsedDates[1] ? parsedDates[1].getTime() < now : false;
+
+        errEl.style.display = 'none';
+        resEl.style.display = 'block';
+        gridEl.innerHTML = [
+          `<div class="kv-box"><span>${T.size}</span><strong>${bytes.length}</strong></div>`,
+          `<div class="kv-box"><span>${T.status}</span><strong style="color:${isExpired ? '#b91c1c' : '#15803d'}">${isExpired ? T.expired : T.valid}</strong></div>`,
+          `<div class="kv-box"><span>Not Before</span><strong>${notBefore}</strong></div>`,
+          `<div class="kv-box"><span>Not After</span><strong>${notAfter}</strong></div>`,
+        ].join('');
+
+        detEl.textContent = [
+          `${T.sha256}: ${toHex(sha256Buf)}`,
+          `${T.sha1}:   ${toHex(sha1Buf)}`,
+          ``,
+          `${T.names}:`,
+          ...printable.map((s) => `  - ${s}`),
+        ].join('\n');
+      } catch (e) {
+        errEl.style.display = 'block';
+        errEl.textContent = `${T.invalidPem} (${e.message})`;
+        resEl.style.display = 'none';
+      }
+    }
+
+    document.getElementById('cert-parse')?.addEventListener('click', inspect);
+    document.getElementById('cert-sample')?.addEventListener('click', () => {
+      inp.value = SAMPLE_PEM;
+      inspect();
+    });
+  })();
+</script>
+

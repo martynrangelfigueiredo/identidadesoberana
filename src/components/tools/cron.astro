@@ -1,0 +1,265 @@
+---
+import ToolShell from "../ToolShell.astro";
+import type { Locale } from "../../lib/i18n";
+import { UTIL_TOOLS } from "../../lib/tools";
+
+interface Props { locale?: Locale; }
+const { locale = "pt" } = Astro.props;
+const meta = UTIL_TOOLS.find((t) => t.id === "cron")!;
+
+const T = {
+  pt: {
+    h2Expr: "Expressão Cron (5 campos: minuto hora dia mês dia-da-semana)",
+    presets: "Presets rápidos:",
+    p5m: "A cada 5 min",
+    p1h: "A cada hora",
+    pDay: "Diário 03:00",
+    pWeek: "Seg 08:00",
+    pMon: "Dia 1 às 00:00",
+    btnEval: "Analisar & Simular",
+    fieldsTitle: "Detalhamento dos Campos",
+    fMin: "Minuto (0–59)",
+    fHour: "Hora (0–23)",
+    fDom: "Dia do Mês (1–31)",
+    fMon: "Mês (1–12)",
+    fDow: "Dia da Semana (0–6, Dom=0)",
+    nextTitle: "Próximas 5 execuções (horário local)",
+    invalid: "Expressão inválida. Informe exatamente 5 campos separados por espaço.",
+    every: "A cada",
+    all: "Todos os valores (*)",
+  },
+  de: {
+    h2Expr: "Cron-Ausdruck (5 Felder: Minute Stunde Tag Monat Wochentag)",
+    presets: "Schnellvorlagen:",
+    p5m: "Alle 5 Min.",
+    p1h: "Stündlich",
+    pDay: "Täglich 03:00",
+    pWeek: "Mo 08:00",
+    pMon: "1. des Monats 00:00",
+    btnEval: "Analysieren & Simulieren",
+    fieldsTitle: "Felddetails",
+    fMin: "Minute (0–59)",
+    fHour: "Stunde (0–23)",
+    fDom: "Tag im Monat (1–31)",
+    fMon: "Monat (1–12)",
+    fDow: "Wochentag (0–6, So=0)",
+    nextTitle: "Nächste 5 Ausführungen (Ortszeit)",
+    invalid: "Ungültiger Ausdruck. Bitte genau 5 durch Leerzeichen getrennte Felder angeben.",
+    every: "Alle",
+    all: "Jeder Wert (*)",
+  },
+  zh: {
+    h2Expr: "Cron 表达式（5 个字段：分 时 日 月 周）",
+    presets: "常用模板：",
+    p5m: "每 5 分钟",
+    p1h: "每小时",
+    pDay: "每天 03:00",
+    pWeek: "每周一 08:00",
+    pMon: "每月 1 日 00:00",
+    btnEval: "解析并模拟",
+    fieldsTitle: "字段解析",
+    fMin: "分钟 (0–59)",
+    fHour: "小时 (0–23)",
+    fDom: "日期 (1–31)",
+    fMon: "月份 (1–12)",
+    fDow: "星期 (0–6, 周日=0)",
+    nextTitle: "接下来 5 次运行时间（本地时间）",
+    invalid: "表达式无效，请输入由空格分隔的 5 个字段。",
+    every: "每",
+    all: "全部 (*)",
+  },
+  en: {
+    h2Expr: "Cron Expression (5 fields: minute hour day month weekday)",
+    presets: "Quick presets:",
+    p5m: "Every 5 min",
+    p1h: "Hourly",
+    pDay: "Daily 03:00",
+    pWeek: "Mon 08:00",
+    pMon: "1st of month 00:00",
+    btnEval: "Parse & Simulate",
+    fieldsTitle: "Field Breakdown",
+    fMin: "Minute (0–59)",
+    fHour: "Hour (0–23)",
+    fDom: "Day of Month (1–31)",
+    fMon: "Month (1–12)",
+    fDow: "Day of Week (0–6, Sun=0)",
+    nextTitle: "Next 5 executions (local time)",
+    invalid: "Invalid expression. Provide exactly 5 space-separated fields.",
+    every: "Every",
+    all: "Every value (*)",
+  },
+}[locale];
+---
+
+<ToolShell
+  locale={locale}
+  title={meta.title[locale]}
+  description={meta.description[locale]}
+  badge="100% Local"
+  icon="⏱️"
+>
+  <div class="tool-card">
+    <h2>{T.h2Expr}</h2>
+    <div style="display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;">
+      <input
+        id="cron-input"
+        type="text"
+        class="tool-input"
+        value="*/15 * * * *"
+        style="flex:1;min-width:210px;font-family:var(--font-mono);"
+        aria-label={T.h2Expr}
+      />
+      <button id="cron-eval" type="button" class="tool-btn">{T.btnEval}</button>
+    </div>
+
+    <div style="display:flex;gap:.45rem;flex-wrap:wrap;align-items:center;margin-top:.85rem;">
+      <span style="font-size:.82rem;color:var(--c-muted);font-weight:600;">{T.presets}</span>
+      <button type="button" class="tool-btn outline cron-preset" data-expr="*/5 * * * *" style="padding:.35rem .7rem;font-size:.8rem;">{T.p5m}</button>
+      <button type="button" class="tool-btn outline cron-preset" data-expr="0 * * * *" style="padding:.35rem .7rem;font-size:.8rem;">{T.p1h}</button>
+      <button type="button" class="tool-btn outline cron-preset" data-expr="0 3 * * *" style="padding:.35rem .7rem;font-size:.8rem;">{T.pDay}</button>
+      <button type="button" class="tool-btn outline cron-preset" data-expr="0 8 * * 1" style="padding:.35rem .7rem;font-size:.8rem;">{T.pWeek}</button>
+      <button type="button" class="tool-btn outline cron-preset" data-expr="0 0 1 * *" style="padding:.35rem .7rem;font-size:.8rem;">{T.pMon}</button>
+    </div>
+
+    <div id="cron-error" style="display:none;margin-top:.75rem;color:#b91c1c;font-weight:600;font-size:.88rem;"></div>
+
+    <div id="cron-fields" class="tool-grid" style="margin-top:1rem;"></div>
+  </div>
+
+  <div class="tool-card">
+    <h2>{T.nextTitle}</h2>
+    <pre id="cron-next" class="code-out" style="margin:0;"></pre>
+  </div>
+</ToolShell>
+
+<script is:inline define:vars={{ T, locale }}>
+  (() => {
+    const inp = document.getElementById('cron-input');
+    const errEl = document.getElementById('cron-error');
+    const fieldsEl = document.getElementById('cron-fields');
+    const nextEl = document.getElementById('cron-next');
+
+    function matchPart(part, val, min, max) {
+      if (part === '*') return true;
+      for (const token of part.split(',')) {
+        let step = 1;
+        let range = token;
+        if (token.includes('/')) {
+          const parts = token.split('/');
+          if (parts.length !== 2) return null;
+          range = parts[0];
+          step = parseInt(parts[1], 10);
+          if (!Number.isInteger(step) || step <= 0) return null;
+        }
+        let start = min, end = max;
+        if (range !== '*') {
+          if (range.includes('-')) {
+            const bounds = range.split('-').map((n) => parseInt(n, 10));
+            if (bounds.length !== 2 || bounds.some((n) => !Number.isInteger(n))) return null;
+            start = bounds[0];
+            end = bounds[1];
+          } else {
+            const single = parseInt(range, 10);
+            if (!Number.isInteger(single)) return null;
+            start = single;
+            end = token.includes('/') ? max : single;
+          }
+        }
+        if (start < min || end > max || start > end) return null;
+        if (val >= start && val <= end && (val - start) % step === 0) return true;
+      }
+      return false;
+    }
+
+    function validatePart(part, min, max) {
+      return matchPart(part, min, min, max) !== null;
+    }
+
+    function describePart(part) {
+      if (part === '*') return T.all;
+      if (part.startsWith('*/')) return `${T.every} ${part.slice(2)}`;
+      return part;
+    }
+
+    function evaluate() {
+      const parts = inp.value.trim().split(/\s+/);
+      if (parts.length !== 5) {
+        errEl.style.display = 'block';
+        errEl.textContent = T.invalid;
+        fieldsEl.innerHTML = '';
+        nextEl.textContent = '-';
+        return;
+      }
+
+      const [minP, hourP, domP, monP, dowP] = parts;
+      const valid =
+        validatePart(minP, 0, 59) &&
+        validatePart(hourP, 0, 23) &&
+        validatePart(domP, 1, 31) &&
+        validatePart(monP, 1, 12) &&
+        validatePart(dowP, 0, 6);
+
+      if (!valid) {
+        errEl.style.display = 'block';
+        errEl.textContent = T.invalid;
+        fieldsEl.innerHTML = '';
+        nextEl.textContent = '-';
+        return;
+      }
+
+      errEl.style.display = 'none';
+      const labels = [
+        [T.fMin, minP],
+        [T.fHour, hourP],
+        [T.fDom, domP],
+        [T.fMon, monP],
+        [T.fDow, dowP],
+      ];
+
+      fieldsEl.innerHTML = labels
+        .map(([label, val]) => `<div class="kv-box"><span>${label}</span><strong>${val} · ${describePart(val)}</strong></div>`)
+        .join('');
+
+      const runs = [];
+      const cur = new Date();
+      cur.setSeconds(0, 0);
+      cur.setMinutes(cur.getMinutes() + 1);
+
+      const limit = 60 * 24 * 366;
+      for (let i = 0; i < limit && runs.length < 5; i++) {
+        const m = cur.getMinutes();
+        const h = cur.getHours();
+        const dom = cur.getDate();
+        const mon = cur.getMonth() + 1;
+        const dow = cur.getDay();
+
+        if (
+          matchPart(minP, m, 0, 59) &&
+          matchPart(hourP, h, 0, 23) &&
+          matchPart(domP, dom, 1, 31) &&
+          matchPart(monP, mon, 1, 12) &&
+          matchPart(dowP, dow, 0, 6)
+        ) {
+          runs.push(cur.toLocaleString(locale === 'pt' ? 'pt-BR' : locale === 'zh' ? 'zh-CN' : locale === 'de' ? 'de-DE' : 'en-US', {
+            dateStyle: 'medium',
+            timeStyle: 'short',
+          }));
+        }
+        cur.setMinutes(cur.getMinutes() + 1);
+      }
+
+      nextEl.textContent = runs.length ? runs.map((r, idx) => `${idx + 1}. ${r}`).join('\n') : '-';
+    }
+
+    document.getElementById('cron-eval')?.addEventListener('click', evaluate);
+    inp?.addEventListener('keydown', (e) => { if (e.key === 'Enter') evaluate(); });
+    document.querySelectorAll('.cron-preset').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        inp.value = btn.getAttribute('data-expr') || '* * * * *';
+        evaluate();
+      });
+    });
+    evaluate();
+  })();
+</script>
+

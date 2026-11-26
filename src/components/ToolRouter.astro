@@ -2,6 +2,9 @@
 import type { Locale } from "../lib/i18n";
 import Aadsts from "./tools/aadsts.astro";
 import CalcOps from "./tools/calc-ops.astro";
+import Cert from "./tools/cert.astro";
+import Chmod from "./tools/chmod.astro";
+import Cron from "./tools/cron.astro";
 import Defang from "./tools/defang.astro";
 import Distance from "./tools/distance.astro";
 import Dns from "./tools/dns.astro";
@@ -15,9 +18,11 @@ import Mac from "./tools/mac.astro";
 import Passgen from "./tools/passgen.astro";
 import Portals from "./tools/portals.astro";
 import Rdap from "./tools/rdap.astro";
+import Regex from "./tools/regex.astro";
 import SeoWeb from "./tools/seo-web.astro";
 import Subnet from "./tools/subnet.astro";
 import TextDev from "./tools/text-dev.astro";
+import Totp from "./tools/totp.astro";
 import Ua from "./tools/ua.astro";
 
 interface Props {
@@ -30,6 +35,9 @@ const { toolId, locale } = Astro.props;
 
 {toolId === "aadsts" && <Aadsts locale={locale} />}
 {toolId === "calc-ops" && <CalcOps locale={locale} />}
+{toolId === "cert" && <Cert locale={locale} />}
+{toolId === "chmod" && <Chmod locale={locale} />}
+{toolId === "cron" && <Cron locale={locale} />}
 {toolId === "defang" && <Defang locale={locale} />}
 {toolId === "distance" && <Distance locale={locale} />}
 {toolId === "dns" && <Dns locale={locale} />}
@@ -43,8 +51,10 @@ const { toolId, locale } = Astro.props;
 {toolId === "passgen" && <Passgen locale={locale} />}
 {toolId === "portals" && <Portals locale={locale} />}
 {toolId === "rdap" && <Rdap locale={locale} />}
+{toolId === "regex" && <Regex locale={locale} />}
 {toolId === "seo-web" && <SeoWeb locale={locale} />}
 {toolId === "subnet" && <Subnet locale={locale} />}
 {toolId === "text-dev" && <TextDev locale={locale} />}
+{toolId === "totp" && <Totp locale={locale} />}
 {toolId === "ua" && <Ua locale={locale} />}
 
