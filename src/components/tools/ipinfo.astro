@@ -19,7 +19,8 @@ const T = {
     h2Multi: "3. Comparação Multi-Provedor (Tempo Real)",
     thSource: "Fonte", thLoc: "País / Cidade", thOrg: "ASN / ISP / Organização", thSig: "Sinais",
     h2Rdap: "4. Registro Oficial de Rede & Abuso (RDAP / RIR)",
-    h2Pivot: "5. Queries Prontas para SOC & Fontes Externas",
+    h2Ctx: "5. Contexto Situacional, Node Range & Orientação SOC",
+    h2Pivot: "6. Queries Prontas para SOC & Fontes Externas",
     lblPivot: "Consultar em Fontes Globais, América do Sul & Ásia (1 clique)",
   },
   de: {
@@ -35,7 +36,8 @@ const T = {
     h2Multi: "3. Multi-Provider-Vergleich (Echtzeit)",
     thSource: "Quelle", thLoc: "Land / Stadt", thOrg: "ASN / ISP / Organisation", thSig: "Signale",
     h2Rdap: "4. Offizielle Netzwerk- & Abuse-Daten (RDAP / RIR)",
-    h2Pivot: "5. SOC-Abfragen (KQL/Wazuh) & OSINT-Pivots",
+    h2Ctx: "5. Situativer Kontext, Node Range & SOC-Einordnung",
+    h2Pivot: "6. SOC-Abfragen (KQL/Wazuh) & OSINT-Pivots",
     lblPivot: "In globalen, südamerikanischen & asiatischen Quellen prüfen",
   },
   zh: {
@@ -51,7 +53,8 @@ const T = {
     h2Multi: "3. 多源实时对比（Multi-Provider）",
     thSource: "数据源", thLoc: "国家 / 城市", thOrg: "ASN / ISP / 组织", thSig: "风险信号",
     h2Rdap: "4. 官方网络注册与滥用联系（RDAP / RIR）",
-    h2Pivot: "5. SOC 查询语句（KQL/Wazuh）与外部情报关联",
+    h2Ctx: "5. 情景上下文、Node Range 与 SOC 研判建议",
+    h2Pivot: "6. SOC 查询语句（KQL/Wazuh）与外部情报关联",
     lblPivot: "一键跳转全球、南美与亚洲威胁情报平台",
   },
   en: {
@@ -67,7 +70,8 @@ const T = {
     h2Multi: "3. Multi-Provider Comparison (Real-Time)",
     thSource: "Source", thLoc: "Country / City", thOrg: "ASN / ISP / Organization", thSig: "Signals",
     h2Rdap: "4. Official Network & Abuse Registry (RDAP / RIR)",
-    h2Pivot: "5. Ready-to-Run SOC Queries & External OSINT Pivots",
+    h2Ctx: "5. Situational Context, Node Range & SOC Guidance",
+    h2Pivot: "6. Ready-to-Run SOC Queries & External OSINT Pivots",
     lblPivot: "Pivot to Global, South America & Asia Sources (1 click)",
   },
 }[locale];
@@ -308,7 +312,13 @@ const L = {
     <div id="rdap-grid" class="tool-grid"></div>
   </div>
 
-  <!-- Bloco 5: Queries SOC (Empilhadas) & Pivot Regional/Global -->
+  <!-- Bloco 5: Contexto Situacional, Node Range & Orientação SOC -->
+  <div id="ctx-card" class="tool-card" style="display:none;">
+    <h2>{T.h2Ctx}</h2>
+    <div id="ctx-grid" class="tool-grid"></div>
+  </div>
+
+  <!-- Bloco 6: Queries SOC (Empilhadas) & Pivot Regional/Global -->
   <div id="pivot-card" class="tool-card" style="display:none;">
     <h2>{T.h2Pivot}</h2>
 
@@ -328,7 +338,7 @@ const L = {
   </div>
 </ToolShell>
 
-<script is:inline define:vars={{ L }}>
+<script is:inline define:vars={{ L, locale }}>
   (() => {
     const ipInput = document.getElementById('ip-input');
     const btnLookup = document.getElementById('btn-lookup');
@@ -348,6 +358,9 @@ const L = {
 
     const rdapCard = document.getElementById('rdap-card');
     const rdapGrid = document.getElementById('rdap-grid');
+
+    const ctxCard = document.getElementById('ctx-card');
+    const ctxGrid = document.getElementById('ctx-grid');
 
     const pivotCard = document.getElementById('pivot-card');
     const kqlOut = document.getElementById('kql-out');
@@ -458,6 +471,10 @@ const L = {
 
     function detectCloud(org) {
       const s = (org || '').toLowerCase();
+      if (s.includes('zscaler')) return 'Zscaler SASE';
+      if (s.includes('netskope')) return 'Netskope SASE';
+      if (s.includes('palo alto') || s.includes('prisma')) return 'Palo Alto Prisma';
+      if (s.includes('cato networks')) return 'Cato SASE';
       if (s.includes('microsoft') || s.includes('azure')) return 'Microsoft Azure';
       if (s.includes('amazon') || s.includes('aws')) return 'Amazon AWS';
       if (s.includes('google')) return 'Google Cloud';
@@ -467,6 +484,134 @@ const L = {
       if (s.includes('alibaba') || s.includes('tencent')) return 'Alibaba / Tencent Cloud';
       if (s.includes('ovh') || s.includes('hetzner')) return 'OVH / Hetzner';
       return 'ISP / Enterprise';
+    }
+
+    function renderSituationalContext(baseIp, c) {
+      const text = `${c.org} ${c.isp} ${c.asn} ${c.ptr} ${c.rdapName}`.toLowerCase();
+      const ptrLow = (c.ptr || '').toLowerCase();
+      const rdapCidr = c.rdapCidr || '—';
+      const asnStr = c.asn || '—';
+
+      const labels = {
+        pt: { p: 'Perfil / Plataforma', r: 'Node Range / Bloco Identificado', g: 'Orientação Operacional (SOC)' },
+        de: { p: 'Profil / Plattform', r: 'Erkannter Node Range / Block', g: 'Operative SOC-Einordnung' },
+        zh: { p: '平台 / 基础设施画像', r: '识别的节点网段 (Node Range)', g: 'SOC 实战研判建议' },
+        en: { p: 'Profile / Platform', r: 'Identified Node Range / Block', g: 'Operational Guidance (SOC)' },
+      }[locale] || { p: 'Profile', r: 'Node Range', g: 'Guidance' };
+
+      let profile = '';
+      let nodeRange = `${rdapCidr} (${c.rdapName || asnStr})`;
+      let guidance = '';
+
+      if (text.includes('zscaler') || text.includes('22616') || text.includes('53813') || text.includes('62044') || ptrLow.includes('zscloud') || ptrLow.includes('zscaler')) {
+        profile = 'Zscaler SASE / Secure Web Gateway';
+        let cloudName = 'Zscaler Public Service Edge (ZIA)';
+        if (ptrLow.includes('zscalerthree')) cloudName = 'zscalerthree.net (ZIA Cloud)';
+        else if (ptrLow.includes('zscalertwo')) cloudName = 'zscalertwo.net (ZIA Cloud)';
+        else if (ptrLow.includes('zscloud')) cloudName = 'zscloud.net (ZIA Cloud)';
+        else if (ptrLow.includes('zscalergov')) cloudName = 'zscalergov.net (GovCloud)';
+        else if (ptrLow.includes('zpa') || text.includes('private access')) cloudName = 'Zscaler Private Access (ZPA)';
+        else if (text.includes('dedicated') || text.includes('sipa')) cloudName = 'Zscaler Dedicated Egress / SIPA';
+        nodeRange = `${cloudName} · ${rdapCidr} · ${asnStr}`;
+        guidance = {
+          pt: 'IP de saída SASE/SWG compartilhado (ou Dedicated Egress). Não bloqueie este IP globalmente sem verificar o tenant; correlacione com X-Forwarded-For, DeviceID no Entra ID e logs Zscaler NSS.',
+          de: 'Geteilte SASE/SWG-Ausgangs-IP (oder Dedicated Egress). IP nicht global blockieren; zuerst X-Forwarded-For, Entra-DeviceID und Zscaler-NSS-Logs korrelieren.',
+          zh: 'Zscaler SASE/SWG 出口 IP（可能为多租户共享或专用出口）。切勿盲目全局封禁，请结合 X-Forwarded-For、Entra DeviceID 与 Zscaler NSS 日志确认具体终端。',
+          en: 'Shared SASE/SWG egress IP (or Dedicated Egress). Do not globally block this IP blindly; correlate with X-Forwarded-For, Entra DeviceID, and Zscaler NSS logs first.',
+        }[locale];
+      } else if (text.includes('cloudflare') || text.includes('13335')) {
+        const isWarp = ptrLow.includes('warp') || ptrLow.includes('gateway') || text.includes('warp');
+        profile = isWarp ? 'Cloudflare WARP / Zero Trust Egress' : 'Cloudflare CDN / Anycast Edge (AS13335)';
+        nodeRange = `${isWarp ? 'WARP Client Egress' : 'Cloudflare Edge / Anycast'} · ${rdapCidr} · ${asnStr}`;
+        guidance = {
+          pt: 'Tráfego originado pela borda Cloudflare ou cliente WARP. Em autenticações no Entra ID, valide se a empresa usa Cloudflare Gateway/WARP ou se há proxy reverso/AitM.',
+          de: 'Datenverkehr über Cloudflare Edge oder WARP-Client. Prüfen Sie bei Entra-ID-Logins, ob Cloudflare Gateway aktiv ist oder ein Reverse-Proxy/AitM vorliegt.',
+          zh: '流量来自 Cloudflare 边缘节点或 WARP 客户端。在排查 Entra ID 登录时，请核实企业是否部署了 Cloudflare Gateway 或存在反向代理钓鱼 (AitM)。',
+          en: 'Traffic from Cloudflare Edge or WARP client. For Entra ID sign-ins, verify whether Cloudflare Gateway/WARP is deployed or if an AitM reverse proxy is involved.',
+        }[locale];
+      } else if (text.includes('netskope') || text.includes('16552')) {
+        profile = 'Netskope SASE / NewEdge SWG';
+        nodeRange = `Netskope NewEdge · ${rdapCidr} · ${asnStr}`;
+        guidance = {
+          pt: 'Nó de saída Netskope SWG/CASB. Confirme o tenant de origem nos logs da Netskope antes de tratar como acesso externo anômalo.',
+          de: 'Netskope-SWG/CASB-Ausgangsknoten. Prüfen Sie den Ursprungs-Tenant in den Netskope-Logs vor einer Sperrung.',
+          zh: 'Netskope SWG/CASB 出口节点。处置前请先在 Netskope 日志中核对租户与用户归属。',
+          en: 'Netskope SWG/CASB egress node. Confirm the originating user/tenant in Netskope logs before treating as anomalous external access.',
+        }[locale];
+      } else if (text.includes('palo alto') || text.includes('prisma') || ptrLow.includes('gpcloudservice')) {
+        profile = 'Palo Alto Networks Prisma Access';
+        nodeRange = `Prisma Access Mobile/Remote Egress · ${rdapCidr} · ${asnStr}`;
+        guidance = {
+          pt: 'IP de saída GlobalProtect / Prisma Access. Verifique se o usuário estava conectado à VPN corporativa SASE no momento do evento.',
+          de: 'GlobalProtect / Prisma Access Ausgangs-IP. Prüfen Sie, ob der Benutzer zum Zeitpunkt des Vorfalls mit dem SASE-VPN verbunden war.',
+          zh: 'GlobalProtect / Prisma Access 出口 IP。请核实事件发生时用户是否已连接企业 SASE VPN。',
+          en: 'GlobalProtect / Prisma Access egress IP. Verify whether the user was connected to corporate SASE VPN at event time.',
+        }[locale];
+      } else if (text.includes('microsoft') || text.includes('azure') || text.includes('8075')) {
+        profile = 'Microsoft Azure / Microsoft 365';
+        let svc = 'Azure Compute / Public Cloud';
+        if (ptrLow.includes('protection.outlook') || ptrLow.includes('mail')) svc = 'Exchange Online Protection (EOP)';
+        else if (ptrLow.includes('cloudapp.azure')) svc = 'Azure VM / CloudApp';
+        nodeRange = `${svc} · ${rdapCidr} · ${asnStr}`;
+        guidance = {
+          pt: 'Infraestrutura Microsoft Azure/M365. Pode ser VM de cliente, Azure Logic App/Automation ou servidor alugado por atacante; valide o Resource ID ou cabeçalhos se for tráfego de entrada.',
+          de: 'Microsoft Azure/M365-Infrastruktur. Kann legitime Cloud-Automatisierung oder eine vom Angreifer gemietete VM sein; prüfen Sie Resource ID und Sign-in-Kontext.',
+          zh: 'Microsoft Azure/M365 基础设施。可能是企业云端自动化服务，也可能是攻击者租用的云主机；请结合 Resource ID 与登录上下文研判。',
+          en: 'Microsoft Azure/M365 infrastructure. Could be legitimate cloud automation or an attacker-rented VM; validate Resource ID and sign-in context.',
+        }[locale];
+      } else if (text.includes('amazon') || text.includes('aws') || text.includes('16509') || text.includes('14618')) {
+        profile = 'Amazon Web Services (AWS)';
+        const svc = ptrLow.includes('cloudfront') ? 'Amazon CloudFront CDN' : ptrLow.includes('compute') ? 'Amazon EC2' : 'AWS Infrastructure';
+        nodeRange = `${svc} · ${rdapCidr} · ${asnStr}`;
+        guidance = {
+          pt: 'Infraestrutura AWS. Se surgir em SigninLogs humanos fora de automação conhecida, trate com prioridade alta (possível VPS/proxy de ataque ou password spray).',
+          de: 'AWS-Infrastruktur. Bei menschlichen Entra-Anmeldungen außerhalb bekannter Automatisierung mit hoher Priorität auf VPS/Password-Spray prüfen.',
+          zh: 'AWS 云基础设施。若在非自动化场景的人工登录日志中出现，需高度警惕 VPS 代理或密码喷洒。',
+          en: 'AWS infrastructure. If seen in interactive human sign-ins outside known automation, prioritize triage for VPS proxy or password spraying.',
+        }[locale];
+      } else if (text.includes('google') || text.includes('15169') || text.includes('396982')) {
+        profile = 'Google Cloud / Google Infrastructure';
+        nodeRange = `${ptrLow.includes('googleusercontent') ? 'GCP Compute / UserContent' : 'Google Edge / Cloud'} · ${rdapCidr} · ${asnStr}`;
+        guidance = {
+          pt: 'Rede Google / GCP. Diferencie crawlers/serviços Google de VMs hospedadas no Google Cloud (`googleusercontent.com`).',
+          de: 'Google / GCP-Netzwerk. Unterscheiden Sie Google-Dienste von Kunden-VMs in Google Cloud (`googleusercontent.com`).',
+          zh: 'Google / GCP 网络。请区分 Google 官方服务与租户部署在 GCP 上的虚拟机（`googleusercontent.com`）。',
+          en: 'Google / GCP network. Distinguish official Google services from customer-hosted GCP VMs (`googleusercontent.com`).',
+        }[locale];
+      } else if (text.includes('digitalocean') || text.includes('ovh') || text.includes('hetzner') || text.includes('linode') || text.includes('vultr') || text.includes('oracle') || text.includes('alibaba') || text.includes('tencent')) {
+        profile = `VPS / Cloud Hosting (${detectCloud(c.org || c.isp)})`;
+        nodeRange = `Dedicated/Cloud Hosting · ${rdapCidr} · ${asnStr}`;
+        guidance = {
+          pt: 'Provedor de VPS/Hosting. Baixa probabilidade de acesso corporativo legítimo de usuário final; alto risco para brute force, phishing AitM ou C2.',
+          de: 'VPS-/Hosting-Anbieter. Geringe Wahrscheinlichkeit für legitime Endbenutzer-Logins; hohes Risiko für Brute Force, AitM-Phishing oder C2.',
+          zh: 'VPS / 云主机托管商。终端员工直接从托管机房登录的概率极低，存在较高的暴力破解、AitM 钓鱼或 C2 风险。',
+          en: 'VPS/Hosting provider. Low likelihood for legitimate end-user logins; high risk for brute force, AitM phishing, or C2 activity.',
+        }[locale];
+      } else if (c.isProxy) {
+        profile = 'VPN / Proxy / Anonymizer';
+        nodeRange = `${rdapCidr} · ${asnStr}`;
+        guidance = {
+          pt: 'Sinalizado como Proxy/VPN por provedor de reputação. Confirme se o colaborador utiliza VPN autorizada ou se há tentativa de mascarar origem.',
+          de: 'Als Proxy/VPN markiert. Prüfen Sie, ob ein autorisiertes VPN genutzt wurde oder eine Verschleierung der Herkunft vorliegt.',
+          zh: '情报源标记为代理或 VPN 出口。请核实员工是否使用了合规 VPN，或存在隐藏真实源 IP 的行为。',
+          en: 'Flagged as Proxy/VPN by reputation feeds. Verify if an authorized VPN was used or if origin masking is occurring.',
+        }[locale];
+      } else {
+        profile = 'ISP / Telecom / Enterprise Network';
+        nodeRange = `${rdapCidr} · ${asnStr}`;
+        guidance = {
+          pt: 'Rede de operadora ou bloco corporativo. Compare cidade/ASN com o histórico do usuário em SigninLogs e valide dispositivo gerenciado.',
+          de: 'Telekom-ISP oder Unternehmensnetz. Vergleichen Sie Stadt/ASN mit dem SigninLogs-Verlauf und dem Geräte-Compliance-Status.',
+          zh: '运营商宽带或企业专线网段。请将城市与 ASN 与用户历史 SigninLogs 及设备合规状态进行比对。',
+          en: 'Telecom ISP or enterprise netblock. Compare city/ASN against user SigninLogs history and check device compliance status.',
+        }[locale];
+      }
+
+      ctxGrid.innerHTML = '';
+      ctxCard.style.display = '';
+      addKv(ctxGrid, labels.p, profile);
+      addKv(ctxGrid, labels.r, nodeRange);
+      addKv(ctxGrid, labels.g, guidance, true);
     }
 
     function fetchWithTimeout(url, opts = {}, signal, ms = 4500) {
@@ -555,6 +700,7 @@ const L = {
       geoGrid.innerHTML = '';
       multiTbody.innerHTML = '';
       rdapGrid.innerHTML = '';
+      ctxGrid.innerHTML = '';
       mapContainer.style.display = 'none';
       osmFrame.src = 'about:blank';
       btnLoadMap.style.display = 'none';
@@ -563,6 +709,9 @@ const L = {
       geoCard.style.display = 'none';
       multiCard.style.display = '';
       rdapCard.style.display = 'none';
+      ctxCard.style.display = 'none';
+
+      const ctxData = { asn: '', org: '', isp: '', ptr: '', rdapName: '', rdapCidr: '', isProxy: false };
 
       statusEl.textContent = `${L.querying} (${baseIp})...`;
       statusEl.className = 'status-msg';
@@ -578,6 +727,9 @@ const L = {
         .then((r) => r.json())
         .then((d) => {
           if (reqId !== activeReqId || !d.success) return;
+          if (d.connection?.asn) ctxData.asn = `AS${d.connection.asn}`;
+          if (d.connection?.org) ctxData.org = d.connection.org;
+          if (d.connection?.isp) ctxData.isp = d.connection.isp;
           addMultiRow('ipwho.is', `${d.country || '—'} · ${d.city || '—'}`, `AS${d.connection?.asn || '?'} · ${d.connection?.isp || d.connection?.org || '—'}`, d.timezone?.id || 'OK');
           if (!geoPopulated) {
             geoPopulated = true;
@@ -603,6 +755,8 @@ const L = {
         .then((r) => r.json())
         .then((d) => {
           if (reqId !== activeReqId || d.bogon || d.error) return;
+          if (!ctxData.org && d.org) ctxData.org = d.org;
+          if (!ctxData.ptr && d.hostname) ctxData.ptr = d.hostname;
           addMultiRow('IPinfo.io', `${d.country || '—'} · ${d.city || '—'}`, d.org || '—', d.anycast ? 'Anycast' : (d.timezone || 'OK'));
           if (!geoPopulated && d.loc) {
             geoPopulated = true;
@@ -626,6 +780,8 @@ const L = {
         .then((r) => r.json())
         .then((d) => {
           if (reqId !== activeReqId || !d.ipAddress) return;
+          if (d.isProxy) ctxData.isProxy = true;
+          if (!ctxData.org && d.asnOrganization) ctxData.org = d.asnOrganization;
           const sig = d.isProxy ? L.proxyYes : L.proxyNo;
           addMultiRow('FreeIPAPI', `${d.countryName || '—'} · ${d.cityName || '—'}`, d.asnOrganization || (d.asn ? `AS${d.asn}` : '—'), sig);
         })
@@ -670,6 +826,7 @@ const L = {
             .then((d) => {
               if (reqId !== activeReqId) return;
               const ptr = d.Answer?.[0]?.data?.replace(/\.$/, '') || L.noPtr;
+              if (d.Answer?.[0]?.data) ctxData.ptr = d.Answer[0].data.replace(/\.$/, '');
               addKv(localGrid, L.rdns, ptr);
             })
             .catch(() => {})
@@ -694,6 +851,8 @@ const L = {
             ? `${data.cidr0_cidrs[0].v4prefix || data.cidr0_cidrs[0].v6prefix}/${data.cidr0_cidrs[0].length}`
             : data.handle;
 
+          ctxData.rdapName = data.name || '';
+          ctxData.rdapCidr = cidr || '';
           rdapCard.style.display = '';
           addKv(rdapGrid, L.netName, data.name || '—');
           addKv(rdapGrid, L.cidrBlock, cidr || '—');
@@ -706,6 +865,7 @@ const L = {
       await Promise.allSettled([p1, p2, p3, p4, p5, p6, p7, p8]);
       if (reqId !== activeReqId) return;
 
+      renderSituationalContext(baseIp, ctxData);
       statusEl.textContent = `${L.done} (${baseIp})`;
       statusEl.className = 'status-msg ok';
     }

@@ -1,0 +1,118 @@
+---
+import ToolShell from "../ToolShell.astro";
+import type { Locale } from "../../lib/i18n";
+import { UTIL_TOOLS } from "../../lib/tools";
+
+interface Props { locale?: Locale; }
+const { locale = "pt" } = Astro.props;
+const meta = UTIL_TOOLS.find((t) => t.id === "sec-headers")!;
+
+const T = {
+  pt: {
+    h2Cfg: "Gerador de Security Headers HTTP (Zero Bloat)",
+    profileLbl: "Perfil de Aplicação",
+    srvLbl: "Formato de Saída",
+    pStrict: "Restrito (Site Estático / Zero Scripts Terceiros)",
+    pApp: "Aplicação Web / SPA (OIDC + API própria)",
+    btnGen: "Gerar Cabeçalhos",
+    outTitle: "Configuração Pronta (Nginx / Caddy / Headers)",
+  },
+  de: {
+    h2Cfg: "HTTP Security Header Generator",
+    profileLbl: "Anwendungsprofil",
+    srvLbl: "Ausgabeformat",
+    pStrict: "Strikt (Statische Website / Keine Drittanbieter-Skripte)",
+    pApp: "Web-App / SPA (OIDC + Eigene API)",
+    btnGen: "Header erzeugen",
+    outTitle: "Fertige Konfiguration (Nginx / Caddy / Headers)",
+  },
+  zh: {
+    h2Cfg: "HTTP 安全响应头生成器",
+    profileLbl: "应用安全基线",
+    srvLbl: "输出格式",
+    pStrict: "严格模式（静态站点 / 零第三方脚本）",
+    pApp: "Web 应用 / SPA（OIDC + 自有 API）",
+    btnGen: "生成安全响应头",
+    outTitle: "可直接使用的配置（Nginx / Caddy / Headers）",
+  },
+  en: {
+    h2Cfg: "HTTP Security Headers Generator",
+    profileLbl: "Application Profile",
+    srvLbl: "Output Format",
+    pStrict: "Strict (Static Site / Zero Third-Party Scripts)",
+    pApp: "Web App / SPA (OIDC + First-Party API)",
+    btnGen: "Generate Headers",
+    outTitle: "Ready-to-Use Configuration (Nginx / Caddy / Headers)",
+  },
+}[locale];
+---
+
+<ToolShell locale={locale} title={meta.title[locale]} description={meta.description[locale]} badge="100% Local" icon="🧱">
+  <div class="tool-card">
+    <h2>{T.h2Cfg}</h2>
+    <div class="tool-grid">
+      <div class="kv-box">
+        <span>{T.profileLbl}</span>
+        <select id="sh-prof" class="tool-input" style="margin-top:.3rem;">
+          <option value="strict">{T.pStrict}</option>
+          <option value="app">{T.pApp}</option>
+        </select>
+      </div>
+      <div class="kv-box">
+        <span>{T.srvLbl}</span>
+        <select id="sh-srv" class="tool-input" style="margin-top:.3rem;">
+          <option value="nginx">Nginx (add_header)</option>
+          <option value="caddy">Caddyfile (header)</option>
+          <option value="raw">HTTP Raw / _headers</option>
+        </select>
+      </div>
+    </div>
+    <div style="margin-top:.85rem;">
+      <button id="sh-btn" type="button" class="tool-btn">{T.btnGen}</button>
+    </div>
+  </div>
+
+  <div class="tool-card">
+    <h2>{T.outTitle}</h2>
+    <pre id="sh-out" class="code-out" style="margin:0;"></pre>
+  </div>
+</ToolShell>
+
+<script is:inline>
+  (() => {
+    const profEl = document.getElementById('sh-prof');
+    const srvEl = document.getElementById('sh-srv');
+    const outEl = document.getElementById('sh-out');
+
+    function render() {
+      const strict = profEl.value === 'strict';
+      const srv = srvEl.value;
+      const csp = strict
+        ? "default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
+        : "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: https:; connect-src 'self' https:; frame-ancestors 'none'; base-uri 'self'";
+
+      const headers = [
+        ['Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload'],
+        ['Content-Security-Policy', csp],
+        ['X-Frame-Options', 'DENY'],
+        ['X-Content-Type-Options', 'nosniff'],
+        ['Referrer-Policy', 'strict-origin-when-cross-origin'],
+        ['Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=()'],
+      ];
+
+      if (srv === 'nginx') {
+        outEl.textContent = headers.map(([k, v]) => `add_header ${k} "${v}" always;`).join('\n');
+      } else if (srv === 'caddy') {
+        outEl.textContent = `header {\n${headers.map(([k, v]) => `  ${k} "${v}"`).join('\n')}\n}`;
+      } else {
+        outEl.textContent = headers.map(([k, v]) => `${k}: ${v}`).join('\n');
+      }
+    }
+
+    document.getElementById('sh-btn')?.addEventListener('click', render);
+    profEl?.addEventListener('change', render);
+    srvEl?.addEventListener('change', render);
+    render();
+  })();
+</script>
+

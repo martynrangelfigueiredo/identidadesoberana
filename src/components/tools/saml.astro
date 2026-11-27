@@ -1,0 +1,141 @@
+---
+import ToolShell from "../ToolShell.astro";
+import type { Locale } from "../../lib/i18n";
+import { UTIL_TOOLS } from "../../lib/tools";
+
+interface Props { locale?: Locale; }
+const { locale = "pt" } = Astro.props;
+const meta = UTIL_TOOLS.find((t) => t.id === "saml")!;
+
+const T = {
+  pt: {
+    h2In: "Cole a SAMLResponse / AuthnRequest (Base64 ou XML · 100% Local)",
+    btnParse: "Decodificar SAML",
+    btnSample: "Carregar Exemplo",
+    invalid: "Conteúdo SAML inválido. Cole um payload Base64 ou XML SAML válido.",
+    issuer: "Issuer (Emissor IdP)",
+    dest: "Destination / ACS URL",
+    nameId: "Subject NameID",
+    notOnOrAfter: "Expiração (NotOnOrAfter)",
+    xmlTitle: "XML Formatado",
+  },
+  de: {
+    h2In: "SAMLResponse / AuthnRequest einfügen (Base64 oder XML · 100% Lokal)",
+    btnParse: "SAML dekodieren",
+    btnSample: "Beispiel laden",
+    invalid: "Ungültiger SAML-Inhalt. Bitte gültiges Base64 oder SAML-XML einfügen.",
+    issuer: "Issuer (IdP-Aussteller)",
+    dest: "Destination / ACS-URL",
+    nameId: "Subject NameID",
+    notOnOrAfter: "Ablauf (NotOnOrAfter)",
+    xmlTitle: "Formatiertes XML",
+  },
+  zh: {
+    h2In: "粘贴 SAMLResponse / AuthnRequest（Base64 或 XML · 100% 本地）",
+    btnParse: "解码 SAML",
+    btnSample: "加载示例",
+    invalid: "无效的 SAML 内容，请粘贴有效的 Base64 或 SAML XML。",
+    issuer: "Issuer（身份提供商）",
+    dest: "Destination / ACS 地址",
+    nameId: "Subject NameID",
+    notOnOrAfter: "过期时间 (NotOnOrAfter)",
+    xmlTitle: "格式化 XML",
+  },
+  en: {
+    h2In: "Paste SAMLResponse / AuthnRequest (Base64 or XML · 100% Local)",
+    btnParse: "Decode SAML",
+    btnSample: "Load Sample",
+    invalid: "Invalid SAML payload. Paste valid Base64 or SAML XML.",
+    issuer: "Issuer (IdP)",
+    dest: "Destination / ACS URL",
+    nameId: "Subject NameID",
+    notOnOrAfter: "Expiration (NotOnOrAfter)",
+    xmlTitle: "Formatted XML",
+  },
+}[locale];
+---
+
+<ToolShell locale={locale} title={meta.title[locale]} description={meta.description[locale]} badge="100% Local" icon="🪪">
+  <div class="tool-card">
+    <h2>{T.h2In}</h2>
+    <textarea id="saml-in" class="tool-textarea" rows="6" placeholder="PHNhbWxwOlJlc3BvbnNlIC..." style="font-family:var(--font-mono);font-size:.82rem;" aria-label={T.h2In}></textarea>
+    <div style="display:flex;gap:.5rem;margin-top:.75rem;flex-wrap:wrap;">
+      <button id="saml-btn" type="button" class="tool-btn">{T.btnParse}</button>
+      <button id="saml-sample" type="button" class="tool-btn secondary">{T.btnSample}</button>
+    </div>
+    <div id="saml-err" style="display:none;margin-top:.75rem;color:#b91c1c;font-weight:600;font-size:.88rem;"></div>
+  </div>
+
+  <div id="saml-res" class="tool-card" style="display:none;">
+    <div id="saml-grid" class="tool-grid"></div>
+    <h2 style="margin-top:1.1rem;">{T.xmlTitle}</h2>
+    <pre id="saml-xml" class="code-out" style="margin:0;"></pre>
+  </div>
+</ToolShell>
+
+<script is:inline define:vars={{ T }}>
+  (() => {
+    const inp = document.getElementById('saml-in');
+    const errEl = document.getElementById('saml-err');
+    const resEl = document.getElementById('saml-res');
+    const gridEl = document.getElementById('saml-grid');
+    const xmlEl = document.getElementById('saml-xml');
+
+    const SAMPLE_XML = `<samlp:Response xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol" xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" ID="_id12345" Version="2.0" IssueInstant="2026-11-27T14:00:00Z" Destination="https://app.lab.local/saml/acs"><saml:Issuer>https://sts.windows.net/11111111-2222-3333-4444-555555555555/</saml:Issuer><saml:Assertion ID="_assert01" Version="2.0"><saml:Subject><saml:NameID>analyst@contoso.com</saml:NameID></saml:Subject><saml:Conditions NotBefore="2026-11-27T13:55:00Z" NotOnOrAfter="2026-11-27T15:00:00Z"></saml:Conditions></saml:Assertion></samlp:Response>`;
+
+    function formatXml(xml) {
+      let pad = 0;
+      return xml
+        .replace(/(>)(<)(\/*)/g, '$1\n$2$3')
+        .split('\n')
+        .map((line) => {
+          if (/^<\/\w/.test(line)) pad = Math.max(0, pad - 1);
+          const out = '  '.repeat(pad) + line;
+          if (/^<\w[^>]*[^\/]>$/.test(line) && !line.includes('</')) pad += 1;
+          return out;
+        })
+        .join('\n');
+    }
+
+    function decode() {
+      let raw = inp.value.trim();
+      if (!raw) return;
+      try {
+        if (!raw.startsWith('<')) {
+          const clean = decodeURIComponent(raw).replace(/\s+/g, '');
+          raw = new TextDecoder('utf-8').decode(Uint8Array.from(atob(clean), (c) => c.charCodeAt(0)));
+        }
+        const doc = new DOMParser().parseFromString(raw, 'application/xml');
+        if (doc.querySelector('parsererror')) throw new Error('XML Parse Error');
+
+        const issuer = doc.getElementsByTagNameNS('*', 'Issuer')[0]?.textContent || '—';
+        const nameId = doc.getElementsByTagNameNS('*', 'NameID')[0]?.textContent || '—';
+        const root = doc.documentElement;
+        const dest = root?.getAttribute('Destination') || '—';
+        const cond = doc.getElementsByTagNameNS('*', 'Conditions')[0];
+        const notAfter = cond?.getAttribute('NotOnOrAfter') || '—';
+
+        errEl.style.display = 'none';
+        resEl.style.display = 'block';
+        gridEl.innerHTML = [
+          `<div class="kv-box"><span>${T.issuer}</span><strong>${issuer}</strong></div>`,
+          `<div class="kv-box"><span>${T.nameId}</span><strong>${nameId}</strong></div>`,
+          `<div class="kv-box"><span>${T.dest}</span><strong>${dest}</strong></div>`,
+          `<div class="kv-box"><span>${T.notOnOrAfter}</span><strong>${notAfter}</strong></div>`,
+        ].join('');
+        xmlEl.textContent = formatXml(raw);
+      } catch {
+        errEl.style.display = 'block';
+        errEl.textContent = T.invalid;
+        resEl.style.display = 'none';
+      }
+    }
+
+    document.getElementById('saml-btn')?.addEventListener('click', decode);
+    document.getElementById('saml-sample')?.addEventListener('click', () => {
+      inp.value = btoa(unescape(encodeURIComponent(SAMPLE_XML)));
+      decode();
+    });
+  })();
+</script>
+

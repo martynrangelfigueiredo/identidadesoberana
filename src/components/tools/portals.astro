@@ -6,10 +6,46 @@ interface Props { locale?: Locale; }
 const { locale = "pt" } = Astro.props;
 const meta = UTIL_TOOLS.find((t) => t.id === "portals")!;
 const T = {
-  pt: { badge: "Diretório", h2Cve: "Consulta Rápida de CVE (Base Aberta CIRCL)", btnCve: "Buscar CVE" },
-  de: { badge: "Verzeichnis", h2Cve: "Schnelle CVE-Abfrage (Offene CIRCL-Datenbank)", btnCve: "CVE suchen" },
-  zh: { badge: "权威导航", h2Cve: "CVE 漏洞快速查询（CIRCL 开源库）", btnCve: "查询 CVE" },
-  en: { badge: "Directory", h2Cve: "Quick CVE Lookup (Open CIRCL Database)", btnCve: "Lookup CVE" },
+  pt: {
+    badge: "Diretório",
+    h2Cve: "Consulta Rápida de CVE (Base Aberta CIRCL)",
+    btnCve: "Buscar CVE",
+    errFmt: "Formato inválido. Use o padrão CVE-AAAA-NNNN (ex: CVE-2024-3094).",
+    querying: "Consultando",
+    notFound: "CVE não encontrado na base CIRCL.",
+    loaded: "carregado com sucesso.",
+    errQ: "Erro na consulta:",
+  },
+  de: {
+    badge: "Verzeichnis",
+    h2Cve: "Schnelle CVE-Abfrage (Offene CIRCL-Datenbank)",
+    btnCve: "CVE suchen",
+    errFmt: "Ungültiges Format. Bitte CVE-JJJJ-NNNN verwenden (z. B. CVE-2024-3094).",
+    querying: "Abfrage läuft für",
+    notFound: "CVE nicht in der CIRCL-Datenbank gefunden.",
+    loaded: "erfolgreich geladen.",
+    errQ: "Abfragefehler:",
+  },
+  zh: {
+    badge: "权威导航",
+    h2Cve: "CVE 漏洞快速查询（CIRCL 开源库）",
+    btnCve: "查询 CVE",
+    errFmt: "格式无效，请使用 CVE-YYYY-NNNN 格式（例如 CVE-2024-3094）。",
+    querying: "正在查询",
+    notFound: "在 CIRCL 数据库中未找到该 CVE。",
+    loaded: "加载成功。",
+    errQ: "查询失败：",
+  },
+  en: {
+    badge: "Directory",
+    h2Cve: "Quick CVE Lookup (Open CIRCL Database)",
+    btnCve: "Lookup CVE",
+    errFmt: "Invalid format. Use CVE-YYYY-NNNN (e.g., CVE-2024-3094).",
+    querying: "Querying",
+    notFound: "CVE not found in CIRCL database.",
+    loaded: "loaded successfully.",
+    errQ: "Lookup error:",
+  },
 }[locale];
 
 const SECTIONS = [
@@ -89,7 +125,7 @@ const SECTIONS = [
   ))}
 </ToolShell>
 
-<script is:inline>
+<script is:inline define:vars={{ T }}>
   (() => {
     const input = document.getElementById('cve-input');
     const btn = document.getElementById('btn-cve');
@@ -99,17 +135,17 @@ const SECTIONS = [
     async function lookupCve() {
       const id = input.value.trim().toUpperCase();
       if (!/^CVE-\d{4}-\d{4,}$/.test(id)) {
-        statusEl.textContent = 'Formato inválido. Use o padrão CVE-AAAA-NNNN (ex: CVE-2024-3094).';
+        statusEl.textContent = T.errFmt;
         statusEl.className = 'status-msg error';
         return;
       }
-      statusEl.textContent = `Consultando ${id}...`;
+      statusEl.textContent = `${T.querying} ${id}...`;
       statusEl.className = 'status-msg';
       try {
         const res = await fetch(`https://cve.circl.lu/api/cve/${encodeURIComponent(id)}`);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
-        if (!data || !data.id) throw new Error('CVE não encontrado na base CIRCL.');
+        if (!data || !data.id) throw new Error(T.notFound);
         out.style.display = '';
         out.textContent = JSON.stringify({
           id: data.id,
@@ -119,11 +155,11 @@ const SECTIONS = [
           summary: data.summary,
           references: (data.references || []).slice(0, 5),
         }, null, 2);
-        statusEl.textContent = `${id} carregado com sucesso.`;
+        statusEl.textContent = `${id} ${T.loaded}`;
         statusEl.className = 'status-msg ok';
       } catch (err) {
         out.style.display = 'none';
-        statusEl.textContent = `Erro na consulta: ${err.message}`;
+        statusEl.textContent = `${T.errQ} ${err.message}`;
         statusEl.className = 'status-msg error';
       }
     }

@@ -13,6 +13,10 @@ const T = {
     btnU8: "Decodificar UTF-8", btnPs: "Decodificar PowerShell (UTF-16LE)", btnEnc: "Codificar Base64",
     h2Hash: "3. Gerador de Hash Local (Web Crypto API · Zero Upload)",
     btnHash: "Calcular Hash do Texto",
+    copied: "✔ Copiado!",
+    copyOut: "Copiar Saída",
+    errU8: "Erro ao decodificar UTF-8:",
+    errPs: "Erro ao decodificar PowerShell UTF-16LE:",
   },
   de: {
     h2Def: "1. IoC Defang & Refang",
@@ -21,6 +25,10 @@ const T = {
     btnU8: "UTF-8 dekodieren", btnPs: "PowerShell (UTF-16LE) dekodieren", btnEnc: "Base64 kodieren",
     h2Hash: "3. Lokaler Hash-Generator (Web Crypto API · Kein Upload)",
     btnHash: "Text-Hash berechnen",
+    copied: "✔ Kopiert!",
+    copyOut: "Ausgabe kopieren",
+    errU8: "Fehler beim UTF-8-Dekodieren:",
+    errPs: "Fehler beim PowerShell-UTF-16LE-Dekodieren:",
   },
   zh: {
     h2Def: "1. IoC 安全脱敏（Defang & Refang）",
@@ -29,6 +37,10 @@ const T = {
     btnU8: "解码 UTF-8", btnPs: "解码 PowerShell (UTF-16LE)", btnEnc: "编码为 Base64",
     h2Hash: "3. 本地哈希计算（Web Crypto API · 零上传）",
     btnHash: "计算文本哈希",
+    copied: "✔ 已复制！",
+    copyOut: "复制输出",
+    errU8: "UTF-8 解码错误：",
+    errPs: "PowerShell UTF-16LE 解码错误：",
   },
   en: {
     h2Def: "1. IoC Defang & Refang",
@@ -37,6 +49,10 @@ const T = {
     btnU8: "Decode UTF-8", btnPs: "Decode PowerShell (UTF-16LE)", btnEnc: "Encode Base64",
     h2Hash: "3. Local Hash Generator (Web Crypto API · Zero Upload)",
     btnHash: "Compute Text Hash",
+    copied: "✔ Copied!",
+    copyOut: "Copy Output",
+    errU8: "UTF-8 decode error:",
+    errPs: "PowerShell UTF-16LE decode error:",
   },
 }[locale];
 ---
@@ -101,7 +117,7 @@ const T = {
   </div>
 </ToolShell>
 
-<script is:inline>
+<script is:inline define:vars={{ T }}>
   (() => {
     // 1. Defang / Refang
     const defangIn = document.getElementById('defang-input');
@@ -124,8 +140,8 @@ const T = {
     document.getElementById('btn-copy-defang')?.addEventListener('click', async (e) => {
       if (!defangOut.textContent) return;
       await navigator.clipboard.writeText(defangOut.textContent);
-      e.target.textContent = '✔ Copiado!';
-      setTimeout(() => (e.target.textContent = 'Copiar Saída'), 1600);
+      e.target.textContent = T.copied;
+      setTimeout(() => (e.target.textContent = T.copyOut), 1600);
     });
 
     // 2. Base64 & PowerShell
@@ -145,7 +161,7 @@ const T = {
         b64Out.textContent = new TextDecoder('utf-8').decode(bytes);
       } catch (err) {
         b64Out.style.display = '';
-        b64Out.textContent = `Erro ao decodificar UTF-8: ${err.message}`;
+        b64Out.textContent = `${T.errU8} ${err.message}`;
       }
     });
 
@@ -156,7 +172,7 @@ const T = {
         b64Out.textContent = new TextDecoder('utf-16le').decode(bytes);
       } catch (err) {
         b64Out.style.display = '';
-        b64Out.textContent = `Erro ao decodificar PowerShell UTF-16LE: ${err.message}`;
+        b64Out.textContent = `${T.errPs} ${err.message}`;
       }
     });
 

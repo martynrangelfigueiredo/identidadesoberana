@@ -73,7 +73,7 @@ const L = {
   </div>
 </ToolShell>
 
-<script is:inline define:vars={{ L }}>
+<script is:inline define:vars={{ L, locale }}>
   (() => {
     const input = document.getElementById('ua-input');
     const card = document.getElementById('ua-result-card');
@@ -128,11 +128,45 @@ const L = {
         riskSignal = L.headlessAlert;
       }
 
+      const ctxLabel = { pt: 'Contexto SOC', de: 'SOC-Kontext', zh: 'SOC 研判上下文', en: 'SOC Context' }[locale] || 'SOC Context';
+      let ctxText = {
+        pt: 'Navegador interativo padrão. Valide em SigninLogs se o dispositivo está marcado como gerenciado (IsCompliant).',
+        de: 'Standard-Browser. Prüfen Sie in SigninLogs, ob das Gerät als konform (IsCompliant) markiert ist.',
+        zh: '常规交互式浏览器。请在 SigninLogs 中核实设备是否合规 (IsCompliant)。',
+        en: 'Standard interactive browser. Check SigninLogs to verify device compliance (IsCompliant).',
+      }[locale];
+      if (/BAV2ROPC/i.test(s)) {
+        ctxText = {
+          pt: 'Fluxo ROPC / Autenticação Legada (BAV2ROPC) sem desafio interativo de MFA. Forte candidato a bloqueio via Conditional Access.',
+          de: 'ROPC / Legacy-Authentifizierung (BAV2ROPC) ohne interaktive MFA. Sollte per Conditional Access blockiert werden.',
+          zh: 'ROPC / 旧版身份验证 (BAV2ROPC)，无交互式 MFA 校验，建议通过条件访问阻断。',
+          en: 'ROPC / Legacy Auth (BAV2ROPC) without interactive MFA challenge. Strong candidate to block via Conditional Access.',
+        }[locale];
+      } else if (/HeadlessChrome|PhantomJS|Selenium|Playwright|Puppeteer/i.test(s)) {
+        ctxText = {
+          pt: 'Automação headless detectada. Pode indicar ferramenta de phishing AitM (Evilginx/Modlishka) ou scraping automatizado.',
+          de: 'Headless-Automatisierung erkannt. Kann auf AitM-Phishing-Tools oder automatisiertes Scraping hinweisen.',
+          zh: '检测到无头浏览器自动化，可能涉及 AitM 钓鱼代理或自动化探测。',
+          en: 'Headless browser automation detected. May indicate AitM phishing frameworks or automated scraping.',
+        }[locale];
+      } else if (isAutomated) {
+        ctxText = {
+          pt: 'Cliente CLI/Script. Comum em pipelines legítimas ou ataques de password spray e replay de tokens roubados.',
+          de: 'CLI-/Skript-Client. Typisch für Pipelines, aber auch für Password-Spraying oder Token-Replay.',
+          zh: 'CLI/脚本客户端。常见于自动化流水线，也常用于密码喷洒或令牌重放攻击。',
+          en: 'CLI/Script client. Common in pipelines as well as password spray or stolen token replay attacks.',
+        }[locale];
+      }
+
       grid.innerHTML = '';
       addKv(L.os, os);
       addKv(L.client, browser);
       addKv(L.dev, /Mobile|Android|iPhone/i.test(s) ? 'Mobile' : (isAutomated ? 'CLI / Script' : 'Desktop'));
       addKv(L.risk, riskSignal);
+      const wideBox = document.createElement('div');
+      wideBox.className = 'kv-box wide';
+      wideBox.innerHTML = `<div class="kv-label">${ctxLabel}</div><div class="kv-value">${ctxText}</div>`;
+      grid.appendChild(wideBox);
 
       card.style.display = '';
     }

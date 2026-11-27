@@ -93,7 +93,7 @@ const L = {
   </div>
 </ToolShell>
 
-<script is:inline define:vars={{ L }}>
+<script is:inline define:vars={{ L, locale }}>
   (() => {
     const input = document.getElementById('jwt-input');
     const statusEl = document.getElementById('jwt-status');
@@ -175,6 +175,31 @@ const L = {
           const expStatus = (diff > 0 ? L.validIn : L.expiredAgo).replace('{m}', String(mins));
           addKv(L.exp, `${formatTime(payload.exp)} · ${expStatus}`);
         }
+
+        // Contexto situacional de IAM
+        const issStr = String(payload.iss || '').toLowerCase();
+        let idp = 'Custom / Generic OIDC';
+        if (issStr.includes('login.microsoftonline.com') || issStr.includes('sts.windows.net')) idp = 'Microsoft Entra ID';
+        else if (issStr.includes('keycloak') || issStr.includes('/realms/')) idp = 'Keycloak';
+        else if (issStr.includes('auth0.com')) idp = 'Auth0';
+        else if (issStr.includes('okta.com')) idp = 'Okta';
+        else if (issStr.includes('accounts.google.com')) idp = 'Google Identity';
+
+        const isAppOnly = payload.idtyp === 'app' || (!payload.scp && payload.roles && !payload.upn && !payload.preferred_username);
+        const amrList = Array.isArray(payload.amr) ? payload.amr.map((x) => String(x).toLowerCase()) : [];
+        const hasMfa = amrList.includes('mfa') || amrList.includes('ngcmfa') || amrList.includes('fido');
+        const hasWids = Boolean(payload.wids && (!Array.isArray(payload.wids) || payload.wids.length > 0));
+
+        const iamLabel = { pt: 'Contexto Situacional (IAM / SOC)', de: 'Situativer Kontext (IAM / SOC)', zh: 'IAM / SOC 情景研判', en: 'Situational Context (IAM / SOC)' }[locale] || 'Context';
+        const iamParts = [`IdP: ${idp}`];
+        iamParts.push(isAppOnly ? ({ pt: 'Tipo: App-Only (Service Principal)', de: 'Typ: App-Only (Service Principal)', zh: '类型：仅应用 (Service Principal)', en: 'Type: App-Only (Service Principal)' }[locale]) : ({ pt: 'Tipo: Usuário Delegado', de: 'Typ: Delegierter Benutzer', zh: '类型：委托用户令牌', en: 'Type: Delegated User' }[locale]));
+        if (amrList.length) iamParts.push(hasMfa ? 'MFA: ✔' : 'MFA: ⚠️ Single-factor');
+        if (hasWids) iamParts.push({ pt: '⚠️ Possui wids (Papel privilegiado Entra ID)', de: '⚠️ Enthält wids (Privilegierte Entra-Rolle)', zh: '⚠️ 包含 wids（Entra ID 特权角色）', en: '⚠️ Contains wids (Privileged Entra Role)' }[locale]);
+
+        const ctxBox = document.createElement('div');
+        ctxBox.className = 'kv-box wide';
+        ctxBox.innerHTML = `<div class="kv-label">${iamLabel}</div><div class="kv-value">${iamParts.join(' · ')}</div>`;
+        highlightsGrid.appendChild(ctxBox);
 
         highlightsCard.style.display = '';
         outputCard.style.display = '';

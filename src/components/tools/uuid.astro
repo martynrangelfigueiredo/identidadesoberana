@@ -1,0 +1,145 @@
+---
+import ToolShell from "../ToolShell.astro";
+import type { Locale } from "../../lib/i18n";
+import { UTIL_TOOLS } from "../../lib/tools";
+
+interface Props { locale?: Locale; }
+const { locale = "pt" } = Astro.props;
+const meta = UTIL_TOOLS.find((t) => t.id === "uuid")!;
+
+const T = {
+  pt: {
+    h2Gen: "Gerador de UUID v4 / UUID v7 (100% Local)",
+    btnV4: "Gerar 5x UUID v4",
+    btnV7: "Gerar 5x UUID v7 (Ordenável)",
+    h2Insp: "Inspecionar UUID / GUID (Entra ID TenantId, ObjectId, CorrelationId)",
+    btnInsp: "Inspecionar",
+    invalid: "UUID inválido.",
+    verLbl: "Versão",
+    varLbl: "Variante",
+    tsLbl: "Timestamp (UUID v7)",
+  },
+  de: {
+    h2Gen: "UUID v4 / UUID v7 Generator (100% Lokal)",
+    btnV4: "5x UUID v4 erzeugen",
+    btnV7: "5x UUID v7 (Sortierbar)",
+    h2Insp: "UUID / GUID prüfen (Entra ID TenantId, ObjectId, CorrelationId)",
+    btnInsp: "Prüfen",
+    invalid: "Ungültige UUID.",
+    verLbl: "Version",
+    varLbl: "Variante",
+    tsLbl: "Zeitstempel (UUID v7)",
+  },
+  zh: {
+    h2Gen: "UUID v4 / UUID v7 生成器（100% 本地）",
+    btnV4: "生成 5 个 UUID v4",
+    btnV7: "生成 5 个 UUID v7（按时间排序）",
+    h2Insp: "解析 UUID / GUID（Entra ID TenantId、ObjectId、CorrelationId）",
+    btnInsp: "解析",
+    invalid: "无效的 UUID 格式。",
+    verLbl: "版本",
+    varLbl: "变体 (Variant)",
+    tsLbl: "时间戳（UUID v7）",
+  },
+  en: {
+    h2Gen: "UUID v4 / UUID v7 Generator (100% Local)",
+    btnV4: "Generate 5x UUID v4",
+    btnV7: "Generate 5x UUID v7 (Time-Ordered)",
+    h2Insp: "Inspect UUID / GUID (Entra ID TenantId, ObjectId, CorrelationId)",
+    btnInsp: "Inspect",
+    invalid: "Invalid UUID.",
+    verLbl: "Version",
+    varLbl: "Variant",
+    tsLbl: "Timestamp (UUID v7)",
+  },
+}[locale];
+---
+
+<ToolShell locale={locale} title={meta.title[locale]} description={meta.description[locale]} badge="100% Local" icon="🆔">
+  <div class="tool-card">
+    <h2>{T.h2Gen}</h2>
+    <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.85rem;">
+      <button id="uuid-v4" type="button" class="tool-btn">{T.btnV4}</button>
+      <button id="uuid-v7" type="button" class="tool-btn secondary">{T.btnV7}</button>
+    </div>
+    <pre id="uuid-out" class="code-out" style="margin:0;"></pre>
+  </div>
+
+  <div class="tool-card">
+    <h2>{T.h2Insp}</h2>
+    <div style="display:flex;gap:.5rem;flex-wrap:wrap;">
+      <input id="uuid-in" type="text" class="tool-input" style="flex:1;min-width:220px;font-family:var(--font-mono);" placeholder="01936a8b-..." aria-label={T.h2Insp} />
+      <button id="uuid-insp" type="button" class="tool-btn">{T.btnInsp}</button>
+    </div>
+    <div id="uuid-grid" class="tool-grid" style="margin-top:.9rem;"></div>
+  </div>
+</ToolShell>
+
+<script is:inline define:vars={{ T }}>
+  (() => {
+    const outEl = document.getElementById('uuid-out');
+    const inEl = document.getElementById('uuid-in');
+    const gridEl = document.getElementById('uuid-grid');
+
+    function genV7() {
+      const now = BigInt(Date.now());
+      const rnd = crypto.getRandomValues(new Uint8Array(10));
+      const b = new Uint8Array(16);
+      b[0] = Number((now >> 40n) & 0xffn);
+      b[1] = Number((now >> 32n) & 0xffn);
+      b[2] = Number((now >> 24n) & 0xffn);
+      b[3] = Number((now >> 16n) & 0xffn);
+      b[4] = Number((now >> 8n) & 0xffn);
+      b[5] = Number(now & 0xffn);
+      b[6] = (rnd[0] & 0x0f) | 0x70;
+      b[7] = rnd[1];
+      b[8] = (rnd[2] & 0x3f) | 0x80;
+      for (let i = 9; i < 16; i++) b[i] = rnd[i - 6];
+      const h = Array.from(b, (x) => x.toString(16).padStart(2, '0')).join('');
+      return `${h.slice(0, 8)}-${h.slice(8, 12)}-${h.slice(12, 16)}-${h.slice(16, 20)}-${h.slice(20)}`;
+    }
+
+    function inspect() {
+      const val = inEl.value.trim().toLowerCase();
+      if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(val)) {
+        gridEl.innerHTML = `<div class="kv-box"><span>Status</span><strong style="color:#b91c1c">${T.invalid}</strong></div>`;
+        return;
+      }
+      const hex = val.replace(/-/g, '');
+      const ver = parseInt(hex[12], 16);
+      const varNibble = parseInt(hex[16], 16);
+      const variant = (varNibble & 0x8) === 0 ? 'NCS (0xxx)' : (varNibble & 0xc) === 0x8 ? 'RFC 4122 / 9562 (10xx)' : 'Microsoft / Reserved';
+      let ts = '—';
+      if (ver === 7) {
+        const ms = Number(BigInt('0x' + hex.slice(0, 12)));
+        ts = new Date(ms).toISOString();
+      }
+      gridEl.innerHTML = [
+        `<div class="kv-box"><span>${T.verLbl}</span><strong>v${ver}</strong></div>`,
+        `<div class="kv-box"><span>${T.varLbl}</span><strong>${variant}</strong></div>`,
+        `<div class="kv-box"><span>${T.tsLbl}</span><strong>${ts}</strong></div>`,
+      ].join('');
+    }
+
+    document.getElementById('uuid-v4')?.addEventListener('click', () => {
+      const list = Array.from({ length: 5 }, () => crypto.randomUUID());
+      outEl.textContent = list.join('\n');
+      inEl.value = list[0];
+      inspect();
+    });
+
+    document.getElementById('uuid-v7')?.addEventListener('click', () => {
+      const list = Array.from({ length: 5 }, () => genV7());
+      outEl.textContent = list.join('\n');
+      inEl.value = list[0];
+      inspect();
+    });
+
+    document.getElementById('uuid-insp')?.addEventListener('click', inspect);
+    const initList = Array.from({ length: 5 }, () => genV7());
+    outEl.textContent = initList.join('\n');
+    inEl.value = initList[0];
+    inspect();
+  })();
+</script>
+

@@ -1,0 +1,112 @@
+---
+import ToolShell from "../ToolShell.astro";
+import type { Locale } from "../../lib/i18n";
+import { UTIL_TOOLS } from "../../lib/tools";
+
+interface Props { locale?: Locale; }
+const { locale = "pt" } = Astro.props;
+const meta = UTIL_TOOLS.find((t) => t.id === "cidr-check")!;
+
+const T = {
+  pt: {
+    h2Ips: "1. Lista de IPs IPv4 para verificar (um por linha)",
+    h2Cidrs: "2. Blocos CIDR de referência (ex: ranges Zscaler, Azure, VPN)",
+    btnCheck: "Verificar Correspondências",
+    resTitle: "Resultado do Cruzamento (100% Local)",
+    matched: "MATCH",
+    unmatched: "SEM MATCH",
+  },
+  de: {
+    h2Ips: "1. Liste der zu prüfenden IPv4-Adressen (eine pro Zeile)",
+    h2Cidrs: "2. Referenz-CIDR-Blöcke (z. B. Zscaler-, Azure-, VPN-Ranges)",
+    btnCheck: "Treffer prüfen",
+    resTitle: "Abgleichergebnis (100% Lokal)",
+    matched: "TREFFER",
+    unmatched: "KEIN TREFFER",
+  },
+  zh: {
+    h2Ips: "1. 待检查的 IPv4 列表（每行一个）",
+    h2Cidrs: "2. 参考 CIDR 网段列表（如 Zscaler、Azure、VPN 网段）",
+    btnCheck: "执行批量匹配",
+    resTitle: "匹配结果（100% 本地计算）",
+    matched: "命中",
+    unmatched: "未命中",
+  },
+  en: {
+    h2Ips: "1. IPv4 Addresses to Check (one per line)",
+    h2Cidrs: "2. Reference CIDR Blocks (e.g., Zscaler, Azure, VPN ranges)",
+    btnCheck: "Check Matches",
+    resTitle: "Match Results (100% Local)",
+    matched: "MATCH",
+    unmatched: "NO MATCH",
+  },
+}[locale];
+---
+
+<ToolShell locale={locale} title={meta.title[locale]} description={meta.description[locale]} badge="100% Local" icon="🎯">
+  <div class="tool-card">
+    <h2>{T.h2Ips}</h2>
+    <textarea id="cc-ips" class="tool-textarea" rows="4" aria-label={T.h2Ips}>165.225.216.14
+198.51.100.42
+10.24.8.15</textarea>
+
+    <h2 style="margin-top:1rem;">{T.h2Cidrs}</h2>
+    <textarea id="cc-cidrs" class="tool-textarea" rows="4" aria-label={T.h2Cidrs}>165.225.0.0/16 # Zscaler ZIA
+10.0.0.0/8 # RFC1918 Internal
+172.16.0.0/12 # VPN / Docker</textarea>
+
+    <div style="margin-top:.85rem;">
+      <button id="cc-btn" type="button" class="tool-btn">{T.btnCheck}</button>
+    </div>
+  </div>
+
+  <div class="tool-card">
+    <h2>{T.resTitle}</h2>
+    <pre id="cc-out" class="code-out" style="margin:0;"></pre>
+  </div>
+</ToolShell>
+
+<script is:inline define:vars={{ T }}>
+  (() => {
+    const ipsEl = document.getElementById('cc-ips');
+    const cidrsEl = document.getElementById('cc-cidrs');
+    const outEl = document.getElementById('cc-out');
+
+    function ipToInt(ip) {
+      const parts = ip.trim().split('.');
+      if (parts.length !== 4 || parts.some((p) => !/^\d+$/.test(p) || Number(p) > 255)) return null;
+      return ((Number(parts[0]) << 24) | (Number(parts[1]) << 16) | (Number(parts[2]) << 8) | Number(parts[3])) >>> 0;
+    }
+
+    function run() {
+      const cidrs = cidrsEl.value
+        .split('\n')
+        .map((line) => line.trim())
+        .filter(Boolean)
+        .map((line) => {
+          const [cidrPart, ...comment] = line.split('#');
+          const [netStr, pStr] = cidrPart.trim().split('/');
+          const netInt = ipToInt(netStr || '');
+          const prefix = Number(pStr);
+          if (netInt === null || !Number.isInteger(prefix) || prefix < 0 || prefix > 32) return null;
+          const mask = prefix === 0 ? 0 : (0xffffffff << (32 - prefix)) >>> 0;
+          return { label: line, net: (netInt & mask) >>> 0, mask, note: comment.join('#').trim() };
+        })
+        .filter(Boolean);
+
+      const ips = ipsEl.value.split('\n').map((l) => l.trim()).filter(Boolean);
+      const lines = ips.map((ip) => {
+        const val = ipToInt(ip);
+        if (val === null) return `${ip} -> INVALID`;
+        const hits = cidrs.filter((c) => ((val & c.mask) >>> 0) === c.net);
+        if (!hits.length) return `${ip} -> [${T.unmatched}]`;
+        return `${ip} -> [${T.matched}] ${hits.map((h) => h.label).join(' | ')}`;
+      });
+      outEl.textContent = lines.join('\n');
+    }
+
+    document.getElementById('cc-btn')?.addEventListener('click', run);
+    run();
+  })();
+</script>
+

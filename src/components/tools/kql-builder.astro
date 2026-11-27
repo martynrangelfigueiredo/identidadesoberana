@@ -1,0 +1,148 @@
+---
+import ToolShell from "../ToolShell.astro";
+import type { Locale } from "../../lib/i18n";
+import { UTIL_TOOLS } from "../../lib/tools";
+
+interface Props { locale?: Locale; }
+const { locale = "pt" } = Astro.props;
+const meta = UTIL_TOOLS.find((t) => t.id === "kql-builder")!;
+
+const T = {
+  pt: {
+    h2Cfg: "Construtor de Query KQL para Microsoft Sentinel (Sintaxe ASCII)",
+    tblLbl: "Tabela Sentinel",
+    winLbl: "Janela (Lookback)",
+    upnLbl: "Usuário / UPN (opcional)",
+    ipLbl: "Endereço IP (opcional)",
+    corrLbl: "CorrelationId (opcional)",
+    btnGen: "Gerar Query KQL",
+    outTitle: "Query KQL Pronta (Compilável)",
+  },
+  de: {
+    h2Cfg: "KQL-Query-Builder für Microsoft Sentinel (ASCII-konform)",
+    tblLbl: "Sentinel-Tabelle",
+    winLbl: "Zeitraum (Lookback)",
+    upnLbl: "Benutzer / UPN (optional)",
+    ipLbl: "IP-Adresse (optional)",
+    corrLbl: "CorrelationId (optional)",
+    btnGen: "KQL-Abfrage erzeugen",
+    outTitle: "Fertige KQL-Abfrage",
+  },
+  zh: {
+    h2Cfg: "Microsoft Sentinel KQL 查询生成器（严格 ASCII 语法）",
+    tblLbl: "Sentinel 日志表",
+    winLbl: "时间范围 (Lookback)",
+    upnLbl: "用户 / UPN（可选）",
+    ipLbl: "IP 地址（可选）",
+    corrLbl: "CorrelationId（可选）",
+    btnGen: "生成 KQL 查询",
+    outTitle: "生成的 KQL 查询语句",
+  },
+  en: {
+    h2Cfg: "Microsoft Sentinel KQL Query Builder (ASCII-Safe)",
+    tblLbl: "Sentinel Table",
+    winLbl: "Lookback Window",
+    upnLbl: "User / UPN (optional)",
+    ipLbl: "IP Address (optional)",
+    corrLbl: "CorrelationId (optional)",
+    btnGen: "Build KQL Query",
+    outTitle: "Ready-to-Run KQL Query",
+  },
+}[locale];
+---
+
+<ToolShell locale={locale} title={meta.title[locale]} description={meta.description[locale]} badge="Microsoft Security" icon="🔎">
+  <div class="tool-card">
+    <h2>{T.h2Cfg}</h2>
+    <div class="tool-grid">
+      <div class="kv-box">
+        <span>{T.tblLbl}</span>
+        <select id="kql-tbl" class="tool-input" style="margin-top:.3rem;">
+          <option value="SigninLogs">SigninLogs (Entra ID)</option>
+          <option value="AuditLogs">AuditLogs (Entra ID)</option>
+          <option value="AADServicePrincipalSignInLogs">AADServicePrincipalSignInLogs</option>
+          <option value="DeviceLogonEvents">DeviceLogonEvents (Defender XDR)</option>
+        </select>
+      </div>
+      <div class="kv-box">
+        <span>{T.winLbl}</span>
+        <select id="kql-win" class="tool-input" style="margin-top:.3rem;">
+          <option value="24h">24h</option>
+          <option value="7d" selected>7d</option>
+          <option value="14d">14d</option>
+          <option value="30d">30d</option>
+        </select>
+      </div>
+      <div class="kv-box">
+        <span>{T.upnLbl}</span>
+        <input id="kql-upn" type="text" class="tool-input" placeholder="ana.silva@contoso.com" style="margin-top:.3rem;" />
+      </div>
+      <div class="kv-box">
+        <span>{T.ipLbl}</span>
+        <input id="kql-ip" type="text" class="tool-input" placeholder="198.51.100.42" style="margin-top:.3rem;" />
+      </div>
+      <div class="kv-box wide">
+        <span>{T.corrLbl}</span>
+        <input id="kql-corr" type="text" class="tool-input" placeholder="00000000-0000-0000-0000-000000000000" style="margin-top:.3rem;font-family:var(--font-mono);" />
+      </div>
+    </div>
+    <div style="margin-top:.85rem;">
+      <button id="kql-btn" type="button" class="tool-btn">{T.btnGen}</button>
+    </div>
+  </div>
+
+  <div class="tool-card">
+    <h2>{T.outTitle}</h2>
+    <pre id="kql-out" class="code-out" style="margin:0;"></pre>
+  </div>
+</ToolShell>
+
+<script is:inline>
+  (() => {
+    const tblEl = document.getElementById('kql-tbl');
+    const winEl = document.getElementById('kql-win');
+    const upnEl = document.getElementById('kql-upn');
+    const ipEl = document.getElementById('kql-ip');
+    const corrEl = document.getElementById('kql-corr');
+    const outEl = document.getElementById('kql-out');
+
+    function build() {
+      const tbl = tblEl.value;
+      const win = winEl.value;
+      const upn = upnEl.value.trim().replace(/"/g, '');
+      const ip = ipEl.value.trim().replace(/"/g, '');
+      const corr = corrEl.value.trim().replace(/"/g, '');
+
+      const lines = [`let Lookback = ${win};`, tbl, `| where TimeGenerated >= ago(Lookback)`];
+
+      if (tbl === 'SigninLogs') {
+        if (upn) lines.push(`| where UserPrincipalName == "${upn}"`);
+        if (ip) lines.push(`| where IPAddress == "${ip}"`);
+        if (corr) lines.push(`| where CorrelationId == "${corr}"`);
+        lines.push(`| project TimeGenerated, UserPrincipalName, AppDisplayName, ClientAppUsed, ResultType, ConditionalAccessStatus, IPAddress, CorrelationId`);
+      } else if (tbl === 'AuditLogs') {
+        if (upn) lines.push(`| where tostring(InitiatedBy.user.userPrincipalName) == "${upn}"`);
+        if (ip) lines.push(`| where tostring(InitiatedBy.user.ipAddress) == "${ip}"`);
+        if (corr) lines.push(`| where CorrelationId == "${corr}"`);
+        lines.push(`| project TimeGenerated, OperationName, Category, Result, ResultReason, InitiatedBy, TargetResources, CorrelationId`);
+      } else if (tbl === 'AADServicePrincipalSignInLogs') {
+        if (upn) lines.push(`| where ServicePrincipalName has "${upn}"`);
+        if (ip) lines.push(`| where IPAddress == "${ip}"`);
+        if (corr) lines.push(`| where CorrelationId == "${corr}"`);
+        lines.push(`| project TimeGenerated, ServicePrincipalName, ServicePrincipalId, AppId, ResourceDisplayName, ResultType, IPAddress, CorrelationId`);
+      } else {
+        if (upn) lines.push(`| where AccountName has "${upn}"`);
+        if (ip) lines.push(`| where RemoteIP == "${ip}"`);
+        lines.push(`| project TimeGenerated, DeviceName, AccountName, LogonType, ActionType, RemoteIP, RemoteDeviceName`);
+      }
+
+      lines.push(`| order by TimeGenerated desc`);
+      outEl.textContent = lines.join('\n');
+    }
+
+    document.getElementById('kql-btn')?.addEventListener('click', build);
+    [tblEl, winEl, upnEl, ipEl, corrEl].forEach((el) => el?.addEventListener('input', build));
+    build();
+  })();
+</script>
+
